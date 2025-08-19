@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -32,6 +32,7 @@ export function GiftProductForm({ initial, onSubmit, submitting }: Props) {
   const [imageUrl, setImageUrl] = useState(initial?.image_url ?? '')
   const [status, setStatus] = useState<'active' | 'inactive'>(initial?.status ?? 'active')
   const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'public'
 
@@ -80,13 +81,19 @@ export function GiftProductForm({ initial, onSubmit, submitting }: Props) {
       <div className="grid gap-2">
         <Label htmlFor="image">Imagem (URL)</Label>
         <Input id="image" value={imageUrl ?? ''} onChange={e => setImageUrl(e.target.value)} placeholder="https://..." />
-        <div className="flex items-center gap-3">
-          <Input type="file" accept="image/*" onChange={e => {
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={e => {
             const file = e.target.files?.[0]
             if (file) void handleImageUpload(file)
-          }} />
-          <Button type="button" variant="outline" disabled>{uploading ? 'Enviando...' : 'Upload'}</Button>
-        </div>
+          }}
+        />
+        <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+          {uploading ? 'Enviando...' : 'Fazer upload'}
+        </Button>
         {imageUrl ? (
           <img src={imageUrl} alt="preview" className="mt-2 h-32 w-32 object-cover rounded border" />
         ) : null}
@@ -98,7 +105,7 @@ export function GiftProductForm({ initial, onSubmit, submitting }: Props) {
           <option value="inactive">Inativo</option>
         </select>
       </div>
-      <Button type="submit" disabled={submitting}>Salvar</Button>
+      <Button type="submit" disabled={submitting || uploading}>Salvar</Button>
     </form>
   )
 }
