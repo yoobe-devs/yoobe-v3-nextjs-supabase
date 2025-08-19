@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { apiFetch } from '@/lib/api'
 
 export interface Order {
   id: string
@@ -44,8 +45,48 @@ export interface OrderCreateInput {
   }[]
 }
 
-// Get all orders with related data
+function isApiMode() {
+  return Boolean(process.env.NEXT_PUBLIC_API_BASE_URL)
+}
+
+function mapStorefrontOrder(o: any): Order {
+  const attrs = o?.attributes || {}
+  const now = new Date().toISOString()
+  const total = (() => {
+    const raw = attrs.total ?? attrs.display_total
+    if (typeof raw === 'number') return raw
+    if (typeof raw === 'string') {
+      const num = Number(raw.replace(/[^0-9.,-]/g, '').replace(',', '.'))
+      return isNaN(num) ? 0 : num
+    }
+    return 0
+  })()
+  return {
+    id: String(o?.id ?? attrs.id ?? Math.random().toString(36).slice(2)),
+    order_number: String(attrs.number ?? o?.id ?? ''),
+    user_id: undefined,
+    status: (attrs.state ?? 'pending') as Order['status'],
+    total_amount: total,
+    payment_method: undefined,
+    shipping_address: attrs?.ship_address || undefined,
+    notes: undefined,
+    created_at: attrs.created_at ?? now,
+    updated_at: attrs.updated_at ?? now,
+    profiles: undefined,
+    order_items: [],
+  }
+}
+
+// Get all orders
 export async function getOrders() {
+  if (isApiMode()) {
+    const resp = await apiFetch<any>('/api/v2/storefront/account/orders', {
+      query: { sort: '-created_at' },
+    })
+    const list = Array.isArray(resp?.data) ? resp.data.map(mapStorefrontOrder) : []
+    return list as Order[]
+  }
+
   const { data, error } = await supabase
     .from('orders')
     .select(`
@@ -74,6 +115,13 @@ export async function getOrders() {
 
 // Get order by ID
 export async function getOrderById(id: string) {
+  if (isApiMode()) {
+    const resp = await apiFetch<any>(`/api/v2/storefront/account/orders/${id}`)
+    const order = resp?.data ? mapStorefrontOrder(resp.data) : null
+    if (!order) throw new Error('Pedido não encontrado')
+    return order
+  }
+
   const { data, error } = await supabase
     .from('orders')
     .select(`
@@ -103,6 +151,9 @@ export async function getOrderById(id: string) {
 
 // Create new order
 export async function createOrder(orderData: OrderCreateInput) {
+  if (isApiMode()) {
+    throw new Error('Criação de pedidos via Storefront requer fluxo de carrinho/checkout. Implementar conforme API.')
+  }
   // Create the order first
   const { data: order, error: orderError } = await supabase
     .from('orders')
@@ -145,6 +196,9 @@ export async function createOrder(orderData: OrderCreateInput) {
 
 // Update order status
 export async function updateOrderStatus(id: string, status: Order['status']) {
+  if (isApiMode()) {
+    throw new Error('Atualização de status via API Storefront não suportada neste cliente.')
+  }
   const { data, error } = await supabase
     .from('orders')
     .update({ status })
@@ -162,6 +216,13 @@ export async function updateOrderStatus(id: string, status: Order['status']) {
 
 // Get orders by status
 export async function getOrdersByStatus(status: Order['status']) {
+  if (isApiMode()) {
+    const resp = await apiFetch<any>('/api/v2/storefront/account/orders', {
+      query: { 'filter[state_eq]': status, sort: '-created_at' },
+    })
+    const list = Array.isArray(resp?.data) ? resp.data.map(mapStorefrontOrder) : []
+    return list as Order[]
+  }
   const { data, error } = await supabase
     .from('orders')
     .select(`
@@ -191,6 +252,9 @@ export async function getOrdersByStatus(status: Order['status']) {
 
 // Get dashboard metrics
 export async function getDashboardMetrics() {
+  if (isApiMode()) {
+    // Could be derived client-side from orders listing; keeping Supabase logic for now
+  }
   // Get total orders count
   const { count: totalOrders } = await supabase
     .from('orders')
