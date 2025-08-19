@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { apiFetch } from '@/lib/api'
 
 export interface Product {
   id: string
@@ -30,8 +31,48 @@ export interface ProductUpdateInput extends Partial<ProductCreateInput> {
   id: string
 }
 
+function isApiMode() {
+  return Boolean(process.env.NEXT_PUBLIC_API_BASE_URL)
+}
+
+function mapStorefrontProduct(p: any): Product {
+  const attrs = p?.attributes || {}
+  const now = new Date().toISOString()
+  const normalizedPrice = (() => {
+    const raw = attrs.price ?? attrs.display_price
+    if (typeof raw === 'number') return raw
+    if (typeof raw === 'string') {
+      const num = Number(raw.replace(/[^0-9.,-]/g, '').replace(',', '.'))
+      return isNaN(num) ? 0 : num
+    }
+    return 0
+  })()
+  return {
+    id: String(p?.id ?? attrs.id ?? Math.random().toString(36).slice(2)),
+    name: String(attrs.name ?? 'Produto'),
+    description: attrs.description ?? undefined,
+    price: normalizedPrice,
+    image_url: undefined,
+    country: 'Brasil',
+    sku: attrs.sku ?? undefined,
+    claim_methods: Array.isArray(attrs.claim_methods) ? attrs.claim_methods : [],
+    status: (attrs.available_on ? 'active' : 'inactive'),
+    category_id: undefined,
+    created_at: attrs.created_at ?? now,
+    updated_at: attrs.updated_at ?? now,
+  }
+}
+
 // Get all products
 export async function getProducts() {
+  if (isApiMode()) {
+    const resp = await apiFetch<any>('/api/v2/storefront/products', {
+      query: { sort: '-created_at' },
+    })
+    const list = Array.isArray(resp?.data) ? resp.data.map(mapStorefrontProduct) : []
+    return list as Product[]
+  }
+
   const { data, error } = await supabase
     .from('products')
     .select('*')
@@ -48,6 +89,13 @@ export async function getProducts() {
 
 // Get product by ID
 export async function getProductById(id: string) {
+  if (isApiMode()) {
+    const resp = await apiFetch<any>(`/api/v2/storefront/products/${id}`)
+    const prod = resp?.data ? mapStorefrontProduct(resp.data) : null
+    if (!prod) throw new Error('Produto não encontrado')
+    return prod
+  }
+
   const { data, error } = await supabase
     .from('products')
     .select('*')
@@ -64,6 +112,29 @@ export async function getProductById(id: string) {
 
 // Create new product
 export async function createProduct(product: ProductCreateInput) {
+  if (isApiMode()) {
+    // Adjust this endpoint to your admin API if available
+    const resp = await apiFetch<any>('/api/v1/products', {
+      method: 'POST',
+      body: product,
+    })
+    if (resp?.data) return mapStorefrontProduct(resp.data)
+    return {
+      id: String(resp?.id ?? Math.random().toString(36).slice(2)),
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      image_url: product.image_url,
+      country: product.country || 'Brasil',
+      sku: product.sku,
+      claim_methods: product.claim_methods || [],
+      status: 'active',
+      category_id: product.category_id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+  }
+
   const { data, error } = await supabase
     .from('products')
     .insert({
@@ -86,7 +157,14 @@ export async function createProduct(product: ProductCreateInput) {
 // Update product
 export async function updateProduct(product: ProductUpdateInput) {
   const { id, ...updateData } = product
-  
+  if (isApiMode()) {
+    const resp = await apiFetch<any>(`/api/v1/products/${id}`, {
+      method: 'PUT',
+      body: updateData,
+    })
+    return resp?.data ? mapStorefrontProduct(resp.data) : { ...updateData, id } as unknown as Product
+  }
+
   const { data, error } = await supabase
     .from('products')
     .update(updateData)
@@ -104,6 +182,11 @@ export async function updateProduct(product: ProductUpdateInput) {
 
 // Delete product (soft delete)
 export async function deleteProduct(id: string) {
+  if (isApiMode()) {
+    await apiFetch(`/api/v1/products/${id}`, { method: 'DELETE' })
+    return true
+  }
+
   const { error } = await supabase
     .from('products')
     .update({ status: 'inactive' })
@@ -119,6 +202,14 @@ export async function deleteProduct(id: string) {
 
 // Search products
 export async function searchProducts(query: string) {
+  if (isApiMode()) {
+    const resp = await apiFetch<any>('/api/v2/storefront/products', {
+      query: { 'filter[name_cont]': query, sort: '-created_at' },
+    })
+    const list = Array.isArray(resp?.data) ? resp.data.map(mapStorefrontProduct) : []
+    return list as Product[]
+  }
+
   const { data, error } = await supabase
     .from('products')
     .select('*')
@@ -133,4 +224,5 @@ export async function searchProducts(query: string) {
 
   return data as Product[]
 }
+
 
