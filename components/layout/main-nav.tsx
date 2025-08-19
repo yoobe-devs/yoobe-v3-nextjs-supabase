@@ -73,6 +73,11 @@ const mainNav = [
     title: "Configurações",
     href: "/configuracoes",
     icon: Settings
+  },
+  {
+    title: "Admin Produtos",
+    href: "/admin/produtos",
+    icon: Package
   }
 ]
 
