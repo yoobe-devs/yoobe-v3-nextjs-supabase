@@ -24,6 +24,11 @@ const mainNav = [
     icon: Store
   },
   {
+    title: "Loja de Brindes",
+    href: "/loja-brindes",
+    icon: Gift
+  },
+  {
     title: "Minha Loja",
     href: "/minha-loja",
     icon: Store

@@ -25,6 +25,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.294.0",
     "next": "14.0.4",
     "react": "^18",
@@ -35,6 +36,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
