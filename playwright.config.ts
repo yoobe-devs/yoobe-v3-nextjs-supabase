@@ -10,6 +10,12 @@ export default defineConfig({
     screenshot: 'off',
     video: 'off',
   },
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    timeout: 120_000,
+    reuseExistingServer: !process.env.CI,
+  },
   projects: [
     {
       name: 'chromium',
