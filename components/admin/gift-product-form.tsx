@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { supabase } from '@/lib/supabase'
 
 type Props = {
   initial?: {
@@ -30,6 +31,25 @@ export function GiftProductForm({ initial, onSubmit, submitting }: Props) {
   const [price, setPrice] = useState(initial?.price?.toString() ?? '0')
   const [imageUrl, setImageUrl] = useState(initial?.image_url ?? '')
   const [status, setStatus] = useState<'active' | 'inactive'>(initial?.status ?? 'active')
+  const [uploading, setUploading] = useState(false)
+
+  const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET || 'public'
+
+  async function handleImageUpload(file: File) {
+    if (!file) return
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop() || 'jpg'
+      const rand = (globalThis.crypto?.randomUUID?.() || Math.random().toString(36).slice(2))
+      const path = `gift-products/${rand}.${ext}`
+      const { error: upErr } = await supabase.storage.from(bucket).upload(path, file, { upsert: true })
+      if (upErr) throw upErr
+      const { data } = supabase.storage.from(bucket).getPublicUrl(path)
+      if (data?.publicUrl) setImageUrl(data.publicUrl)
+    } finally {
+      setUploading(false)
+    }
+  }
 
   return (
     <form
@@ -59,7 +79,17 @@ export function GiftProductForm({ initial, onSubmit, submitting }: Props) {
       </div>
       <div className="grid gap-2">
         <Label htmlFor="image">Imagem (URL)</Label>
-        <Input id="image" value={imageUrl ?? ''} onChange={e => setImageUrl(e.target.value)} />
+        <Input id="image" value={imageUrl ?? ''} onChange={e => setImageUrl(e.target.value)} placeholder="https://..." />
+        <div className="flex items-center gap-3">
+          <Input type="file" accept="image/*" onChange={e => {
+            const file = e.target.files?.[0]
+            if (file) void handleImageUpload(file)
+          }} />
+          <Button type="button" variant="outline" disabled>{uploading ? 'Enviando...' : 'Upload'}</Button>
+        </div>
+        {imageUrl ? (
+          <img src={imageUrl} alt="preview" className="mt-2 h-32 w-32 object-cover rounded border" />
+        ) : null}
       </div>
       <div className="grid gap-2">
         <Label htmlFor="status">Status</Label>
