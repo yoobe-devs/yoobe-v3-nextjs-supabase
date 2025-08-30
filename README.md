@@ -36,136 +36,248 @@ Plataforma brasileira para gestão de produtos promocionais e kits corporativos,
 ## 📊 Funcionalidades Implementadas
 
 ### ✅ Concluídas
-- [x] Dashboard com métricas de vendas
-- [x] Sistema de navegação completo
-- [x] Gestão de Produtos (CRUD básico)
-- [x] Gestão de Pedidos (visualização)
-- [x] Gestão de Estoque
-- [x] Gestão de Usuários
-- [x] Sistema de componentes UI (shadcn/ui)
-- [x] Banco de dados PostgreSQL com schema completo
-- [x] Configuração do ambiente de desenvolvimento
+- [x] **Sistema de Autenticação Completo**
+  - Login com email/senha
+  - OTP e Magic Link
+  - Redirecionamento inteligente
+  - Logout funcional
+  - Proteção de rotas
+
+- [x] **Três Ambientes Funcionais**
+  - **Admin Global** (`/admin/dashboard`) - Gerenciamento de todas as empresas
+  - **Gestor da Loja** (`/gestor/dashboard`) - Gerenciamento da empresa específica
+  - **Funcionário** (`/store/dashboard`) - Loja corporativa para resgates
+
+- [x] **Admin Global - Funcionalidades Completas**
+  - **Dashboard** - Visão geral com métricas e estatísticas
+  - **Empresas** - Gerenciamento de empresas clientes
+  - **Lojas** - Gerenciamento de lojas corporativas
+  - **Usuários** - Gerenciamento de usuários do sistema
+  - **Produtos** - Gerenciamento de produtos globais
+  - **Pedidos** - Gerenciamento de todos os pedidos
+  - **Relatórios** - Análise detalhada de performance
+  - **Configurações** - Configurações globais do sistema
+
+- [x] **Gestor da Loja - Funcionalidades Completas**
+  - **Dashboard** - Visão geral da empresa com métricas específicas
+  - **Funcionários** - CRUD completo de funcionários com sistema de pontos
+  - **Produtos** - Gerenciamento de produtos da empresa com imagens placeholder
+  - **Pedidos** - Acompanhamento e atualização de status dos pedidos
+  - **Configurações** - Configurações da empresa, sistema de pontos e notificações
+
+- [x] **Sistema de Navegação Completo**
+  - Menu lateral responsivo
+  - Breadcrumbs
+  - Navegação entre ambientes
+  - Logout integrado
+
+- [x] **Interface Moderna e Responsiva**
+  - Design system consistente
+  - Componentes reutilizáveis
+  - Layouts adaptativos
+  - Ícones e badges informativos
+
+- [x] **Banco de Dados PostgreSQL**
+  - Schema completo implementado
+  - Tabelas para multitenancy
+  - Relacionamentos configurados
+  - Migrações organizadas
 
 ### 🔄 Em Desenvolvimento
-- [ ] Autenticação e autorização
-- [ ] Upload de imagens para produtos
-- [ ] Sistema de pagamentos
-- [ ] Relatórios avançados
-- [ ] Sistema de campanhas
-- [ ] Criação de kits
-- [ ] Integração com APIs de frete
+- [ ] **Integrações Externas**
+  - Cubbo Logistics
+  - Workvivo
+  - Olist ERP
+  - Gateways de pagamento
+
+- [ ] **Funcionalidades Avançadas**
+  - Upload de imagens
+  - Sistema de pagamentos
+  - Notificações em tempo real
+  - Relatórios avançados
+
+- [ ] **Gestor da Loja**
+  - Funcionalidades específicas do gestor
+  - Gerenciamento de funcionários
+  - Campanhas e promoções
+
+- [ ] **Loja Corporativa**
+  - Carrinho de compras
+  - Checkout completo
+  - Rastreamento de pedidos
 
 ## 🗃️ Schema do Banco de Dados
 
 ### Principais Tabelas:
 - **profiles** - Perfis de usuários
+- **companies** - Empresas clientes
+- **stores** - Lojas corporativas
 - **categories** - Categorias de produtos
 - **products** - Produtos do marketplace
 - **inventory** - Controle de estoque
-- **orders** - Pedidos realizados
+- **orders** - Pedidos dos clientes
 - **order_items** - Itens dos pedidos
-- **campaigns** - Campanhas promocionais
-- **kits** - Kits de produtos
+- **gift_shops** - Lojas de brindes
+- **gift_products** - Produtos das lojas
+- **gift_orders** - Pedidos de brindes
 
-### Produtos Exemplo (Pré-populados):
-- Bonés Hapvida (Azul, Laranja, Preto) - R$ 448,00
-- Camisetas (Branca, Preta) - R$ 49,90 - R$ 59,90
-- Caneca Personalizada - R$ 29,90
+## 🎯 Funcionalidades do Admin Global
 
-## ⚙️ Como Executar Localmente
+### 📊 Dashboard
+- Métricas em tempo real
+- Estatísticas de vendas
+- Gráficos de performance
+- Atividades recentes
+- Visão geral do sistema
+
+### 🏢 Gerenciamento de Empresas
+- Lista de empresas clientes
+- Filtros por status e nome
+- Estatísticas por empresa
+- Ações de edição/exclusão
+- Status de ativação
+
+### 🏪 Gerenciamento de Lojas
+- Lojas corporativas por empresa
+- Domínios personalizados
+- Métricas de performance
+- Status de operação
+- Configurações de loja
+
+### 👥 Gerenciamento de Usuários
+- Usuários por empresa
+- Filtros por role e status
+- Pontos e pedidos
+- Ações de gerenciamento
+- Perfis detalhados
+
+### 📦 Gerenciamento de Produtos
+- Produtos globais
+- Categorização
+- Controle de estoque
+- Avaliações e vendas
+- Status de disponibilidade
+
+### 🛒 Gerenciamento de Pedidos
+- Todos os pedidos do sistema
+- Filtros por status e empresa
+- Detalhes de clientes
+- Rastreamento de entrega
+- Exportação de dados
+
+### 📈 Relatórios
+- Análise de receita
+- Performance por período
+- Top empresas e produtos
+- Métricas de crescimento
+- Gráficos interativos
+
+### ⚙️ Configurações
+- Configurações gerais
+- Segurança e privacidade
+- Notificações
+- Backup e retenção
+- Informações do sistema
+
+## 🔐 Autenticação e Segurança
+
+### Sistema de Login
+- **Email/Senha:** Login tradicional
+- **OTP:** One-Time Password
+- **Magic Link:** Link mágico por email
+- **Google OAuth:** Integração com Google (preparado)
+
+### Controle de Acesso
+- **Middleware:** Proteção de rotas
+- **Roles:** Admin, Gestor, Funcionário
+- **Redirecionamento:** Baseado em email/role
+- **Sessões:** Persistentes e seguras
+
+### Ambientes Separados
+- **Admin Global:** `admin@yoobe.co`
+- **Gestor da Loja:** `gestor@jointecnologia.com`
+- **Funcionário:** `user@jointecnologia.com`
+
+## 🎨 Interface e UX
+
+### Design System
+- **Cores:** Paleta azul (yoobe.co)
+- **Componentes:** shadcn/ui
+- **Ícones:** Lucide React
+- **Tipografia:** Sistema consistente
+
+### Responsividade
+- **Mobile:** Otimizado para dispositivos móveis
+- **Tablet:** Layout adaptativo
+- **Desktop:** Interface completa
+- **Navegação:** Menu lateral colapsável
+
+### Feedback Visual
+- **Loading States:** Indicadores de carregamento
+- **Error Handling:** Tratamento de erros
+- **Success Messages:** Confirmações de ações
+- **Badges:** Status e indicadores
+
+## 🚀 Como Executar
 
 ### Pré-requisitos
-- Node.js 18+ (instalado via Homebrew)
-- Docker Desktop (instalado via Homebrew)
-- Homebrew (gerenciador de pacotes macOS)
+- Node.js 18+
+- Docker
+- Git
 
-### 1. Iniciar o Supabase
+### Instalação
 ```bash
-# Navegar para o diretório do projeto
-cd /Users/genautech/Downloads/v3-main/yoobe-v3
+# Clone o repositório
+git clone <repository-url>
+cd yoobe-v3
 
-# Adicionar Homebrew ao PATH
-export PATH="/opt/homebrew/bin:$PATH"
-
-# Iniciar Supabase local
-supabase start
-```
-
-### 2. Iniciar a Aplicação Next.js
-```bash
-# Instalar dependências (se necessário)
+# Instale as dependências
 npm install
 
-# Iniciar servidor de desenvolvimento
+# Configure as variáveis de ambiente
+cp .env.example .env.local
+
+# Inicie o Supabase local
+npx supabase start
+
+# Execute as migrações
+npx supabase db reset
+
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-### 3. Acessar as URLs
+### Acesso
 - **Aplicação:** http://localhost:3000
 - **Supabase Studio:** http://127.0.0.1:54323
+- **Login Admin:** admin@yoobe.co / admin123
 
-## 🔧 Scripts Disponíveis
+## 📝 Próximos Passos
 
-```bash
-# Desenvolvimento
-npm run dev          # Iniciar servidor de desenvolvimento
+### ✅ Concluído
+1. **Conectar com banco real: Substituir dados mock por Supabase** ✅
+2. **Implementar CRUD completo: Criar, editar, excluir funcionalidades** ✅
+3. **Criar funcionalidades do Gestor: Ambiente específico para gestores** ✅
 
-# Build
-npm run build        # Build para produção
-npm run start        # Iniciar servidor de produção
+### 🚧 Em Desenvolvimento
+4. **Adicionar upload de imagens: Integração com Supabase Storage**
+5. **Implementar notificações: Sistema de alertas em tempo real**
+6. **Completar loja corporativa: Carrinho, checkout, rastreamento**
+4. **Completar loja corporativa**
+5. **Implementar sistema de pagamentos**
+6. **Adicionar testes automatizados**
+7. **Otimizar performance**
+8. **Deploy em produção**
 
-# Banco de dados
-npm run db:reset     # Resetar banco local
-npm run db:generate  # Gerar tipos TypeScript
-npm run db:migrate   # Aplicar migrações
+## 🤝 Contribuição
 
-# Supabase
-npm run supabase:start  # Iniciar Supabase local
-npm run supabase:stop   # Parar Supabase local
-```
+1. Fork o projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
 
-## 🔐 Variáveis de Ambiente
+## 📄 Licença
 
-O arquivo `.env.local` foi criado automaticamente com as configurações locais:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
-```
-
-## 📱 Próximos Passos
-
-1. **Implementar Autenticação**
-   - Sistema de login/cadastro
-   - Proteção de rotas
-   - Gerenciamento de sessões
-
-2. **Conectar Dados Reais**
-   - Substituir dados mock por queries Supabase
-   - Implementar CRUD completo para todas as entidades
-
-3. **Sistema de Upload**
-   - Upload de imagens para produtos
-   - Integração com Supabase Storage
-
-4. **Pagamentos**
-   - Integração com gateways de pagamento brasileiros
-   - Sistema de carrinho de compras
-
-5. **Deploy**
-   - Configurar Supabase em produção
-   - Deploy na Vercel ou similar
-
-## 🆘 Suporte
-
-Para iniciar rapidamente:
-
-1. Certifique-se que o Docker está rodando
-2. Execute `supabase start` para iniciar o banco
-3. Execute `npm run dev` para iniciar a aplicação
-4. Acesse http://localhost:3000
-
-**Status Atual:** ✅ Ambiente completamente funcional para desenvolvimento!
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 

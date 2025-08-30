@@ -496,6 +496,16 @@ export type CompositeTypes<
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never
 
+// Tipos auxiliares para facilitar o uso
+export type Product = Tables<"products">
+export type Profile = Tables<"profiles">
+export type Order = Tables<"orders">
+export type OrderItem = Tables<"order_items">
+export type Inventory = Tables<"inventory">
+export type Campaign = Tables<"campaigns">
+export type Category = Tables<"categories">
+export type Kit = Tables<"kits">
+
 export const Constants = {
   graphql_public: {
     Enums: {},
