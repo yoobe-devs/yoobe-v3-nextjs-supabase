@@ -17,20 +17,35 @@ import {
   Minus,
   Plus
 } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Product {
   id: string
   name: string
   description: string
   price: number
-  points: number
-  image: string
-  category: string
-  stock: number
-  rating: number
-  reviews: number
-  features: string[]
-  specifications: Record<string, string>
+  points_cost: number
+  stock_quantity: number
+  image_url: string
+  status: string
+  stores: {
+    id: string
+    name: string
+    domain: string
+    description: string
+    logo_url: string
+    primary_color: string
+    secondary_color: string
+    companies: {
+      name: string
+    }
+  }
+  product_categories: {
+    id: string
+    name: string
+    icon: string
+    color: string
+  }
 }
 
 export default function ProductDetailPage() {
@@ -45,37 +60,17 @@ export default function ProductDetailPage() {
   useEffect(() => {
     const loadProduct = async () => {
       try {
-        // Mock product data - em produção viria da API
-        const mockProduct: Product = {
-          id: params.id as string,
-          name: 'Camiseta Corporativa Join Tecnologia',
-          description: 'Camiseta de alta qualidade com logo da empresa, feita em 100% algodão. Perfeita para eventos corporativos e uso diário.',
-          price: 45.00,
-          points: 450,
-          image: '/placeholder-product.jpg',
-          category: 'Vestuário',
-          stock: 25,
-          rating: 4.8,
-          reviews: 12,
-          features: [
-            '100% algodão',
-            'Logo bordado',
-            'Múltiplos tamanhos',
-            'Lavagem à máquina',
-            'Não encolhe'
-          ],
-          specifications: {
-            'Material': '100% Algodão',
-            'Peso': '180g/m²',
-            'Tamanhos': 'P, M, G, GG',
-            'Cores': 'Azul, Branco, Preto',
-            'Cuidados': 'Lavar à máquina 30°C'
-          }
+        const response = await fetch(`/api/store/product/${params.id}`)
+        if (response.ok) {
+          const data = await response.json()
+          setProduct(data.product)
+        } else {
+          toast.error('Produto não encontrado')
+          router.push('/store')
         }
-        
-        setProduct(mockProduct)
       } catch (error) {
         console.error('Erro ao carregar produto:', error)
+        toast.error('Erro ao carregar produto')
       } finally {
         setLoading(false)
       }
@@ -84,7 +79,7 @@ export default function ProductDetailPage() {
     if (params.id) {
       loadProduct()
     }
-  }, [params.id])
+  }, [params.id, router])
 
   const addToCart = async () => {
     if (!product) return
@@ -92,42 +87,38 @@ export default function ProductDetailPage() {
     setAddingToCart(true)
     
     try {
-      const response = await fetch('/api/cart/add', {
+      const response = await fetch('/api/store/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: product.id,
-          quantity
+          quantity,
+          storeId: product.stores.id
         })
       })
 
-      const result = await response.json()
-      
       if (response.ok) {
-        // Redirecionar para o carrinho
+        toast.success('Produto adicionado ao carrinho!')
+        // Redirecionar para o carrinho ou checkout
         router.push('/store/cart')
       } else {
-        throw new Error(result.error || 'Erro ao adicionar ao carrinho')
+        const error = await response.json()
+        toast.error(error.error || 'Erro ao adicionar ao carrinho')
       }
     } catch (error) {
       console.error('Erro ao adicionar ao carrinho:', error)
-      alert('Erro ao adicionar ao carrinho. Tente novamente.')
+      toast.error('Erro ao adicionar ao carrinho')
     } finally {
       setAddingToCart(false)
     }
   }
 
-  const updateQuantity = (delta: number) => {
-    const newQuantity = Math.max(1, Math.min(product?.stock || 1, quantity + delta))
-    setQuantity(newQuantity)
-  }
-
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Carregando produto...</p>
+          <Package className="h-12 w-12 text-gray-400 mx-auto mb-4 animate-pulse" />
+          <p className="text-gray-600">Carregando produto...</p>
         </div>
       </div>
     )
@@ -135,13 +126,14 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Produto não encontrado</h2>
-          <p className="text-gray-600 mb-6">O produto que você está procurando não existe.</p>
-          <Button onClick={() => router.push('/store/catalog')}>
-            Voltar ao Catálogo
+          <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Produto não encontrado</h2>
+          <p className="text-gray-600 mb-4">O produto que você está procurando não existe ou foi removido.</p>
+          <Button onClick={() => router.back()}>
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Voltar
           </Button>
         </div>
       </div>
@@ -149,90 +141,104 @@ export default function ProductDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Breadcrumb */}
-        <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.back()}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Voltar
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Imagem do Produto */}
-          <div className="space-y-4">
-            <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border">
-              <Package className="h-32 w-32 text-gray-400" />
-            </div>
-            <div className="flex gap-2">
-              <div className="w-20 h-20 bg-gray-100 rounded border-2 border-blue-500 flex items-center justify-center">
-                <Package className="h-8 w-8 text-gray-400" />
-              </div>
-              <div className="w-20 h-20 bg-gray-100 rounded border flex items-center justify-center">
-                <Package className="h-8 w-8 text-gray-400" />
-              </div>
-              <div className="w-20 h-20 bg-gray-100 rounded border flex items-center justify-center">
-                <Package className="h-8 w-8 text-gray-400" />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <Button 
+                variant="ghost" 
+                onClick={() => router.back()}
+                className="flex items-center space-x-2"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Voltar</span>
+              </Button>
+              {product.stores.logo_url && (
+                <img 
+                  src={product.stores.logo_url} 
+                  alt={product.stores.name}
+                  className="h-8 w-auto"
+                />
+              )}
+              <div>
+                <h1 className="text-sm font-medium text-gray-900">{product.stores.name}</h1>
+                <p className="text-xs text-gray-500">{product.stores.companies.name}</p>
               </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Informações do Produto */}
+      {/* Product Details */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Product Image */}
+          <div className="space-y-4">
+            <div className="aspect-square bg-white rounded-lg overflow-hidden shadow-sm">
+              {product.image_url ? (
+                <img
+                  src={product.image_url}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                  <Package className="h-24 w-24 text-gray-400" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Product Info */}
           <div className="space-y-6">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline">{product.category}</Badge>
-                <Badge variant={product.stock > 0 ? "default" : "destructive"}>
-                  {product.stock > 0 ? 'Em Estoque' : 'Sem Estoque'}
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+              {product.product_categories && (
+                <Badge 
+                  variant="outline" 
+                  className="mb-4"
+                  style={{ 
+                    borderColor: product.product_categories.color,
+                    color: product.product_categories.color 
+                  }}
+                >
+                  {product.product_categories.name}
                 </Badge>
-              </div>
-              
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {product.name}
-              </h1>
-              
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex items-center gap-1">
-                  <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                  <span className="font-medium">{product.rating}</span>
-                  <span className="text-gray-600">({product.reviews} avaliações)</span>
-                </div>
-              </div>
-
-              <p className="text-gray-600 text-lg leading-relaxed">
-                {product.description}
-              </p>
+              )}
+              <p className="text-gray-600 text-lg leading-relaxed">{product.description}</p>
             </div>
 
-            {/* Preços */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-4">
-                <div className="text-3xl font-bold text-gray-900">
+            {/* Price and Points */}
+            <div className="space-y-4">
+              <div className="flex items-baseline space-x-4">
+                <span className="text-3xl font-bold text-gray-900">
                   R$ {product.price.toFixed(2)}
-                </div>
-                <div className="flex items-center gap-2 text-purple-600">
-                  <Star className="h-5 w-5" />
-                  <span className="text-xl font-semibold">{product.points} pontos</span>
-                </div>
+                </span>
+                {product.points_cost > 0 && (
+                  <span className="text-lg text-gray-500">
+                    ou {product.points_cost} pontos
+                  </span>
+                )}
               </div>
-              <p className="text-sm text-gray-600">
-                ou {product.points} pontos para resgate
-              </p>
+              
+              <div className="flex items-center space-x-2 text-sm text-gray-600">
+                <Package className="h-4 w-4" />
+                <span>Estoque: {product.stock_quantity} unidades</span>
+              </div>
             </div>
 
-            {/* Quantidade */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Quantidade</label>
-              <div className="flex items-center gap-3">
+            {/* Quantity Selector */}
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Quantidade
+              </label>
+              <div className="flex items-center space-x-3">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => updateQuantity(-1)}
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1}
                 >
                   <Minus className="h-4 w-4" />
@@ -241,101 +247,62 @@ export default function ProductDetailPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => updateQuantity(1)}
-                  disabled={quantity >= product.stock}
+                  onClick={() => setQuantity(Math.min(product.stock_quantity, quantity + 1))}
+                  disabled={quantity >= product.stock_quantity}
                 >
                   <Plus className="h-4 w-4" />
                 </Button>
-                <span className="text-sm text-gray-600">
-                  {product.stock} disponíveis
-                </span>
               </div>
             </div>
 
-            {/* Ações */}
-            <div className="flex gap-3">
-              <Button 
-                className="flex-1" 
-                size="lg"
-                onClick={addToCart}
-                disabled={addingToCart || product.stock === 0}
-              >
-                {addingToCart ? (
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    Adicionando...
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <ShoppingCart className="h-4 w-4" />
-                    Adicionar ao Carrinho
-                  </div>
-                )}
-              </Button>
-              <Button variant="outline" size="lg">
-                <Heart className="h-4 w-4" />
-              </Button>
-            </div>
+            {/* Add to Cart Button */}
+            <Button
+              onClick={addToCart}
+              disabled={addingToCart || product.stock_quantity === 0}
+              className="w-full h-12 text-lg"
+              style={{
+                backgroundColor: product.stores.primary_color || '#3b82f6',
+                borderColor: product.stores.primary_color || '#3b82f6'
+              }}
+            >
+              {addingToCart ? (
+                <>
+                  <Package className="h-5 w-5 mr-2 animate-spin" />
+                  Adicionando...
+                </>
+              ) : product.stock_quantity === 0 ? (
+                'Produto indisponível'
+              ) : (
+                <>
+                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  Adicionar ao Carrinho
+                </>
+              )}
+            </Button>
 
-            {/* Informações de Entrega */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <Truck className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="font-medium">Entrega Gratuita</p>
-                      <p className="text-sm text-gray-600">3-5 dias úteis</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-green-600" />
-                    <div>
-                      <p className="font-medium">Garantia</p>
-                      <p className="text-sm text-gray-600">30 dias para troca</p>
-                    </div>
-                  </div>
+            {/* Features */}
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Características</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex items-center space-x-3">
+                  <Truck className="h-5 w-5 text-gray-400" />
+                  <span className="text-sm text-gray-600">Entrega rápida</span>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        {/* Características e Especificações */}
-        <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Características */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Características</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-2">
-                {product.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Especificações */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Especificações</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <div key={key} className="flex justify-between py-2 border-b last:border-b-0">
-                    <span className="font-medium text-gray-700">{key}</span>
-                    <span className="text-gray-600">{value}</span>
-                  </div>
-                ))}
+                <div className="flex items-center space-x-3">
+                  <Shield className="h-5 w-5 text-gray-400" />
+                  <span className="text-sm text-gray-600">Garantia de qualidade</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Package className="h-5 w-5 text-gray-400" />
+                  <span className="text-sm text-gray-600">Produto original</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <Star className="h-5 w-5 text-gray-400" />
+                  <span className="text-sm text-gray-600">Qualidade premium</span>
+                </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

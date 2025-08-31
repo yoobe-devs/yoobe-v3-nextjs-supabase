@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -16,12 +17,14 @@ import {
   BarChart3,
   Store,
   Star,
-  UserPlus
+  UserPlus,
+  Loader2
 } from "lucide-react"
 import { YoobeLogo } from "@/components/ui/yoobe-logo"
 import { useAuth } from "@/components/auth/auth-provider-simple"
 import { LogOut } from "lucide-react"
 import { getGestorStats, type GestorStats } from "@/lib/queries/gestor"
+import { toast } from "sonner"
 
 export default function GestorDashboardPage() {
   const [stats, setStats] = useState<GestorStats>({
@@ -36,24 +39,27 @@ export default function GestorDashboardPage() {
   })
   const [loading, setLoading] = useState(true)
   const { user, signOut } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        setLoading(true)
         const dashboardStats = await getGestorStats()
         setStats(dashboardStats)
       } catch (error) {
         console.error('Error fetching dashboard stats:', error)
-        // Fallback para dados mock se houver erro
+        toast.error('Erro ao carregar estatísticas')
+        // Fallback para dados vazios se houver erro
         setStats({
-          totalEmployees: 12,
-          totalProducts: 45,
-          totalOrders: 89,
-          totalRevenue: 12500,
-          activeEmployees: 10,
-          pendingOrders: 5,
-          totalPointsDistributed: 25000,
-          averageOrderValue: 140
+          totalEmployees: 0,
+          totalProducts: 0,
+          totalOrders: 0,
+          totalRevenue: 0,
+          activeEmployees: 0,
+          pendingOrders: 0,
+          totalPointsDistributed: 0,
+          averageOrderValue: 0
         })
       } finally {
         setLoading(false)
@@ -61,6 +67,29 @@ export default function GestorDashboardPage() {
     }
     fetchStats()
   }, [])
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      router.push('/auth/login')
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+      toast.error('Erro ao fazer logout')
+    }
+  }
+
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-100 text-green-800">Ativo</Badge>
+      case 'inactive':
+        return <Badge className="bg-red-100 text-red-800">Inativo</Badge>
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-800">Pendente</Badge>
+      default:
+        return <Badge variant="outline">{status}</Badge>
+    }
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -74,15 +103,18 @@ export default function GestorDashboardPage() {
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline">
+          <Button 
+            variant="outline"
+            onClick={() => router.push('/gestor/configuracoes')}
+          >
             <Settings className="h-4 w-4 mr-2" />
             Configurações
           </Button>
-          <Button>
+          <Button onClick={() => router.push('/gestor/funcionarios')}>
             <UserPlus className="h-4 w-4 mr-2" />
             Novo Funcionário
           </Button>
-          <Button variant="outline" onClick={signOut}>
+          <Button variant="outline" onClick={handleSignOut}>
             <LogOut className="h-4 w-4 mr-2" />
             Sair
           </Button>
@@ -99,8 +131,12 @@ export default function GestorDashboardPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Funcionários</p>
-                <p className="text-2xl font-bold">{loading ? '...' : stats.totalEmployees}</p>
-                <p className="text-xs text-green-600">+{loading ? '...' : stats.activeEmployees} ativos</p>
+                <p className="text-2xl font-bold">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.totalEmployees}
+                </p>
+                <p className="text-xs text-green-600">
+                  +{loading ? '...' : stats.activeEmployees} ativos
+                </p>
               </div>
             </div>
           </CardContent>
@@ -114,7 +150,9 @@ export default function GestorDashboardPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Produtos</p>
-                <p className="text-2xl font-bold">{loading ? '...' : stats.totalProducts}</p>
+                <p className="text-2xl font-bold">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.totalProducts}
+                </p>
                 <p className="text-xs text-blue-600">Disponíveis</p>
               </div>
             </div>
@@ -129,8 +167,12 @@ export default function GestorDashboardPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Pedidos</p>
-                <p className="text-2xl font-bold">{loading ? '...' : stats.totalOrders}</p>
-                <p className="text-xs text-orange-600">{loading ? '...' : stats.pendingOrders} pendentes</p>
+                <p className="text-2xl font-bold">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.totalOrders}
+                </p>
+                <p className="text-xs text-orange-600">
+                  {loading ? '...' : stats.pendingOrders} pendentes
+                </p>
               </div>
             </div>
           </CardContent>
@@ -144,7 +186,9 @@ export default function GestorDashboardPage() {
               </div>
               <div>
                 <p className="text-sm text-gray-600">Receita</p>
-                <p className="text-2xl font-bold">R$ {loading ? '...' : stats.totalRevenue.toLocaleString()}</p>
+                <p className="text-2xl font-bold">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : `R$ ${stats.totalRevenue.toLocaleString()}`}
+                </p>
                 <p className="text-xs text-green-600">+12% este mês</p>
               </div>
             </div>
@@ -165,19 +209,35 @@ export default function GestorDashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => router.push('/gestor/funcionarios')}
+            >
               <Users className="h-4 w-4 mr-2" />
               Gerenciar Funcionários
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => router.push('/gestor/produtos')}
+            >
               <Package className="h-4 w-4 mr-2" />
               Gestão de Produtos
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => router.push('/gestor/minha-loja')}
+            >
               <Store className="h-4 w-4 mr-2" />
               Configurar Loja
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline"
+              onClick={() => router.push('/gestor/pedidos')}
+            >
               <ShoppingCart className="h-4 w-4 mr-2" />
               Acompanhar Pedidos
             </Button>
@@ -195,27 +255,42 @@ export default function GestorDashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Novo funcionário cadastrado</p>
-                <p className="text-sm text-gray-600">João Silva</p>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="ml-2">Carregando atividades...</span>
               </div>
-              <Badge variant="secondary">Agora</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Produto adicionado</p>
-                <p className="text-sm text-gray-600">Camiseta Corporativa</p>
+            ) : stats.totalEmployees > 0 ? (
+              <>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Funcionários cadastrados</p>
+                    <p className="text-sm text-gray-600">{stats.totalEmployees} funcionários</p>
+                  </div>
+                  <Badge variant="secondary">Ativo</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Produtos disponíveis</p>
+                    <p className="text-sm text-gray-600">{stats.totalProducts} produtos</p>
+                  </div>
+                  <Badge variant="secondary">Disponível</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Pedidos realizados</p>
+                    <p className="text-sm text-gray-600">{stats.totalOrders} pedidos</p>
+                  </div>
+                  <Badge variant="secondary">Total</Badge>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-8">
+                <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-500">Nenhuma atividade recente</p>
+                <p className="text-sm text-gray-400">Comece adicionando funcionários e produtos</p>
               </div>
-              <Badge variant="secondary">2 min</Badge>
-            </div>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-medium">Novo pedido</p>
-                <p className="text-sm text-gray-600">#ORD-2024-001</p>
-              </div>
-              <Badge variant="secondary">5 min</Badge>
-            </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -236,21 +311,27 @@ export default function GestorDashboardPage() {
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Users className="h-6 w-6 text-green-600" />
-                <span className="text-2xl font-bold text-green-600">{stats.activeEmployees}</span>
+                <span className="text-2xl font-bold text-green-600">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.activeEmployees}
+                </span>
               </div>
               <p className="text-sm text-gray-600">Funcionários Ativos</p>
             </div>
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <Star className="h-6 w-6 text-blue-600" />
-                <span className="text-2xl font-bold text-blue-600">{loading ? '...' : stats.totalPointsDistributed.toLocaleString()}</span>
+                <span className="text-2xl font-bold text-blue-600">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.totalPointsDistributed.toLocaleString()}
+                </span>
               </div>
               <p className="text-sm text-gray-600">Pontos Distribuídos</p>
             </div>
             <div className="text-center p-4 bg-purple-50 rounded-lg">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <ShoppingCart className="h-6 w-6 text-purple-600" />
-                <span className="text-2xl font-bold text-purple-600">{loading ? '...' : stats.totalOrders}</span>
+                <span className="text-2xl font-bold text-purple-600">
+                  {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : stats.totalOrders}
+                </span>
               </div>
               <p className="text-sm text-gray-600">Resgates Realizados</p>
             </div>

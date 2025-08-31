@@ -24,9 +24,25 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from('orders')
       .select(`
-        *,
-        companies(name),
-        users(name, email)
+        id,
+        order_number,
+        user_id,
+        company_id,
+        total_amount,
+        points_used,
+        currency,
+        status,
+        created_at,
+        updated_at,
+        companies!inner(
+          id,
+          name
+        ),
+        users!inner(
+          id,
+          name,
+          email
+        )
       `, { count: 'exact' })
 
     // Aplicar filtros
@@ -58,7 +74,7 @@ export async function GET(request: NextRequest) {
 
     // Calcular estatísticas
     const totalOrders = data?.length || 0
-    const pendingOrders = data?.filter(o => o.status === 'pending_payment').length || 0
+    const pendingOrders = data?.filter(o => o.status === 'pending').length || 0
     const confirmedOrders = data?.filter(o => o.status === 'confirmed').length || 0
     const totalValue = data?.reduce((sum, o) => sum + (o.total_amount || 0), 0) || 0
 
@@ -117,6 +133,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Valor total deve ser positivo' }, { status: 400 })
     }
 
+    // Verificar se a empresa existe
+    const { data: company } = await supabase
+      .from('companies')
+      .select('id')
+      .eq('id', company_id)
+      .single()
+
+    if (!company) {
+      return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 400 })
+    }
+
+    // Verificar se o usuário existe
+    const { data: user } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', user_id)
+      .single()
+
+    if (!user) {
+      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 400 })
+    }
+
     // Gerar número do pedido
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
 
@@ -127,7 +165,7 @@ export async function POST(request: NextRequest) {
         order_number: orderNumber,
         company_id,
         user_id,
-        status: status || 'pending_payment',
+        status: status || 'pending',
         total_amount: total_amount || 0,
         points_used: points_used || 0,
         currency: currency || 'BRL',
@@ -136,9 +174,24 @@ export async function POST(request: NextRequest) {
         notes
       })
       .select(`
-        *,
-        companies(name),
-        users(name, email)
+        id,
+        order_number,
+        user_id,
+        company_id,
+        total_amount,
+        points_used,
+        currency,
+        status,
+        created_at,
+        companies!inner(
+          id,
+          name
+        ),
+        users!inner(
+          id,
+          name,
+          email
+        )
       `)
       .single()
 

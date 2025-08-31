@@ -17,7 +17,8 @@ import {
   BarChart3,
   Store,
   UserPlus,
-  Building2
+  Building2,
+  Link
 } from 'lucide-react'
 
 const mainNav = [
@@ -75,6 +76,11 @@ const mainNav = [
     title: "Configurações",
     href: "/gestor/configuracoes",
     icon: Settings
+  },
+  {
+    title: "Integração Cubbo",
+    href: "/gestor/integracao-cubbo",
+    icon: Link
   }
 ]
 

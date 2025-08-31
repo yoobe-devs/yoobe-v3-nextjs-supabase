@@ -80,10 +80,8 @@ export function AuthProviderSimple({ children }: { children: React.ReactNode }) 
           throw error
         }
         
-        // Redirecionamento manual após login bem-sucedido
-        if (data.user) {
-          window.location.href = '/choose-environment'
-        }
+        // Não fazer redirecionamento automático
+        // Deixar o usuário navegar manualmente
       } else {
         const { data, error } = await supabase.auth.signInWithOtp({
           email,
@@ -98,8 +96,9 @@ export function AuthProviderSimple({ children }: { children: React.ReactNode }) 
       }
     } catch (err) {
       const authError = err as AuthError
+      console.error('Auth error:', authError)
       setError(authError.message || 'Sign in failed')
-      throw err
+      throw authError
     }
   }
 

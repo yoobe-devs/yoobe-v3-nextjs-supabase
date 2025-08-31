@@ -16,7 +16,8 @@ import {
   LogOut, 
   HelpCircle,
   BarChart3,
-  Store
+  Store,
+  FileText
 } from 'lucide-react'
 
 const mainNav = [
@@ -54,6 +55,11 @@ const mainNav = [
     title: "Relatórios",
     href: "/admin/relatorios",
     icon: BarChart3
+  },
+  {
+    title: "Templates",
+    href: "/admin/templates",
+    icon: FileText
   },
   {
     title: "Configurações",

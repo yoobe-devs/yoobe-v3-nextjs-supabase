@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { supabaseServiceKey } from '@/lib/supabase-admin'
 
 // GET - Buscar usuário específico
 export async function GET(
@@ -53,7 +54,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { name, email, role, company_id, department, position, status } = body
+    const { name, email, role, company_id, department, position, status, password } = body
 
     // Validações
     if (!name || !email || !role) {
@@ -72,7 +73,20 @@ export async function PUT(
       return NextResponse.json({ error: 'Email já cadastrado' }, { status: 409 })
     }
 
-    // Atualizar usuário
+    // Atualizar senha no Auth se fornecida
+    if (password) {
+      const { error: passwordError } = await supabaseServiceKey.auth.admin.updateUserById(
+        params.id,
+        { password }
+      )
+
+      if (passwordError) {
+        console.error('Erro ao atualizar senha:', passwordError)
+        return NextResponse.json({ error: 'Erro ao atualizar senha' }, { status: 500 })
+      }
+    }
+
+    // Atualizar usuário na tabela
     const { data, error } = await supabase
       .from('users')
       .update({
@@ -121,14 +135,22 @@ export async function DELETE(
       return NextResponse.json({ error: 'Não é possível excluir seu próprio usuário' }, { status: 400 })
     }
 
-    // Excluir usuário
+    // Excluir usuário do Auth primeiro
+    const { error: authDeleteError } = await supabaseServiceKey.auth.admin.deleteUser(params.id)
+    
+    if (authDeleteError) {
+      console.error('Erro ao excluir usuário do Auth:', authDeleteError)
+      return NextResponse.json({ error: 'Erro ao excluir usuário do sistema de autenticação' }, { status: 500 })
+    }
+
+    // Excluir usuário da tabela
     const { error } = await supabase
       .from('users')
       .delete()
       .eq('id', params.id)
 
     if (error) {
-      console.error('Erro ao excluir usuário:', error)
+      console.error('Erro ao excluir usuário da tabela:', error)
       return NextResponse.json({ error: 'Erro ao excluir usuário' }, { status: 500 })
     }
 

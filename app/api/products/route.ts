@@ -45,8 +45,27 @@ export async function GET(request: NextRequest) {
         image_url,
         status,
         created_at,
-        companies!inner(name),
-        categories(name)
+        company_id,
+        category_id,
+        base_product_id,
+        companies (
+          id,
+          name
+        ),
+        product_categories (
+          id,
+          name,
+          description,
+          icon,
+          color
+        ),
+        base_products (
+          id,
+          name,
+          description,
+          base_price,
+          base_points_cost
+        )
       `, { count: 'exact' })
 
     // Aplicar filtros de forma otimizada
@@ -130,6 +149,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Preço, pontos e estoque devem ser valores positivos' }, { status: 400 })
     }
 
+    // Verificar se a empresa existe
+    const { data: company } = await supabase
+      .from('companies')
+      .select('id')
+      .eq('id', company_id)
+      .single()
+
+    if (!company) {
+      return NextResponse.json({ error: 'Empresa não encontrada' }, { status: 400 })
+    }
+
     // Criar produto com query otimizada
     const { data, error } = await supabase
       .from('company_products')
@@ -153,8 +183,11 @@ export async function POST(request: NextRequest) {
         stock_quantity,
         image_url,
         status,
-        companies(name),
-        categories(name)
+        company_id,
+        companies!inner(
+          id,
+          name
+        )
       `)
       .single()
 

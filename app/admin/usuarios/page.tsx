@@ -42,8 +42,14 @@ interface User {
   orders_count?: number
 }
 
+interface Company {
+  id: string
+  name: string
+}
+
 export default function AdminUsuariosPage() {
   const [users, setUsers] = useState<User[]>([])
+  const [companies, setCompanies] = useState<Company[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedStatus, setSelectedStatus] = useState("all")
@@ -51,6 +57,8 @@ export default function AdminUsuariosPage() {
   const [viewingUser, setViewingUser] = useState<User | null>(null)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [creatingUser, setCreatingUser] = useState(false)
+  const [updatingUser, setUpdatingUser] = useState(false)
   const supabase = createClientComponentClient()
 
   const statuses = ["all", "active", "inactive", "suspended"]
@@ -58,6 +66,7 @@ export default function AdminUsuariosPage() {
 
   useEffect(() => {
     fetchUsers()
+    fetchCompanies()
   }, [])
 
   const fetchUsers = async () => {
@@ -92,6 +101,144 @@ export default function AdminUsuariosPage() {
       toast.error('Erro ao carregar usuários')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchCompanies = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('companies')
+        .select('id, name')
+        .order('name')
+
+      if (error) {
+        console.error('Erro ao buscar empresas:', error)
+        return
+      }
+
+      setCompanies(data || [])
+    } catch (error) {
+      console.error('Erro ao buscar empresas:', error)
+    }
+  }
+
+  const handleCreateUser = async (formData: FormData) => {
+    try {
+      setCreatingUser(true)
+      
+      const name = formData.get('name') as string
+      const email = formData.get('email') as string
+      const role = formData.get('role') as string
+      const company_id = formData.get('company_id') as string
+      const department = formData.get('department') as string
+      const position = formData.get('position') as string
+      const password = formData.get('password') as string
+
+      // Validações
+      if (!name || !email || !role) {
+        toast.error('Nome, email e role são obrigatórios')
+        return
+      }
+
+      if (role === 'manager' && !company_id) {
+        toast.error('Empresa é obrigatória para gestores')
+        return
+      }
+
+      // Criar usuário via API
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          role,
+          company_id: company_id || null,
+          department: department || null,
+          position: position || null,
+          password: password || null
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        toast.error(result.error || 'Erro ao criar usuário')
+        return
+      }
+
+      toast.success('Usuário criado com sucesso')
+      setShowCreateModal(false)
+      fetchUsers() // Recarregar lista
+    } catch (error) {
+      console.error('Erro ao criar usuário:', error)
+      toast.error('Erro ao criar usuário')
+    } finally {
+      setCreatingUser(false)
+    }
+  }
+
+  const handleUpdateUser = async (formData: FormData) => {
+    if (!editingUser) return
+
+    try {
+      setUpdatingUser(true)
+      
+      const name = formData.get('name') as string
+      const email = formData.get('email') as string
+      const role = formData.get('role') as string
+      const company_id = formData.get('company_id') as string
+      const department = formData.get('department') as string
+      const position = formData.get('position') as string
+      const status = formData.get('status') as string
+      const password = formData.get('password') as string
+
+      // Validações
+      if (!name || !email || !role) {
+        toast.error('Nome, email e role são obrigatórios')
+        return
+      }
+
+      if (role === 'manager' && !company_id) {
+        toast.error('Empresa é obrigatória para gestores')
+        return
+      }
+
+      // Atualizar usuário via API
+      const response = await fetch(`/api/users/${editingUser.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          role,
+          company_id: company_id || null,
+          department: department || null,
+          position: position || null,
+          status,
+          password: password || null
+        }),
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        toast.error(result.error || 'Erro ao atualizar usuário')
+        return
+      }
+
+      toast.success('Usuário atualizado com sucesso')
+      setEditingUser(null)
+      fetchUsers() // Recarregar lista
+    } catch (error) {
+      console.error('Erro ao atualizar usuário:', error)
+      toast.error('Erro ao atualizar usuário')
+    } finally {
+      setUpdatingUser(false)
     }
   }
 
@@ -372,40 +519,72 @@ export default function AdminUsuariosPage() {
         />
       )}
 
-      {/* Create/Edit Modal */}
+      {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Novo Usuário</h2>
             <form onSubmit={(e) => {
               e.preventDefault()
-              const formData = new FormData(e.currentTarget)
-              // Implementar criação de usuário
-              setShowCreateModal(false)
+              handleCreateUser(new FormData(e.currentTarget))
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Nome</label>
+                  <label className="block text-sm font-medium text-gray-700">Nome Completo *</label>
                   <Input name="name" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <label className="block text-sm font-medium text-gray-700">Email *</label>
                   <Input name="email" type="email" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Role</label>
-                  <select name="role" className="w-full border border-gray-300 rounded-md px-3 py-2">
+                  <label className="block text-sm font-medium text-gray-700">Senha</label>
+                  <Input name="password" type="password" placeholder="Deixe em branco para gerar automaticamente" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Role *</label>
+                  <select name="role" className="w-full border border-gray-300 rounded-md px-3 py-2" required>
+                    <option value="">Selecione um role</option>
                     <option value="user">Usuário</option>
                     <option value="manager">Gerente</option>
                     <option value="admin">Administrador</option>
                   </select>
                 </div>
-                <div className="flex gap-2">
-                  <Button type="submit" className="flex-1">Criar</Button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Empresa</label>
+                  <select name="company_id" className="w-full border border-gray-300 rounded-md px-3 py-2">
+                    <option value="">Selecione uma empresa</option>
+                    {companies.map(company => (
+                      <option key={company.id} value={company.id}>
+                        {company.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Departamento</label>
+                  <Input name="department" placeholder="Ex: TI, RH, Vendas" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Cargo</label>
+                  <Input name="position" placeholder="Ex: Desenvolvedor, Analista" />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <Button type="submit" className="flex-1" disabled={creatingUser}>
+                    {creatingUser ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Criando...
+                      </>
+                    ) : (
+                      'Criar Usuário'
+                    )}
+                  </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setShowCreateModal(false)}
+                    disabled={creatingUser}
                   >
                     Cancelar
                   </Button>
@@ -419,30 +598,51 @@ export default function AdminUsuariosPage() {
       {/* Edit Modal */}
       {editingUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-bold mb-4">Editar Usuário</h2>
             <form onSubmit={(e) => {
               e.preventDefault()
-              const formData = new FormData(e.currentTarget)
-              // Implementar edição de usuário
-              setEditingUser(null)
+              handleUpdateUser(new FormData(e.currentTarget))
             }}>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Nome</label>
+                  <label className="block text-sm font-medium text-gray-700">Nome Completo *</label>
                   <Input name="name" defaultValue={editingUser.name} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <label className="block text-sm font-medium text-gray-700">Email *</label>
                   <Input name="email" type="email" defaultValue={editingUser.email} required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Role</label>
-                  <select name="role" defaultValue={editingUser.role} className="w-full border border-gray-300 rounded-md px-3 py-2">
+                  <label className="block text-sm font-medium text-gray-700">Nova Senha</label>
+                  <Input name="password" type="password" placeholder="Deixe em branco para manter a atual" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Role *</label>
+                  <select name="role" defaultValue={editingUser.role} className="w-full border border-gray-300 rounded-md px-3 py-2" required>
                     <option value="user">Usuário</option>
                     <option value="manager">Gerente</option>
                     <option value="admin">Administrador</option>
                   </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Empresa</label>
+                  <select name="company_id" defaultValue={editingUser.company_id} className="w-full border border-gray-300 rounded-md px-3 py-2">
+                    <option value="">Selecione uma empresa</option>
+                    {companies.map(company => (
+                      <option key={company.id} value={company.id}>
+                        {company.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Departamento</label>
+                  <Input name="department" defaultValue={editingUser.department} placeholder="Ex: TI, RH, Vendas" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Cargo</label>
+                  <Input name="position" defaultValue={editingUser.position} placeholder="Ex: Desenvolvedor, Analista" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Status</label>
@@ -452,12 +652,22 @@ export default function AdminUsuariosPage() {
                     <option value="suspended">Suspenso</option>
                   </select>
                 </div>
-                <div className="flex gap-2">
-                  <Button type="submit" className="flex-1">Salvar</Button>
+                <div className="flex gap-2 pt-4">
+                  <Button type="submit" className="flex-1" disabled={updatingUser}>
+                    {updatingUser ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Salvando...
+                      </>
+                    ) : (
+                      'Salvar Alterações'
+                    )}
+                  </Button>
                   <Button 
                     type="button" 
                     variant="outline" 
                     onClick={() => setEditingUser(null)}
+                    disabled={updatingUser}
                   >
                     Cancelar
                   </Button>

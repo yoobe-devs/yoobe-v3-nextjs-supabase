@@ -78,6 +78,16 @@ const mainNav = [
     title: "Admin Produtos",
     href: "/admin/produtos",
     icon: Package
+  },
+  {
+    title: "Categorias",
+    href: "/admin/categorias",
+    icon: BookOpen
+  },
+  {
+    title: "Produtos-Base",
+    href: "/admin/produtos-base",
+    icon: Boxes
   }
 ]
 

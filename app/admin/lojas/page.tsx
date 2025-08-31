@@ -231,6 +231,13 @@ export default function AdminLojasPage() {
                       <Button 
                         variant="outline" 
                         size="sm"
+                        onClick={() => router.push(`/admin/lojas/${store.id}/produtos`)}
+                      >
+                        <Package className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
                         onClick={() => router.push(`/admin/lojas/editar/${store.id}`)}
                       >
                         <Edit className="h-4 w-4" />

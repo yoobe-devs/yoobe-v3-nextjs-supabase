@@ -1,77 +1,34 @@
 "use client"
 
-import { useState } from "react"
-import { useAuth } from "@/components/auth/auth-provider-simple"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Separator } from "@/components/ui/separator"
-import { Mail, Lock, Smartphone, Link, Chrome, AlertCircle, CheckCircle } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import { useState } from 'react'
+import { useAuth } from '@/components/auth/auth-provider-simple'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Loader2, Mail, Lock } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
-  const { signIn, signInWithGoogle, signInWithOTP, signInWithMagicLink } = useAuth()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
-  const [activeTab, setActiveTab] = useState("password")
+  const { signIn, error } = useAuth()
 
-  const handlePasswordLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setMessage(null)
 
     try {
       await signIn(email, password)
-      // Não mostra mensagem de sucesso, o redirecionamento será automático
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message })
+      toast.success('Login realizado com sucesso!')
+      // Redirecionar manualmente após login bem-sucedido
+      setTimeout(() => {
+        window.location.href = '/choose-environment'
+      }, 1000)
+    } catch (err) {
+      console.error('Erro no login:', err)
+      toast.error('Erro no login. Verifique suas credenciais.')
     } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleOTPLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage(null)
-
-    try {
-      await signInWithOTP(email)
-      setMessage({ type: 'success', text: 'Código OTP enviado para seu email!' })
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleMagicLinkLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setMessage(null)
-
-    try {
-      await signInWithMagicLink(email)
-      setMessage({ type: 'success', text: 'Link mágico enviado para seu email!' })
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleGoogleLogin = async () => {
-    setLoading(true)
-    setMessage(null)
-
-    try {
-      await signInWithGoogle()
-    } catch (error: any) {
-      setMessage({ type: 'error', text: error.message })
       setLoading(false)
     }
   }
@@ -79,159 +36,101 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
-          <div className="flex justify-center">
-            <div className="flex items-center space-x-2">
-              <div className="h-10 w-10 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-xl">Y</span>
-              </div>
-              <span className="font-bold text-2xl">Yoobe</span>
-            </div>
-          </div>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Entre na sua conta
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Login Yoobe
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Escolha seu método de autenticação preferido
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Acesse sua conta
           </p>
         </div>
-
+        
         <Card>
           <CardHeader>
-            <CardTitle>Autenticação</CardTitle>
+            <CardTitle>Entrar</CardTitle>
             <CardDescription>
-              Acesse sua conta usando qualquer método abaixo
+              Use suas credenciais para acessar o sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {message && (
-              <Alert className={`mb-4 ${message.type === 'error' ? 'border-red-200 bg-red-50' : 'border-green-200 bg-green-50'}`}>
-                {message.type === 'error' ? (
-                  <AlertCircle className="h-4 w-4 text-red-600" />
-                ) : (
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                )}
-                <AlertDescription className={message.type === 'error' ? 'text-red-800' : 'text-green-800'}>
-                  {message.text}
-                </AlertDescription>
-              </Alert>
-            )}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
+                <div className="mt-1 relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10"
+                    placeholder="seu@email.com"
+                  />
+                </div>
+              </div>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="password" className="flex items-center gap-2">
-                  <Lock className="h-4 w-4" />
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                   Senha
-                </TabsTrigger>
-                <TabsTrigger value="otp" className="flex items-center gap-2">
-                  <Smartphone className="h-4 w-4" />
-                  OTP
-                </TabsTrigger>
-                <TabsTrigger value="magic" className="flex items-center gap-2">
-                  <Link className="h-4 w-4" />
-                  Link Mágico
-                </TabsTrigger>
-              </TabsList>
+                </label>
+                <div className="mt-1 relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10"
+                    placeholder="Sua senha"
+                  />
+                </div>
+              </div>
 
-              <TabsContent value="password" className="space-y-4">
-                <form onSubmit={handlePasswordLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoComplete="email"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Senha</Label>
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      placeholder="Sua senha"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      autoComplete="current-password"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Entrando..." : "Entrar com Senha"}
-                  </Button>
-                </form>
-              </TabsContent>
+              {error && (
+                <div className="text-red-600 text-sm">
+                  {error}
+                </div>
+              )}
 
-              <TabsContent value="otp" className="space-y-4">
-                <form onSubmit={handleOTPLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email-otp">Email</Label>
-                    <Input
-                      id="email-otp"
-                      name="email-otp"
-                      type="email"
-                      placeholder="seu@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoComplete="email"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Enviando..." : "Enviar Código OTP"}
-                  </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="magic" className="space-y-4">
-                <form onSubmit={handleMagicLinkLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="email-magic">Email</Label>
-                    <Input
-                      id="email-magic"
-                      name="email-magic"
-                      type="email"
-                      placeholder="seu@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      autoComplete="email"
-                      required
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Enviando..." : "Enviar Link Mágico"}
-                  </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-
-            <Separator className="my-6" />
-
-            <div className="space-y-4">
               <Button
-                type="button"
-                variant="outline"
+                type="submit"
                 className="w-full"
-                onClick={handleGoogleLogin}
                 disabled={loading}
               >
-                <Chrome className="mr-2 h-4 w-4" />
-                Continuar com Google
+                {loading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    Entrando...
+                  </>
+                ) : (
+                  'Entrar'
+                )}
               </Button>
-            </div>
+            </form>
 
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Não tem uma conta?{" "}
-                <a href="/auth/register" className="font-medium text-blue-600 hover:text-blue-500">
-                  Criar conta
-                </a>
-              </p>
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">Credenciais de teste</span>
+                </div>
+              </div>
+              
+              <div className="mt-4 space-y-2 text-xs text-gray-600">
+                <p><strong>Admin:</strong> admin@yoobe.com / admin123</p>
+                <p><strong>Gestor:</strong> gestor.join.tech@jointecnologia.com.br / gestor123</p>
+                <p><strong>Funcionário:</strong> maria.santos@jointecnologia.com.br / maria123</p>
+              </div>
             </div>
           </CardContent>
         </Card>

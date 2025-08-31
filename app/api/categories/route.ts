@@ -2,92 +2,45 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 
-// GET - Listar categorias
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = createRouteHandlerClient({ cookies })
     
-    // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    }
-
-    const { searchParams } = new URL(request.url)
-    const search = searchParams.get('search') || ''
-    const company_id = searchParams.get('company_id') || ''
-
-    let query = supabase
-      .from('categories')
-      .select('*', { count: 'exact' })
-
-    // Aplicar filtros
-    if (search) {
-      query = query.ilike('name', `%${search}%`)
-    }
-    if (company_id) {
-      query = query.eq('company_id', company_id)
-    }
-
-    const { data, error, count } = await query
-      .order('name', { ascending: true })
+    const { data: categories, error } = await supabase
+      .from('product_categories')
+      .select('*')
+      .order('name')
 
     if (error) {
       console.error('Erro ao buscar categorias:', error)
       return NextResponse.json({ error: 'Erro ao buscar categorias' }, { status: 500 })
     }
 
-    return NextResponse.json({
-      categories: data,
-      total: count || 0
-    })
-
+    return NextResponse.json(categories)
   } catch (error) {
-    console.error('Erro na API de categorias:', error)
+    console.error('Erro interno:', error)
     return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }
 
-// POST - Criar categoria
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    
-    // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    }
-
     const body = await request.json()
-    const { name, description, company_id, color, icon } = body
 
-    // Validações
-    if (!name || !company_id) {
-      return NextResponse.json({ error: 'Nome e empresa são obrigatórios' }, { status: 400 })
+    const { name, description, icon, color } = body
+
+    if (!name) {
+      return NextResponse.json({ error: 'Nome da categoria é obrigatório' }, { status: 400 })
     }
 
-    // Verificar se categoria já existe para esta empresa
-    const { data: existingCategory } = await supabase
-      .from('categories')
-      .select('id')
-      .eq('name', name)
-      .eq('company_id', company_id)
-      .single()
-
-    if (existingCategory) {
-      return NextResponse.json({ error: 'Categoria já existe para esta empresa' }, { status: 409 })
-    }
-
-    // Criar categoria
     const { data, error } = await supabase
-      .from('categories')
+      .from('product_categories')
       .insert({
         name,
         description,
-        company_id,
-        color,
         icon,
+        color,
         status: 'active'
       })
       .select()
@@ -98,10 +51,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Erro ao criar categoria' }, { status: 500 })
     }
 
-    return NextResponse.json({ category: data, message: 'Categoria criada com sucesso' })
-
+    return NextResponse.json(data, { status: 201 })
   } catch (error) {
-    console.error('Erro na API de categorias:', error)
+    console.error('Erro interno:', error)
     return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }

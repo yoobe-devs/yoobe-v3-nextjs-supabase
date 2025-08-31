@@ -93,12 +93,15 @@ export default function MinhaLojaPage() {
               <Button 
                 variant="outline" 
                 className="flex items-center gap-2"
-                onClick={() => window.open('/store/dashboard', '_blank')}
+                onClick={() => window.open('/store/join-tecnologia', '_blank')}
               >
                 <Eye className="h-4 w-4" />
                 Visualizar Loja
               </Button>
-              <Button className="flex items-center gap-2">
+              <Button 
+                className="flex items-center gap-2"
+                onClick={() => window.location.href = '/gestor/configurar-loja'}
+              >
                 <Settings className="h-4 w-4" />
                 Configurar
               </Button>
@@ -215,19 +218,35 @@ export default function MinhaLojaPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full justify-start" variant="outline">
+              <Button 
+                className="w-full justify-start" 
+                variant="outline"
+                onClick={() => window.location.href = '/gestor/produtos'}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Adicionar Produto
               </Button>
-              <Button className="w-full justify-start" variant="outline">
+              <Button 
+                className="w-full justify-start" 
+                variant="outline"
+                onClick={() => window.location.href = '/gestor/funcionarios'}
+              >
                 <Users className="h-4 w-4 mr-2" />
                 Gerenciar Funcionários
               </Button>
-              <Button className="w-full justify-start" variant="outline">
+              <Button 
+                className="w-full justify-start" 
+                variant="outline"
+                onClick={() => window.location.href = '/gestor/pedidos'}
+              >
                 <ShoppingCart className="h-4 w-4 mr-2" />
                 Ver Pedidos Recentes
               </Button>
-              <Button className="w-full justify-start" variant="outline">
+              <Button 
+                className="w-full justify-start" 
+                variant="outline"
+                onClick={() => window.location.href = '/gestor/relatorios'}
+              >
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Relatórios de Vendas
               </Button>

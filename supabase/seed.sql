@@ -63,32 +63,21 @@ VALUES
     ('550e8400-e29b-41d4-a716-446655440016', 'roberto.almeida@inovacao.com.br', 'Roberto Almeida', 'Roberto Almeida', 'admin', '550e8400-e29b-41d4-a716-446655440004', 'Diretoria', 'Diretor', 5000, 'active', 'https://ui-avatars.com/api/?name=Roberto+Almeida&background=059669&color=ffffff&size=128')
 ON CONFLICT (email) DO NOTHING;
 
--- Insert categories
-INSERT INTO categories (id, name, description, company_id)
-VALUES 
-    ('550e8400-e29b-41d4-a716-446655440020', 'Vestuário', 'Produtos de vestuário corporativo', '550e8400-e29b-41d4-a716-446655440002'),
-    ('550e8400-e29b-41d4-a716-446655440021', 'Acessórios', 'Acessórios diversos', '550e8400-e29b-41d4-a716-446655440002'),
-    ('550e8400-e29b-41d4-a716-446655440022', 'Eletrônicos', 'Produtos eletrônicos', '550e8400-e29b-41d4-a716-446655440002'),
-    ('550e8400-e29b-41d4-a716-446655440023', 'Escritório', 'Produtos de escritório', '550e8400-e29b-41d4-a716-446655440002'),
-    ('550e8400-e29b-41d4-a716-446655440024', 'Bem-estar', 'Produtos para bem-estar', '550e8400-e29b-41d4-a716-446655440002'),
-    ('550e8400-e29b-41d4-a716-446655440025', 'Vestuário', 'Produtos de vestuário corporativo', '550e8400-e29b-41d4-a716-446655440003'),
-    ('550e8400-e29b-41d4-a716-446655440026', 'Acessórios', 'Acessórios diversos', '550e8400-e29b-41d4-a716-446655440003'),
-    ('550e8400-e29b-41d4-a716-446655440027', 'Vestuário', 'Produtos de vestuário corporativo', '550e8400-e29b-41d4-a716-446655440004')
-ON CONFLICT (id) DO NOTHING;
+-- Categorias serão criadas pela migração de categorias
 
--- Insert company products
-INSERT INTO company_products (id, name, description, price, points_cost, stock_quantity, image_url, category_id, company_id, status)
+-- Insert company products (sem category_id por enquanto)
+INSERT INTO company_products (id, name, description, price, points_cost, stock_quantity, image_url, company_id, status)
 VALUES 
-    ('550e8400-e29b-41d4-a716-446655440030', 'Camiseta Join Tecnologia', 'Camiseta oficial da Join Tecnologia com logo bordado', 49.90, 499, 50, 'https://via.placeholder.com/300x300/1e40af/ffffff?text=Camiseta+Join', '550e8400-e29b-41d4-a716-446655440020', '550e8400-e29b-41d4-a716-446655440002', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440031', 'Mochila Corporativa Join', 'Mochila para laptop com logo da empresa', 129.90, 1299, 25, 'https://via.placeholder.com/300x300/3b82f6/ffffff?text=Mochila+Join', '550e8400-e29b-41d4-a716-446655440021', '550e8400-e29b-41d4-a716-446655440002', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440032', 'Caneca Personalizada Join', 'Caneca de cerâmica com logo da Join', 29.90, 299, 100, 'https://via.placeholder.com/300x300/60a5fa/ffffff?text=Caneca+Join', '550e8400-e29b-41d4-a716-446655440021', '550e8400-e29b-41d4-a716-446655440002', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440033', 'Boné Join', 'Boné ajustável com logo bordado', 39.90, 399, 75, 'https://via.placeholder.com/300x300/1e40af/ffffff?text=Boné+Join', '550e8400-e29b-41d4-a716-446655440021', '550e8400-e29b-41d4-a716-446655440002', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440034', 'Garrafa Térmica Join', 'Garrafa de água térmica 500ml', 59.90, 599, 40, 'https://via.placeholder.com/300x300/3b82f6/ffffff?text=Garrafa+Join', '550e8400-e29b-41d4-a716-446655440024', '550e8400-e29b-41d4-a716-446655440002', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440035', 'Notebook Join', 'Caderno personalizado com capa dura', 19.90, 199, 200, 'https://via.placeholder.com/300x300/60a5fa/ffffff?text=Notebook+Join', '550e8400-e29b-41d4-a716-446655440023', '550e8400-e29b-41d4-a716-446655440002', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440036', 'Camiseta TechCorp', 'Camiseta oficial da TechCorp com logo bordado', 49.90, 499, 30, 'https://via.placeholder.com/300x300/7c3aed/ffffff?text=Camiseta+TechCorp', '550e8400-e29b-41d4-a716-446655440025', '550e8400-e29b-41d4-a716-446655440003', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440037', 'Boné TechCorp', 'Boné ajustável com logo bordado', 39.90, 399, 50, 'https://via.placeholder.com/300x300/8b5cf6/ffffff?text=Boné+TechCorp', '550e8400-e29b-41d4-a716-446655440026', '550e8400-e29b-41d4-a716-446655440003', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440038', 'Caneca TechCorp', 'Caneca de cerâmica com logo da TechCorp', 29.90, 299, 80, 'https://via.placeholder.com/300x300/a78bfa/ffffff?text=Caneca+TechCorp', '550e8400-e29b-41d4-a716-446655440026', '550e8400-e29b-41d4-a716-446655440003', 'active'),
-    ('550e8400-e29b-41d4-a716-446655440039', 'Camiseta Inovação', 'Camiseta oficial da Inovação Digital', 49.90, 499, 20, 'https://via.placeholder.com/300x300/059669/ffffff?text=Camiseta+Inovação', '550e8400-e29b-41d4-a716-446655440027', '550e8400-e29b-41d4-a716-446655440004', 'active')
+    ('550e8400-e29b-41d4-a716-446655440030', 'Camiseta Join Tecnologia', 'Camiseta oficial da Join Tecnologia com logo bordado', 49.90, 499, 50, 'https://via.placeholder.com/300x300/1e40af/ffffff?text=Camiseta+Join', '550e8400-e29b-41d4-a716-446655440002', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440031', 'Mochila Corporativa Join', 'Mochila para laptop com logo da empresa', 129.90, 1299, 25, 'https://via.placeholder.com/300x300/3b82f6/ffffff?text=Mochila+Join', '550e8400-e29b-41d4-a716-446655440002', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440032', 'Caneca Personalizada Join', 'Caneca de cerâmica com logo da Join', 29.90, 299, 100, 'https://via.placeholder.com/300x300/60a5fa/ffffff?text=Caneca+Join', '550e8400-e29b-41d4-a716-446655440002', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440033', 'Boné Join', 'Boné ajustável com logo bordado', 39.90, 399, 75, 'https://via.placeholder.com/300x300/1e40af/ffffff?text=Boné+Join', '550e8400-e29b-41d4-a716-446655440002', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440034', 'Garrafa Térmica Join', 'Garrafa de água térmica 500ml', 59.90, 599, 40, 'https://via.placeholder.com/300x300/3b82f6/ffffff?text=Garrafa+Join', '550e8400-e29b-41d4-a716-446655440002', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440035', 'Notebook Join', 'Caderno personalizado com capa dura', 19.90, 199, 200, 'https://via.placeholder.com/300x300/60a5fa/ffffff?text=Notebook+Join', '550e8400-e29b-41d4-a716-446655440002', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440036', 'Camiseta TechCorp', 'Camiseta oficial da TechCorp com logo bordado', 49.90, 499, 30, 'https://via.placeholder.com/300x300/7c3aed/ffffff?text=Camiseta+TechCorp', '550e8400-e29b-41d4-a716-446655440003', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440037', 'Boné TechCorp', 'Boné ajustável com logo bordado', 39.90, 399, 50, 'https://via.placeholder.com/300x300/8b5cf6/ffffff?text=Boné+TechCorp', '550e8400-e29b-41d4-a716-446655440003', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440038', 'Caneca TechCorp', 'Caneca de cerâmica com logo da TechCorp', 29.90, 299, 80, 'https://via.placeholder.com/300x300/a78bfa/ffffff?text=Caneca+TechCorp', '550e8400-e29b-41d4-a716-446655440003', 'active'),
+    ('550e8400-e29b-41d4-a716-446655440039', 'Camiseta Inovação', 'Camiseta oficial da Inovação Digital', 49.90, 499, 20, 'https://via.placeholder.com/300x300/059669/ffffff?text=Camiseta+Inovação', '550e8400-e29b-41d4-a716-446655440004', 'active')
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert stores
