@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle } from 'lucide-react'
+import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle, GitBranch } from 'lucide-react'
+import { ChangelogButton } from "@/components/ui/changelog-button"
 
 const mainNav = [
   {
@@ -150,7 +151,8 @@ export function MainNav() {
             </Link>
           ))}
         </nav>
-        <Button variant="outline" className="mt-6 w-full justify-start gap-2">
+        <ChangelogButton />
+        <Button variant="outline" className="mt-2 w-full justify-start gap-2">
           <HelpCircle className="h-4 w-4" />
           Tour na plataforma
         </Button>
