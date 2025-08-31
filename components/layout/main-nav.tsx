@@ -89,6 +89,11 @@ const mainNav = [
     title: "Produtos-Base",
     href: "/admin/produtos-base",
     icon: Boxes
+  },
+  {
+    title: "Changelog",
+    href: "/admin/changelog",
+    icon: GitBranch
   }
 ]
 

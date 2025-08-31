@@ -15,7 +15,6 @@ import {
   Calendar,
   Tag,
   Search,
-  Filter,
   Download,
   RefreshCw
 } from 'lucide-react'
@@ -29,11 +28,53 @@ interface ChangelogEntry {
   items: string[]
 }
 
-interface ChangelogResponse {
-  changelog: ChangelogEntry[]
-  total: number
-  latest_version: string
-}
+const changelog: ChangelogEntry[] = [
+  {
+    version: '2.0.0',
+    date: '2024-12-31',
+    title: 'Sistema de Integrações Global',
+    description: 'Implementação completa do sistema de integrações com Cubbo, gamificação e automação',
+    type: 'feature',
+    items: [
+      'Integração Cubbo Global para fulfillment centralizado',
+      'Sistema de integrações para gestores (ERP, CRM, Gamificação)',
+      'Plataformas de gamificação: Workvivo, Applause, Human',
+      'Automação: Zapier, Floui, Make',
+      'ERPs/CRMs: SAP, Salesforce, Oracle',
+      'Gestão de usuários: AD, Google Workspace, M365',
+      'Visualização de produtos na loja pública',
+      'Modais de edição completos para produtos e funcionários',
+      'Sistema de estoque integrado com Cubbo',
+      'Interface de gestor completamente funcional'
+    ]
+  },
+  {
+    version: '1.5.0',
+    date: '2024-12-15',
+    title: 'Sistema Básico de Gestão',
+    description: 'Implementação do sistema básico de gestão de produtos e usuários',
+    type: 'feature',
+    items: [
+      'Sistema básico de gestão de produtos',
+      'Autenticação e autorização',
+      'Interface básica de gestor',
+      'Sistema de pontos'
+    ]
+  },
+  {
+    version: '1.0.0',
+    date: '2024-12-01',
+    title: 'Lançamento Inicial',
+    description: 'Versão inicial da plataforma Yoobe',
+    type: 'feature',
+    items: [
+      'Estrutura base da plataforma',
+      'Sistema de autenticação',
+      'Interface básica',
+      'Banco de dados inicial'
+    ]
+  }
+]
 
 const typeIcons = {
   feature: GitBranch,
@@ -60,42 +101,18 @@ const typeLabels = {
 }
 
 export default function ChangelogPage() {
-  const [changelog, setChangelog] = useState<ChangelogEntry[]>([])
-  const [filteredChangelog, setFilteredChangelog] = useState<ChangelogEntry[]>([])
-  const [loading, setLoading] = useState(true)
+  const [filteredChangelog, setFilteredChangelog] = useState<ChangelogEntry[]>(changelog)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState<string>('all')
   const [selectedVersion, setSelectedVersion] = useState<string>('all')
-  const [latestVersion, setLatestVersion] = useState('')
-
-  useEffect(() => {
-    loadChangelog()
-  }, [])
 
   useEffect(() => {
     filterChangelog()
-  }, [changelog, searchTerm, selectedType, selectedVersion])
-
-  const loadChangelog = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/changelog')
-      if (response.ok) {
-        const data: ChangelogResponse = await response.json()
-        setChangelog(data.changelog)
-        setLatestVersion(data.latest_version)
-      }
-    } catch (error) {
-      console.error('Erro ao carregar changelog:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
+  }, [searchTerm, selectedType, selectedVersion])
 
   const filterChangelog = () => {
     let filtered = changelog
 
-    // Filtrar por busca
     if (searchTerm) {
       filtered = filtered.filter(entry => 
         entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -104,12 +121,10 @@ export default function ChangelogPage() {
       )
     }
 
-    // Filtrar por tipo
     if (selectedType !== 'all') {
       filtered = filtered.filter(entry => entry.type === selectedType)
     }
 
-    // Filtrar por versão
     if (selectedVersion !== 'all') {
       filtered = filtered.filter(entry => entry.version === selectedVersion)
     }
@@ -144,14 +159,6 @@ export default function ChangelogPage() {
     return changelog.filter(entry => entry.type === type).length
   }
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-      </div>
-    )
-  }
-
   return (
     <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
@@ -164,7 +171,7 @@ export default function ChangelogPage() {
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="text-lg px-3 py-1">
-            v{latestVersion}
+            v2.0.0
           </Badge>
         </div>
       </div>
@@ -269,16 +276,10 @@ export default function ChangelogPage() {
                 ))}
               </SelectContent>
             </Select>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={loadChangelog}>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Atualizar
-              </Button>
-              <Button variant="outline" onClick={exportChangelog}>
-                <Download className="h-4 w-4 mr-2" />
-                Exportar
-              </Button>
-            </div>
+            <Button variant="outline" onClick={exportChangelog}>
+              <Download className="h-4 w-4 mr-2" />
+              Exportar
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -295,7 +296,7 @@ export default function ChangelogPage() {
           <Card>
             <CardContent className="p-8 text-center">
               <p className="text-gray-500">Nenhum resultado encontrado para os filtros aplicados.</p>
-            </CardContent>
+            </Card>
           </Card>
         ) : (
           <div className="space-y-6">
