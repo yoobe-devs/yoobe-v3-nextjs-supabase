@@ -94,6 +94,16 @@ const mainNav = [
     title: "Changelog",
     href: "/admin/changelog",
     icon: GitBranch
+  },
+  {
+    title: "Integrações",
+    href: "/admin/integracoes",
+    icon: Settings
+  },
+  {
+    title: "Documentação",
+    href: "/admin/documentacao",
+    icon: BookOpen
   }
 ]
 

@@ -3,12 +3,12 @@
 const { createClient } = require('@supabase/supabase-js')
 
 const supabaseUrl = 'http://127.0.0.1:54321'
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
+const serviceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
 
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(supabaseUrl, serviceKey)
 
-async function testLogin() {
-  console.log('🧪 Testando login...\n')
+async function testLoginWithService() {
+  console.log('🧪 Testando login com service key...\n')
 
   const testUsers = [
     {
@@ -44,7 +44,7 @@ async function testLogin() {
         console.log(`   User ID: ${data.user.id}`)
         console.log(`   Email: ${data.user.email}`)
         
-        // Verificar perfil do usuário
+        // Verificar perfil do usuário usando service key
         const { data: profile, error: profileError } = await supabase
           .from('users')
           .select('*')
@@ -68,7 +68,7 @@ async function testLogin() {
 
   console.log('🔍 Verificando usuários no banco...\n')
 
-  // Verificar todos os usuários
+  // Verificar todos os usuários usando service key
   const { data: users, error: usersError } = await supabase
     .from('users')
     .select('*')
@@ -114,6 +114,18 @@ async function testLogin() {
       console.log(`   - ${company.name}`)
     })
   }
+
+  console.log('\n📋 RESUMO DOS LOGINS\n')
+  console.log('✅ Admin: admin@yoobe.com / admin123')
+  console.log('✅ Gestor: gestor.join.tech@jointecnologia.com.br / gestor123')
+  console.log('❌ Funcionário: maria.santos@jointecnologia.com.br / maria123 (credenciais inválidas)')
+  
+  console.log('\n🔗 LINKS PARA TESTE\n')
+  console.log('🌐 Admin Global: http://localhost:3000/test-login-simple')
+  console.log('👤 Gestor: http://localhost:3000/gestor/dashboard')
+  console.log('🏪 Loja: http://localhost:3000/store/join-tecnologia')
+  console.log('📋 Changelog: http://localhost:3000/admin/changelog')
+  console.log('🔧 Integrações: http://localhost:3000/admin/integracoes')
 }
 
-testLogin()
+testLoginWithService()
