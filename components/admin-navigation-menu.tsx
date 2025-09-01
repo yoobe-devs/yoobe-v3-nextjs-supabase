@@ -17,8 +17,11 @@ import {
   HelpCircle,
   BarChart3,
   Store,
-  FileText
+  FileText,
+  GitBranch,
+  BookOpen
 } from 'lucide-react'
+import { ChangelogNotification } from "@/components/ui/changelog-notification"
 
 const mainNav = [
   {
@@ -65,6 +68,16 @@ const mainNav = [
     title: "Configurações",
     href: "/admin/configuracoes",
     icon: Settings
+  },
+  {
+    title: "Changelog",
+    href: "/admin/changelog",
+    icon: GitBranch
+  },
+  {
+    title: "Documentação",
+    href: "/admin/documentacao",
+    icon: BookOpen
   }
 ]
 
@@ -126,6 +139,11 @@ export function AdminNavigationMenu() {
         </nav>
       </div>
       <div className="mt-auto p-4">
+        {/* Notificação de Changelog */}
+        <div className="mb-4 flex justify-center">
+          <ChangelogNotification />
+        </div>
+        
         <nav className="grid gap-1">
           {footerNav.map((item) => (
             <Link

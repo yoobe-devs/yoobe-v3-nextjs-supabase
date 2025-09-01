@@ -1,7 +1,8 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle, GitBranch } from 'lucide-react'
+import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle, GitBranch, Bell } from 'lucide-react'
 import { ChangelogButton } from "@/components/ui/changelog-button"
+import { ChangelogNotification } from "@/components/ui/changelog-notification"
 
 const mainNav = [
   {
@@ -167,6 +168,11 @@ export function MainNav() {
         </nav>
       </div>
       <div className="mt-auto p-4">
+        {/* Notificação de Changelog */}
+        <div className="mb-4 flex justify-center">
+          <ChangelogNotification />
+        </div>
+        
         <nav className="grid gap-1">
           {footerNav.map((item) => (
             <Link
