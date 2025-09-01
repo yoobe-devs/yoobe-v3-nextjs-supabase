@@ -1,5 +1,7 @@
-import { NavigationMenu } from "@/components/navigation-menu"
 import './globals.css'
+import { AuthProviderSimple as AuthProvider } from "@/components/auth/auth-provider-simple"
+import { NotificationProvider } from "@/components/notifications/notification-provider"
+import { Toaster } from 'sonner'
 
 export default function RootLayout({
   children,
@@ -7,14 +9,18 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <body>
-        <div className="flex min-h-screen">
-          <NavigationMenu />
-          <main className="flex-1 overflow-auto bg-gray-50">
+        <AuthProvider>
+          <NotificationProvider>
             {children}
-          </main>
-        </div>
+            <Toaster 
+              position="top-right"
+              richColors
+              closeButton
+            />
+          </NotificationProvider>
+        </AuthProvider>
       </body>
     </html>
   )

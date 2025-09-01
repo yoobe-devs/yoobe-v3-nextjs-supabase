@@ -1,8 +1,21 @@
-export default function DashboardPage() {
+"use client"
+
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+
+export default function DashboardRedirectPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    router.push('/')
+  }, [router])
+
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
-      <p>Bem-vindo ao seu painel de controle Yoobe.</p>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-2 text-sm text-gray-600">Redirecionando...</p>
+      </div>
     </div>
   )
 }

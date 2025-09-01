@@ -4,6 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useAuth } from "@/components/auth/auth-provider-simple"
+import { YoobeLogo } from "@/components/ui/yoobe-logo"
 import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle } from 'lucide-react'
 
 const mainNav = [
@@ -92,17 +94,22 @@ const footerNav = [
 
 export function NavigationMenu() {
   const pathname = usePathname()
+  const { signOut } = useAuth()
+
+  const handleLogout = async () => {
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+    }
+  }
 
   return (
     <div className="flex h-screen flex-col border-r bg-white">
       <div className="p-6">
         <Link href="/">
           <div className="flex items-center space-x-2">
-            <img 
-              src="/placeholder.svg?height=40&width=40" 
-              alt="Yoobe Logo"
-              className="h-10 w-10 rounded-full"
-            />
+            <YoobeLogo size={40} />
             <span className="font-bold text-xl">Yoobe</span>
           </div>
         </Link>
@@ -143,7 +150,11 @@ export function NavigationMenu() {
           <HelpCircle className="h-4 w-4" />
           Tour na plataforma
         </Button>
-        <Button variant="ghost" className="mt-2 w-full justify-start gap-2 text-red-500 hover:text-red-600">
+        <Button 
+          variant="ghost" 
+          className="mt-2 w-full justify-start gap-2 text-red-500 hover:text-red-600"
+          onClick={handleLogout}
+        >
           <LogOut className="h-4 w-4" />
           Sair
         </Button>
