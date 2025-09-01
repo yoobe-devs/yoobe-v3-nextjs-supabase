@@ -850,6 +850,2082 @@ Sincronizar com Cubbo
 
 **Versão**: v2.0.0  
 **Status**: ✅ Ativo`
+  },
+  'ERP_CRM_INTEGRATION': {
+    title: 'Integração ERP/CRM',
+    version: 'v2.0.0',
+    lastUpdated: '17 de Janeiro, 2024',
+    content: `# 🏢 ERP/CRM Integration - Yoobe Platform
+
+## 📋 Índice
+- [Visão Geral](#visão-geral)
+- [Sistemas Suportados](#sistemas-suportados)
+- [Configuração](#configuração)
+- [APIs](#apis)
+
+---
+
+## 🎯 Visão Geral
+
+O sistema de integração ERP/CRM da Yoobe Platform permite que empresas sincronizem dados de funcionários, produtos e pedidos com seus sistemas empresariais existentes.
+
+### 🚀 Benefícios
+
+- **Sincronização Automática**: Dados sempre atualizados
+- **Gestão Centralizada**: Controle unificado de informações
+- **Compliance**: Conformidade com políticas empresariais
+- **Eficiência**: Redução de trabalho manual
+
+---
+
+## 🎪 Sistemas Suportados
+
+### ✅ SAP
+**Foco**: ERP empresarial
+
+**Funcionalidades**:
+- ✅ Sincronização de funcionários
+- ✅ Gestão de produtos
+- ✅ Processamento de pedidos
+- ✅ Controle de estoque
+
+### ✅ Salesforce
+**Foco**: CRM e vendas
+
+**Funcionalidades**:
+- ✅ Sincronização de contatos
+- ✅ Gestão de oportunidades
+- ✅ Qualificação de leads
+- ✅ Relatórios de vendas
+
+### ✅ Oracle
+**Foco**: ERP completo
+
+**Funcionalidades**:
+- ✅ Gestão de RH
+- ✅ Controle de inventário
+- ✅ Gestão financeira
+- ✅ Compliance
+
+---
+
+## ⚙️ Configuração
+
+### 1. Configuração no Admin Global
+
+\`\`\`bash
+# Acesse as configurações de integração
+http://localhost:3001/admin/integracoes
+\`\`\`
+
+### 2. Configuração por Sistema
+
+#### SAP
+
+\`\`\`typescript
+// Configuração SAP
+const sapConfig = {
+  apiKey: process.env.SAP_API_KEY,
+  baseUrl: 'https://api.sap.com/v1',
+  webhookUrl: 'https://api.yoobe.com/webhooks/sap',
+  syncInterval: 300000, // 5 minutos
+  features: {
+    employeeSync: true,
+    productSync: true,
+    orderSync: true
+  }
+}
+\`\`\`
+
+#### Salesforce
+
+\`\`\`typescript
+// Configuração Salesforce
+const salesforceConfig = {
+  apiKey: process.env.SALESFORCE_API_KEY,
+  baseUrl: 'https://api.salesforce.com/v1',
+  webhookUrl: 'https://api.yoobe.com/webhooks/salesforce',
+  syncInterval: 600000, // 10 minutos
+  features: {
+    contactSync: true,
+    opportunitySync: true,
+    leadSync: true
+  }
+}
+\`\`\`
+
+---
+
+## 📡 APIs
+
+### Sincronização de Funcionários
+
+#### POST /api/erp-crm/sync-employees
+\`\`\`typescript
+// Sincronizar funcionários com ERP/CRM
+POST /api/erp-crm/sync-employees
+{
+  "system": "sap", // sap, salesforce, oracle
+  "action": "sync", // sync, update, create
+  "data": {
+    "employees": [
+      {
+        "employee_id": "SAP_EMP_123",
+        "name": "João Silva",
+        "email": "joao@empresa.com",
+        "department": "TI",
+        "position": "Desenvolvedor"
+      }
+    ]
+  }
+}
+\`\`\`
+
+### Sincronização de Produtos
+
+#### POST /api/erp-crm/sync-products
+\`\`\`typescript
+// Sincronizar produtos com ERP/CRM
+POST /api/erp-crm/sync-products
+{
+  "system": "sap",
+  "action": "sync",
+  "data": {
+    "products": [
+      {
+        "product_code": "SAP_PROD_456",
+        "name": "Camiseta Yoobe",
+        "description": "Camiseta de algodão",
+        "price": 89.90,
+        "stock": 100,
+        "category": "Vestuário"
+      }
+    ]
+  }
+}
+\`\`\`
+
+---
+
+## 💡 Exemplos
+
+### 1. Integração SAP - Sincronização de Funcionários
+
+\`\`\`typescript
+// Serviço SAP
+class SAPService {
+  private config: SAPConfig
+
+  constructor(config: SAPConfig) {
+    this.config = config
+  }
+
+  async syncEmployees(): Promise<number> {
+    try {
+      // Buscar funcionários do SAP
+      const sapEmployees = await this.fetchSAPEmployees()
+      
+      // Mapear dados para formato Yoobe
+      const mappedEmployees = sapEmployees.map(employee => ({
+        user_id: employee.employee_id,
+        full_name: employee.name,
+        email: employee.email,
+        department: employee.department,
+        position: employee.position,
+        source: 'sap'
+      }))
+      
+      // Sincronizar com Yoobe
+      const syncedCount = await this.syncWithYoobe(mappedEmployees)
+      
+      return syncedCount
+    } catch (error) {
+      console.error('Erro ao sincronizar funcionários SAP:', error)
+      throw error
+    }
+  }
+}
+\`\`\`
+
+---
+
+## 🔧 Troubleshooting
+
+### Problemas Comuns
+
+#### 1. Sincronização falhando
+
+\`\`\`bash
+# Verificar logs de sincronização
+tail -f /var/log/yoobe/erp-crm-sync.log
+
+# Forçar sincronização manual
+curl -X POST http://localhost:3001/api/erp-crm/sync-employees \\
+  -H "Content-Type: application/json" \\
+  -d '{"system": "sap", "action": "sync"}'
+\`\`\`
+
+#### 2. Erro de autenticação
+
+\`\`\`bash
+# Verificar credenciais
+echo $SAP_API_KEY
+echo $SALESFORCE_API_KEY
+
+# Testar conexão
+curl -X GET https://api.sap.com/v1/health \\
+  -H "Authorization: Bearer $SAP_API_KEY"
+\`\`\`
+
+---
+
+## 📞 Suporte
+
+Para suporte técnico sobre integrações ERP/CRM:
+
+- **Email**: suporte@yoobe.com
+- **Documentação**: https://docs.yoobe.com/erp-crm
+- **Status**: https://status.yoobe.com
+
+**Versão atual**: v2.0.0  
+**Última atualização**: Janeiro 2024  
+**Status**: ✅ Ativo`
+  },
+  'DEPLOYMENT_GUIDE': {
+    title: 'Guia de Deploy',
+    version: 'v2.0.0',
+    lastUpdated: '17 de Janeiro, 2024',
+    content: `# 🚀 Deployment Guide - Yoobe Platform
+
+## 📋 Índice
+- [Visão Geral](#visão-geral)
+- [Requisitos](#requisitos)
+- [Deploy Local](#deploy-local)
+- [Deploy Produção](#deploy-produção)
+- [Monitoramento](#monitoramento)
+
+---
+
+## 🎯 Visão Geral
+
+Este guia detalha o processo completo de deploy da Yoobe Platform, desde o ambiente de desenvolvimento até produção.
+
+### 🚀 Características
+
+- **Multi-ambiente**: Desenvolvimento, Staging, Produção
+- **Containerização**: Docker para consistência
+- **CI/CD**: Pipeline automatizado
+- **Monitoramento**: Logs e métricas em tempo real
+
+---
+
+## 📋 Requisitos
+
+### Sistema
+
+\`\`\`bash
+# Requisitos mínimos
+- Node.js 18+
+- PostgreSQL 14+
+- Redis 6+
+- Docker 20+
+- Nginx 1.18+
+\`\`\`
+
+### Variáveis de Ambiente
+
+\`\`\`bash
+# .env.production
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_JWT_SECRET=your-jwt-secret
+
+# Email
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# Cubbo Integration
+CUBBO_API_KEY=your-cubbo-api-key
+CUBBO_BASE_URL=https://api.cubbo.com
+
+# Gamification
+WORKVIVO_API_KEY=your-workvivo-api-key
+APPLAUSE_API_KEY=your-applause-api-key
+
+# Automation
+ZAPIER_WEBHOOK_URL=your-zapier-webhook
+FLOUI_WEBHOOK_URL=your-floui-webhook
+\`\`\`
+
+---
+
+## 🏠 Deploy Local
+
+### 1. Setup Inicial
+
+\`\`\`bash
+# Clone do repositório
+git clone https://github.com/yoobe/yoobe-platform.git
+cd yoobe-platform
+
+# Instalar dependências
+npm install
+
+# Configurar Supabase local
+npx supabase start
+
+# Configurar variáveis de ambiente
+cp .env.example .env.local
+# Editar .env.local com suas configurações
+\`\`\`
+
+### 2. Banco de Dados
+
+\`\`\`bash
+# Aplicar migrações
+npx supabase db reset
+
+# Seed inicial
+npx supabase db seed
+
+# Verificar status
+npx supabase status
+\`\`\`
+
+### 3. Desenvolvimento
+
+\`\`\`bash
+# Iniciar servidor de desenvolvimento
+npm run dev
+
+# Acessar aplicação
+http://localhost:3001
+\`\`\`
+
+---
+
+## 🌐 Deploy Produção
+
+### 1. PM2 (Recomendado)
+
+\`\`\`bash
+# Instalar PM2
+npm install -g pm2
+
+# Build da aplicação
+npm run build
+
+# Configurar PM2
+pm2 start ecosystem.config.js
+
+# Configurar startup automático
+pm2 startup
+pm2 save
+\`\`\`
+
+#### ecosystem.config.js
+
+\`\`\`javascript
+module.exports = {
+  apps: [{
+    name: 'yoobe-platform',
+    script: 'npm',
+    args: 'start',
+    instances: 'max',
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3001
+    },
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: 3001
+    }
+  }]
+}
+\`\`\`
+
+### 2. Nginx
+
+\`\`\`nginx
+# /etc/nginx/sites-available/yoobe
+server {
+    listen 80;
+    server_name yoobe.com www.yoobe.com;
+
+    # Redirecionar para HTTPS
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yoobe.com www.yoobe.com;
+
+    # SSL Configuration
+    ssl_certificate /etc/letsencrypt/live/yoobe.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yoobe.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+
+    # Security Headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Gzip Compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+
+    # Proxy para Next.js
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # API Routes
+    location /api/ {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Static Files
+    location /_next/static/ {
+        alias /var/www/yoobe-platform/.next/static/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+\`\`\`
+
+### 3. SSL com Let's Encrypt
+
+\`\`\`bash
+# Instalar Certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Obter certificado SSL
+sudo certbot --nginx -d yoobe.com -d www.yoobe.com
+
+# Renovação automática
+sudo crontab -e
+# Adicionar linha:
+0 12 * * * /usr/bin/certbot renew --quiet
+\`\`\`
+
+---
+
+## 🐳 Docker
+
+### Dockerfile
+
+\`\`\`dockerfile
+# Dockerfile
+FROM node:18-alpine AS base
+
+# Dependências
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Copiar package files
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
+
+# Build
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build da aplicação
+RUN npm run build
+
+# Produção
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copiar arquivos necessários
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3001
+
+ENV PORT 3001
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+\`\`\`
+
+### docker-compose.yml
+
+\`\`\`yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  yoobe-platform:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=\${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=\${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=\${SUPABASE_SERVICE_ROLE_KEY}
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: yoobe
+      POSTGRES_USER: yoobe
+      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
+\`\`\`
+
+---
+
+## 🔄 CI/CD
+
+### GitHub Actions
+
+\`\`\`yaml
+# .github/workflows/deploy.yml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build application
+      run: npm run build
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: \${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: \${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+    
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: \${{ secrets.HOST }}
+        username: \${{ secrets.USERNAME }}
+        key: \${{ secrets.SSH_KEY }}
+        script: |
+          cd /var/www/yoobe-platform
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart yoobe-platform
+\`\`\`
+
+### Vercel
+
+\`\`\`json
+// vercel.json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key"
+  }
+}
+\`\`\`
+
+---
+
+## 📊 Monitoramento
+
+### Logs
+
+\`\`\`bash
+# Logs da aplicação
+pm2 logs yoobe-platform
+
+# Logs do Nginx
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+
+# Logs do sistema
+sudo journalctl -u nginx -f
+\`\`\`
+
+### Métricas
+
+\`\`\`bash
+# Status PM2
+pm2 status
+pm2 monit
+
+# Uso de recursos
+htop
+df -h
+free -h
+\`\`\`
+
+### Health Check
+
+\`\`\`bash
+# Endpoint de health check
+curl -X GET https://yoobe.com/api/health
+
+# Resposta esperada
+{
+  "status": "healthy",
+  "timestamp": "2024-01-17T10:30:00Z",
+  "version": "2.0.0",
+  "database": "connected",
+  "services": {
+    "supabase": "connected",
+    "email": "connected",
+    "cubbo": "connected"
+  }
+}
+\`\`\`
+
+---
+
+## 🔧 Troubleshooting
+
+### Problemas Comuns
+
+#### 1. Aplicação não inicia
+
+\`\`\`bash
+# Verificar logs
+pm2 logs yoobe-platform --lines 50
+
+# Verificar variáveis de ambiente
+pm2 env yoobe-platform
+
+# Reiniciar aplicação
+pm2 restart yoobe-platform
+\`\`\`
+
+#### 2. Erro de banco de dados
+
+\`\`\`bash
+# Verificar conexão Supabase
+npx supabase status
+
+# Verificar migrações
+npx supabase db diff
+
+# Aplicar migrações pendentes
+npx supabase db push
+\`\`\`
+
+#### 3. Erro de SSL
+
+\`\`\`bash
+# Verificar certificado
+sudo certbot certificates
+
+# Renovar certificado
+sudo certbot renew
+
+# Verificar configuração Nginx
+sudo nginx -t
+sudo systemctl reload nginx
+\`\`\`
+
+---
+
+## 📞 Suporte
+
+Para suporte técnico sobre deploy:
+
+- **Email**: suporte@yoobe.com
+- **Documentação**: https://docs.yoobe.com/deployment
+- **Status**: https://status.yoobe.com
+
+**Versão atual**: v2.0.0  
+**Última atualização**: Janeiro 2024  
+**Status**: ✅ Ativo`
+  },
+  'GAMIFICATION_INTEGRATION': {
+    title: 'Integração Gamificação',
+    version: 'v2.0.0',
+    lastUpdated: '17 de Janeiro, 2024',
+    content: `# 🎮 Gamificação - Yoobe Platform
+
+## 📋 Índice
+- [Visão Geral](#visão-geral)
+- [Plataformas Suportadas](#plataformas-suportadas)
+- [Configuração](#configuração)
+- [APIs](#apis)
+
+---
+
+## 🎯 Visão Geral
+
+O sistema de gamificação da Yoobe Platform permite que empresas integrem pontos de reconhecimento, feedback e engajamento de equipes diretamente com a compra de brindes.
+
+### 🚀 Benefícios
+
+- **Pontos Integrados**: Pontos de gamificação convertidos em brindes
+- **Engajamento**: Aumento da participação em programas de reconhecimento
+- **Fulfillment**: Processo completo de entrega de brindes
+- **Analytics**: Métricas de engajamento e conversão
+
+---
+
+## 🎪 Plataformas Suportadas
+
+### ✅ Workvivo
+**Foco**: Reconhecimento e engajamento
+
+\`\`\`typescript
+interface WorkvivoConfig {
+  apiKey: string
+  baseUrl: string
+  features: {
+    pointsSync: boolean
+    leaderboards: boolean
+    achievements: boolean
+  }
+}
+\`\`\`
+
+**Funcionalidades**:
+- ✅ Sincronização de pontos
+- ✅ Leaderboards integrados
+- ✅ Conquistas e badges
+- ✅ Reconhecimento em tempo real
+
+### ✅ Applause
+**Foco**: Feedback e avaliações
+
+\`\`\`typescript
+interface ApplauseConfig {
+  apiKey: string
+  baseUrl: string
+  features: {
+    feedbackSync: boolean
+    ratings: boolean
+    rewards: boolean
+  }
+}
+\`\`\`
+
+**Funcionalidades**:
+- ✅ Sincronização de feedback
+- ✅ Sistema de avaliações
+- ✅ Recompensas por feedback
+- ✅ Métricas de satisfação
+
+### ✅ Human
+**Foco**: Desenvolvimento de pessoas
+
+\`\`\`typescript
+interface HumanConfig {
+  apiKey: string
+  baseUrl: string
+  features: {
+    developmentSync: boolean
+    skills: boolean
+    growth: boolean
+  }
+}
+\`\`\`
+
+**Funcionalidades**:
+- ✅ Sincronização de desenvolvimento
+- ✅ Gestão de habilidades
+- ✅ Planos de crescimento
+- ✅ Mentoria integrada
+
+---
+
+## ⚙️ Configuração
+
+### 1. Configuração no Gestor
+
+\`\`\`bash
+# Acesse as configurações de gamificação
+http://localhost:3001/gestor/integracoes
+\`\`\`
+
+### 2. Configuração por Plataforma
+
+#### Workvivo
+
+\`\`\`typescript
+// Configuração Workvivo
+const workvivoConfig = {
+  apiKey: process.env.WORKVIVO_API_KEY,
+  baseUrl: 'https://api.workvivo.com/v1',
+  webhookUrl: 'https://api.yoobe.com/webhooks/workvivo',
+  syncInterval: 300000, // 5 minutos
+  features: {
+    pointsSync: true,
+    leaderboards: true,
+    achievements: true
+  },
+  mappings: {
+    pointsToCurrency: 1.0, // 1 ponto = R$ 1,00
+    minPointsForReward: 100,
+    maxPointsPerMonth: 1000
+  }
+}
+\`\`\`
+
+#### Applause
+
+\`\`\`typescript
+// Configuração Applause
+const applauseConfig = {
+  apiKey: process.env.APPLAUSE_API_KEY,
+  baseUrl: 'https://api.applause.com/v1',
+  webhookUrl: 'https://api.yoobe.com/webhooks/applause',
+  syncInterval: 600000, // 10 minutos
+  features: {
+    feedbackSync: true,
+    ratings: true,
+    rewards: true
+  },
+  mappings: {
+    feedbackPoints: 10, // 10 pontos por feedback
+    ratingPoints: 5, // 5 pontos por avaliação
+    qualityBonus: 1.5 // 50% de bônus para feedback de qualidade
+  }
+}
+\`\`\`
+
+---
+
+## 📡 APIs
+
+### Sincronização de Pontos
+
+#### POST /api/gamification/sync-points
+\`\`\`typescript
+// Sincronizar pontos com plataforma de gamificação
+POST /api/gamification/sync-points
+{
+  "platform": "workvivo", // workvivo, applause, human
+  "action": "sync", // sync, convert, reward
+  "data": {
+    "user_id": "12345",
+    "points": 500,
+    "source": "recognition"
+  }
+}
+
+// Resposta
+{
+  "success": true,
+  "data": {
+    "syncedPoints": 500,
+    "convertedCurrency": 500.00,
+    "availableRewards": 5,
+    "platform": "workvivo",
+    "timestamp": "2024-01-17T10:30:00Z"
+  }
+}
+\`\`\`
+
+### Webhooks
+
+#### POST /api/webhooks/workvivo
+\`\`\`typescript
+// Webhook Workvivo
+POST /api/webhooks/workvivo
+{
+  "event": "points.earned",
+  "data": {
+    "user_id": "WORKVIVO_USER_123",
+    "points": 100,
+    "reason": "recognition",
+    "timestamp": "2024-01-17T10:30:00Z"
+  }
+}
+\`\`\`
+
+#### POST /api/webhooks/applause
+\`\`\`typescript
+// Webhook Applause
+POST /api/webhooks/applause
+{
+  "event": "feedback.submitted",
+  "data": {
+    "user_id": "APPLAUSE_USER_456",
+    "feedback_id": "FEEDBACK_789",
+    "rating": 5,
+    "points": 10,
+    "timestamp": "2024-01-17T10:30:00Z"
+  }
+}
+\`\`\`
+
+---
+
+## 💡 Exemplos
+
+### 1. Integração Workvivo - Sincronização de Pontos
+
+\`\`\`typescript
+// Serviço Workvivo
+class WorkvivoService {
+  private config: WorkvivoConfig
+
+  constructor(config: WorkvivoConfig) {
+    this.config = config
+  }
+
+  async syncPoints(): Promise<number> {
+    try {
+      // Buscar pontos do Workvivo
+      const workvivoPoints = await this.fetchWorkvivoPoints()
+      
+      // Converter pontos para moeda Yoobe
+      const convertedPoints = workvivoPoints.map(point => ({
+        user_id: point.user_id,
+        points: point.points,
+        currency: point.points * this.config.mappings.pointsToCurrency,
+        source: 'workvivo'
+      }))
+      
+      // Sincronizar com Yoobe
+      const syncedCount = await this.syncWithYoobe(convertedPoints)
+      
+      return syncedCount
+    } catch (error) {
+      console.error('Erro ao sincronizar pontos Workvivo:', error)
+      throw error
+    }
+  }
+
+  async createReward(userId: string, points: number, reward: any) {
+    try {
+      // Criar recompensa no Workvivo
+      const response = await fetch(
+        \`\${this.config.baseUrl}/rewards\`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': \`Bearer \${this.config.apiKey}\`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            points_required: points,
+            reward_type: 'yoobe_product',
+            reward_data: reward
+          })
+        }
+      )
+      
+      return response.json()
+    } catch (error) {
+      console.error('Erro ao criar recompensa:', error)
+      throw error
+    }
+  }
+}
+\`\`\`
+
+### 2. Integração Applause - Sistema de Feedback
+
+\`\`\`typescript
+// Serviço Applause
+class ApplauseService {
+  private config: ApplauseConfig
+
+  constructor(config: ApplauseConfig) {
+    this.config = config
+  }
+
+  async syncFeedback(): Promise<number> {
+    try {
+      // Buscar feedback do Applause
+      const applauseFeedback = await this.fetchApplauseFeedback()
+      
+      // Calcular pontos por feedback
+      const feedbackWithPoints = applauseFeedback.map(feedback => ({
+        user_id: feedback.user_id,
+        feedback_id: feedback.feedback_id,
+        rating: feedback.rating,
+        points: this.calculatePoints(feedback),
+        quality_bonus: feedback.rating >= 4 ? this.config.mappings.qualityBonus : 1.0
+      }))
+      
+      // Sincronizar com Yoobe
+      const syncedCount = await this.syncWithYoobe(feedbackWithPoints)
+      
+      return syncedCount
+    } catch (error) {
+      console.error('Erro ao sincronizar feedback Applause:', error)
+      throw error
+    }
+  }
+
+  private calculatePoints(feedback: any): number {
+    let points = this.config.mappings.feedbackPoints
+    
+    if (feedback.rating >= 4) {
+      points += this.config.mappings.ratingPoints
+    }
+    
+    return points
+  }
+}
+\`\`\`
+
+---
+
+## 🔧 Troubleshooting
+
+### Problemas Comuns
+
+#### 1. Sincronização de pontos falhando
+
+\`\`\`bash
+# Verificar logs de sincronização
+tail -f /var/log/yoobe/gamification-sync.log
+
+# Forçar sincronização manual
+curl -X POST http://localhost:3001/api/gamification/sync-points \\
+  -H "Content-Type: application/json" \\
+  -d '{"platform": "workvivo", "action": "sync"}'
+\`\`\`
+
+#### 2. Erro de autenticação
+
+\`\`\`bash
+# Verificar credenciais
+echo $WORKVIVO_API_KEY
+echo $APPLAUSE_API_KEY
+
+# Testar conexão
+curl -X GET https://api.workvivo.com/v1/health \\
+  -H "Authorization: Bearer $WORKVIVO_API_KEY"
+\`\`\`
+
+---
+
+## 📞 Suporte
+
+Para suporte técnico sobre integrações de gamificação:
+
+- **Email**: suporte@yoobe.com
+- **Documentação**: https://docs.yoobe.com/gamification
+- **Status**: https://status.yoobe.com
+
+**Versão atual**: v2.0.0  
+**Última atualização**: Janeiro 2024  
+**Status**: ✅ Ativo`
+  },
+  'AUTOMATION_INTEGRATION': {
+    title: 'Integração Automação',
+    version: 'v2.0.0',
+    lastUpdated: '17 de Janeiro, 2024',
+    content: `# 🤖 Automação - Yoobe Platform
+
+## 📋 Índice
+- [Visão Geral](#visão-geral)
+- [Plataformas Suportadas](#plataformas-suportadas)
+- [Configuração](#configuração)
+- [APIs](#apis)
+
+---
+
+## 🎯 Visão Geral
+
+O sistema de automação da Yoobe Platform permite que gestores integrem suas lojas com plataformas populares de automação como Zapier, Floui e Make. Isso possibilita a criação de workflows automatizados para sincronização de dados, notificações e integração com ERPs/CRMs.
+
+### 🚀 Benefícios
+
+- **Workflows Automatizados**: Processos sem intervenção manual
+- **Integração Simples**: Conexão rápida com plataformas populares
+- **Flexibilidade**: Workflows customizáveis por loja
+- **Escalabilidade**: Automação que cresce com o negócio
+
+---
+
+## 🎪 Plataformas Suportadas
+
+### ✅ Zapier
+**Foco**: Automação de workflows
+
+\`\`\`typescript
+interface ZapierConfig {
+  webhookUrl: string
+  triggers: string[]
+  actions: string[]
+  features: {
+    dataSync: boolean
+    notifications: boolean
+    workflows: boolean
+  }
+}
+\`\`\`
+
+**Funcionalidades**:
+- ✅ Sincronização de dados
+- ✅ Notificações automáticas
+- ✅ Workflows personalizados
+- ✅ Integração com 5000+ apps
+
+### ✅ Floui
+**Foco**: Automação brasileira
+
+\`\`\`typescript
+interface FlouiConfig {
+  webhookUrl: string
+  triggers: string[]
+  actions: string[]
+  features: {
+    brazilianApps: boolean
+    localIntegrations: boolean
+    compliance: boolean
+  }
+}
+\`\`\`
+
+**Funcionalidades**:
+- ✅ Apps brasileiros
+- ✅ Integrações locais
+- ✅ Compliance LGPD
+- ✅ Suporte em português
+
+### ✅ Make
+**Foco**: Automação avançada
+
+\`\`\`typescript
+interface MakeConfig {
+  webhookUrl: string
+  triggers: string[]
+  actions: string[]
+  features: {
+    complexWorkflows: boolean
+    dataTransformation: boolean
+    conditionalLogic: boolean
+  }
+}
+\`\`\`
+
+**Funcionalidades**:
+- ✅ Workflows complexos
+- ✅ Transformação de dados
+- ✅ Lógica condicional
+- ✅ Visual programming
+
+---
+
+## ⚙️ Configuração
+
+### 1. Configuração no Gestor
+
+\`\`\`bash
+# Acesse as configurações de automação
+http://localhost:3001/gestor/integracoes
+\`\`\`
+
+### 2. Configuração por Plataforma
+
+#### Zapier
+
+\`\`\`typescript
+// Configuração Zapier
+const zapierConfig = {
+  webhookUrl: 'https://hooks.zapier.com/hooks/catch/123456/abc123/',
+  triggers: [
+    'order.created',
+    'product.updated',
+    'user.registered'
+  ],
+  actions: [
+    'send_notification',
+    'update_crm',
+    'sync_inventory'
+  ],
+  features: {
+    dataSync: true,
+    notifications: true,
+    workflows: true
+  },
+  mappings: {
+    orderData: {
+      'zapier.order_id': 'yoobe.order_id',
+      'zapier.customer_email': 'yoobe.customer_email',
+      'zapier.total_amount': 'yoobe.total_amount'
+    },
+    productData: {
+      'zapier.product_id': 'yoobe.product_id',
+      'zapier.product_name': 'yoobe.product_name',
+      'zapier.product_price': 'yoobe.product_price'
+    }
+  }
+}
+\`\`\`
+
+#### Floui
+
+\`\`\`typescript
+// Configuração Floui
+const flouiConfig = {
+  webhookUrl: 'https://api.floui.com/webhooks/yoobe/123456',
+  triggers: [
+    'order.created',
+    'product.updated',
+    'user.registered'
+  ],
+  actions: [
+    'send_whatsapp',
+    'update_erp',
+    'sync_stock'
+  ],
+  features: {
+    brazilianApps: true,
+    localIntegrations: true,
+    compliance: true
+  },
+  mappings: {
+    orderData: {
+      'floui.pedido_id': 'yoobe.order_id',
+      'floui.cliente_email': 'yoobe.customer_email',
+      'floui.valor_total': 'yoobe.total_amount'
+    },
+    productData: {
+      'floui.produto_id': 'yoobe.product_id',
+      'floui.produto_nome': 'yoobe.product_name',
+      'floui.produto_preco': 'yoobe.product_price'
+    }
+  }
+}
+\`\`\`
+
+---
+
+## 📡 APIs
+
+### Webhooks Disponíveis
+
+#### POST /api/webhooks/zapier
+\`\`\`typescript
+// Webhook Zapier
+POST /api/webhooks/zapier
+{
+  "event": "order.created",
+  "data": {
+    "order_id": "YOOBE_ORDER_123",
+    "customer_email": "cliente@empresa.com",
+    "total_amount": 299.90,
+    "items": [
+      {
+        "product_id": "PROD_456",
+        "quantity": 2,
+        "price": 149.95
+      }
+    ]
+  }
+}
+\`\`\`
+
+#### POST /api/webhooks/floui
+\`\`\`typescript
+// Webhook Floui
+POST /api/webhooks/floui
+{
+  "event": "product.updated",
+  "data": {
+    "product_id": "PROD_789",
+    "product_name": "Camiseta Yoobe",
+    "product_price": 89.90,
+    "stock": 50,
+    "store_id": "STORE_123"
+  }
+}
+\`\`\`
+
+### Automação de Workflows
+
+#### POST /api/automation/workflow
+\`\`\`typescript
+// Criar workflow de automação
+POST /api/automation/workflow
+{
+  "platform": "zapier", // zapier, floui, make
+  "name": "Order Notification",
+  "trigger": "order.created",
+  "actions": [
+    {
+      "type": "send_notification",
+      "target": "whatsapp",
+      "template": "order_confirmation"
+    },
+    {
+      "type": "update_crm",
+      "system": "salesforce",
+      "action": "create_opportunity"
+    }
+  ],
+  "conditions": {
+    "order_amount": "> 100",
+    "customer_type": "new"
+  }
+}
+
+// Resposta
+{
+  "success": true,
+  "data": {
+    "workflow_id": "WORKFLOW_123",
+    "platform": "zapier",
+    "status": "active",
+    "webhook_url": "https://api.yoobe.com/webhooks/zapier/workflow_123"
+  }
+}
+\`\`\`
+
+---
+
+## 💡 Exemplos
+
+### 1. Workflow Zapier - Notificação de Pedido
+
+\`\`\`typescript
+// Configuração do workflow
+const orderNotificationWorkflow = {
+  name: "Notificação de Pedido",
+  trigger: "order.created",
+  actions: [
+    {
+      type: "send_notification",
+      platform: "whatsapp",
+      template: "order_confirmation",
+      data: {
+        customer_name: "{{customer.name}}",
+        order_id: "{{order.id}}",
+        total_amount: "{{order.total}}",
+        tracking_url: "{{order.tracking_url}}"
+      }
+    },
+    {
+      type: "update_system",
+      system: "erp",
+      action: "create_order",
+      data: {
+        external_id: "{{order.id}}",
+        customer_data: "{{customer}}",
+        items: "{{order.items}}"
+      }
+    }
+  ],
+  conditions: {
+    order_amount: ">= 50",
+    customer_type: "in ['new', 'returning']"
+  }
+}
+
+// Implementação
+class ZapierWorkflowService {
+  async createWorkflow(workflow: any) {
+    try {
+      const response = await fetch('/api/automation/workflow', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          platform: 'zapier',
+          ...workflow
+        })
+      })
+      
+      return response.json()
+    } catch (error) {
+      console.error('Erro ao criar workflow:', error)
+      throw error
+    }
+  }
+}
+\`\`\`
+
+### 2. Workflow Floui - Sincronização de Estoque
+
+\`\`\`typescript
+// Configuração do workflow
+const inventorySyncWorkflow = {
+  name: "Sincronização de Estoque",
+  trigger: "product.updated",
+  actions: [
+    {
+      type: "update_system",
+      system: "erp",
+      action: "update_inventory",
+      data: {
+        product_id: "{{product.id}}",
+        new_stock: "{{product.stock}}",
+        last_updated: "{{product.updated_at}}"
+      }
+    },
+    {
+      type: "send_notification",
+      platform: "email",
+      template: "low_stock_alert",
+      data: {
+        product_name: "{{product.name}}",
+        current_stock: "{{product.stock}}",
+        threshold: "{{product.low_stock_threshold}}"
+      },
+      conditions: {
+        stock: "< 10"
+      }
+    }
+  ]
+}
+
+// Implementação
+class FlouiWorkflowService {
+  async createWorkflow(workflow: any) {
+    try {
+      const response = await fetch('/api/automation/workflow', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          platform: 'floui',
+          ...workflow
+        })
+      })
+      
+      return response.json()
+    } catch (error) {
+      console.error('Erro ao criar workflow:', error)
+      throw error
+    }
+  }
+}
+\`\`\`
+
+---
+
+## 🔧 Troubleshooting
+
+### Problemas Comuns
+
+#### 1. Webhook não funcionando
+
+\`\`\`bash
+# Verificar endpoint
+curl -X POST http://localhost:3001/api/webhooks/zapier \\
+  -H "Content-Type: application/json" \\
+  -d '{"test": true}'
+
+# Verificar logs
+tail -f /var/log/yoobe/automation-webhooks.log
+\`\`\`
+
+#### 2. Workflow não executando
+
+\`\`\`bash
+# Verificar status do workflow
+curl -X GET http://localhost:3001/api/automation/workflow/WORKFLOW_123
+
+# Reativar workflow
+curl -X POST http://localhost:3001/api/automation/workflow/WORKFLOW_123/activate
+\`\`\`
+
+---
+
+## 📞 Suporte
+
+Para suporte técnico sobre automação:
+
+- **Email**: suporte@yoobe.com
+- **Documentação**: https://docs.yoobe.com/automation
+- **Status**: https://status.yoobe.com
+
+**Versão atual**: v2.0.0  
+**Última atualização**: Janeiro 2024  
+**Status**: ✅ Ativo`
+
+## 📋 Índice
+- [Visão Geral](#visão-geral)
+- [Requisitos](#requisitos)
+- [Deploy Local](#deploy-local)
+- [Deploy Produção](#deploy-produção)
+- [Monitoramento](#monitoramento)
+
+---
+
+## 🎯 Visão Geral
+
+Este guia detalha o processo completo de deploy da Yoobe Platform, desde o ambiente de desenvolvimento até produção.
+
+### 🚀 Características
+
+- **Multi-ambiente**: Desenvolvimento, Staging, Produção
+- **Containerização**: Docker para consistência
+- **CI/CD**: Pipeline automatizado
+- **Monitoramento**: Logs e métricas em tempo real
+
+---
+
+## 📋 Requisitos
+
+### Sistema
+
+\`\`\`bash
+# Requisitos mínimos
+- Node.js 18+
+- PostgreSQL 14+
+- Redis 6+
+- Docker 20+
+- Nginx 1.18+
+\`\`\`
+
+### Variáveis de Ambiente
+
+\`\`\`bash
+# .env.production
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_JWT_SECRET=your-jwt-secret
+
+# Email
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+
+# Cubbo Integration
+CUBBO_API_KEY=your-cubbo-api-key
+CUBBO_BASE_URL=https://api.cubbo.com
+
+# Gamification
+WORKVIVO_API_KEY=your-workvivo-api-key
+APPLAUSE_API_KEY=your-applause-api-key
+
+# Automation
+ZAPIER_WEBHOOK_URL=your-zapier-webhook
+FLOUI_WEBHOOK_URL=your-floui-webhook
+\`\`\`
+
+---
+
+## 🏠 Deploy Local
+
+### 1. Setup Inicial
+
+\`\`\`bash
+# Clone do repositório
+git clone https://github.com/yoobe/yoobe-platform.git
+cd yoobe-platform
+
+# Instalar dependências
+npm install
+
+# Configurar Supabase local
+npx supabase start
+
+# Configurar variáveis de ambiente
+cp .env.example .env.local
+# Editar .env.local com suas configurações
+\`\`\`
+
+### 2. Banco de Dados
+
+\`\`\`bash
+# Aplicar migrações
+npx supabase db reset
+
+# Seed inicial
+npx supabase db seed
+
+# Verificar status
+npx supabase status
+\`\`\`
+
+### 3. Desenvolvimento
+
+\`\`\`bash
+# Iniciar servidor de desenvolvimento
+npm run dev
+
+# Acessar aplicação
+http://localhost:3001
+\`\`\`
+
+---
+
+## 🌐 Deploy Produção
+
+### 1. PM2 (Recomendado)
+
+\`\`\`bash
+# Instalar PM2
+npm install -g pm2
+
+# Build da aplicação
+npm run build
+
+# Configurar PM2
+pm2 start ecosystem.config.js
+
+# Configurar startup automático
+pm2 startup
+pm2 save
+\`\`\`
+
+#### ecosystem.config.js
+
+\`\`\`javascript
+module.exports = {
+  apps: [{
+    name: 'yoobe-platform',
+    script: 'npm',
+    args: 'start',
+    instances: 'max',
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3001
+    },
+    env_production: {
+      NODE_ENV: 'production',
+      PORT: 3001
+    }
+  }]
+}
+\`\`\`
+
+### 2. Nginx
+
+\`\`\`nginx
+# /etc/nginx/sites-available/yoobe
+server {
+    listen 80;
+    server_name yoobe.com www.yoobe.com;
+
+    # Redirecionar para HTTPS
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yoobe.com www.yoobe.com;
+
+    # SSL Configuration
+    ssl_certificate /etc/letsencrypt/live/yoobe.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yoobe.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384;
+    ssl_prefer_server_ciphers off;
+
+    # Security Headers
+    add_header X-Frame-Options DENY;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Gzip Compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+
+    # Proxy para Next.js
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # API Routes
+    location /api/ {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Static Files
+    location /_next/static/ {
+        alias /var/www/yoobe-platform/.next/static/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+\`\`\`
+
+### 3. SSL com Let's Encrypt
+
+\`\`\`bash
+# Instalar Certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Obter certificado SSL
+sudo certbot --nginx -d yoobe.com -d www.yoobe.com
+
+# Renovação automática
+sudo crontab -e
+# Adicionar linha:
+0 12 * * * /usr/bin/certbot renew --quiet
+\`\`\`
+
+---
+
+## 🐳 Docker
+
+### Dockerfile
+
+\`\`\`dockerfile
+# Dockerfile
+FROM node:18-alpine AS base
+
+# Dependências
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+# Copiar package files
+COPY package.json package-lock.json* ./
+RUN npm ci --only=production
+
+# Build
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build da aplicação
+RUN npm run build
+
+# Produção
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copiar arquivos necessários
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3001
+
+ENV PORT 3001
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+\`\`\`
+
+### docker-compose.yml
+
+\`\`\`yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  yoobe-platform:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=\${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=\${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=\${SUPABASE_SERVICE_ROLE_KEY}
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: yoobe
+      POSTGRES_USER: yoobe
+      POSTGRES_PASSWORD: \${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
+\`\`\`
+
+---
+
+## 🔄 CI/CD
+
+### GitHub Actions
+
+\`\`\`yaml
+# .github/workflows/deploy.yml
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build application
+      run: npm run build
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: \${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: \${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+    
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: \${{ secrets.HOST }}
+        username: \${{ secrets.USERNAME }}
+        key: \${{ secrets.SSH_KEY }}
+        script: |
+          cd /var/www/yoobe-platform
+          git pull origin main
+          npm install
+          npm run build
+          pm2 restart yoobe-platform
+\`\`\`
+
+### Vercel
+
+\`\`\`json
+// vercel.json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key",
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key"
+  }
+}
+\`\`\`
+
+---
+
+## 📊 Monitoramento
+
+### Logs
+
+\`\`\`bash
+# Logs da aplicação
+pm2 logs yoobe-platform
+
+# Logs do Nginx
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+
+# Logs do sistema
+sudo journalctl -u nginx -f
+\`\`\`
+
+### Métricas
+
+\`\`\`bash
+# Status PM2
+pm2 status
+pm2 monit
+
+# Uso de recursos
+htop
+df -h
+free -h
+\`\`\`
+
+### Health Check
+
+\`\`\`bash
+# Endpoint de health check
+curl -X GET https://yoobe.com/api/health
+
+# Resposta esperada
+{
+  "status": "healthy",
+  "timestamp": "2024-01-17T10:30:00Z",
+  "version": "2.0.0",
+  "database": "connected",
+  "services": {
+    "supabase": "connected",
+    "email": "connected",
+    "cubbo": "connected"
+  }
+}
+\`\`\`
+
+---
+
+## 🔧 Troubleshooting
+
+### Problemas Comuns
+
+#### 1. Aplicação não inicia
+
+\`\`\`bash
+# Verificar logs
+pm2 logs yoobe-platform --lines 50
+
+# Verificar variáveis de ambiente
+pm2 env yoobe-platform
+
+# Reiniciar aplicação
+pm2 restart yoobe-platform
+\`\`\`
+
+#### 2. Erro de banco de dados
+
+\`\`\`bash
+# Verificar conexão Supabase
+npx supabase status
+
+# Verificar migrações
+npx supabase db diff
+
+# Aplicar migrações pendentes
+npx supabase db push
+\`\`\`
+
+#### 3. Erro de SSL
+
+\`\`\`bash
+# Verificar certificado
+sudo certbot certificates
+
+# Renovar certificado
+sudo certbot renew
+
+# Verificar configuração Nginx
+sudo nginx -t
+sudo systemctl reload nginx
+\`\`\`
+
+---
+
+## 📞 Suporte
+
+Para suporte técnico sobre deploy:
+
+- **Email**: suporte@yoobe.com
+- **Documentação**: https://docs.yoobe.com/deployment
+- **Status**: https://status.yoobe.com
+
+**Versão atual**: v2.0.0  
+**Última atualização**: Janeiro 2024  
+**Status**: ✅ Ativo`
   }
 }
 
