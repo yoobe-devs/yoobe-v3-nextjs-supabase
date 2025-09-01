@@ -16,7 +16,14 @@ import {
   Tag,
   Search,
   Download,
-  RefreshCw
+  RefreshCw,
+  TrendingUp,
+  Users,
+  Package,
+  Globe,
+  Database,
+  Code,
+  BookOpen
 } from 'lucide-react'
 
 interface ChangelogEntry {
@@ -26,6 +33,9 @@ interface ChangelogEntry {
   description: string
   type: 'feature' | 'improvement' | 'fix' | 'security' | 'performance'
   items: string[]
+  impact: 'high' | 'medium' | 'low'
+  author: string
+  tags: string[]
 }
 
 const changelog: ChangelogEntry[] = [
@@ -35,6 +45,9 @@ const changelog: ChangelogEntry[] = [
     title: 'Sistema de Integrações Global',
     description: 'Implementação completa do sistema de integrações com Cubbo, gamificação e automação',
     type: 'feature',
+    impact: 'high',
+    author: 'Equipe Yoobe',
+    tags: ['integração', 'cubbo', 'gamificação', 'automação'],
     items: [
       'Integração Cubbo Global para fulfillment centralizado',
       'Sistema de integrações para gestores (ERP, CRM, Gamificação)',
@@ -54,6 +67,9 @@ const changelog: ChangelogEntry[] = [
     title: 'Sistema Básico de Gestão',
     description: 'Implementação do sistema básico de gestão de produtos e usuários',
     type: 'feature',
+    impact: 'medium',
+    author: 'Equipe Yoobe',
+    tags: ['gestão', 'produtos', 'usuários'],
     items: [
       'Sistema básico de gestão de produtos',
       'Autenticação e autorização',
@@ -67,6 +83,9 @@ const changelog: ChangelogEntry[] = [
     title: 'Lançamento Inicial',
     description: 'Versão inicial da plataforma Yoobe',
     type: 'feature',
+    impact: 'high',
+    author: 'Equipe Yoobe',
+    tags: ['lançamento', 'base'],
     items: [
       'Estrutura base da plataforma',
       'Sistema de autenticação',
@@ -85,11 +104,11 @@ const typeIcons = {
 }
 
 const typeColors = {
-  feature: 'bg-blue-100 text-blue-800 border-blue-200',
-  improvement: 'bg-green-100 text-green-800 border-green-200',
-  fix: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-  security: 'bg-red-100 text-red-800 border-red-200',
-  performance: 'bg-purple-100 text-purple-800 border-purple-200'
+  feature: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
+  improvement: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
+  fix: 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white',
+  security: 'bg-gradient-to-r from-red-500 to-red-600 text-white',
+  performance: 'bg-gradient-to-r from-purple-500 to-purple-600 text-white'
 }
 
 const typeLabels = {
@@ -100,33 +119,55 @@ const typeLabels = {
   performance: 'Performance'
 }
 
+const impactColors = {
+  high: 'bg-red-100 text-red-800 border-red-200',
+  medium: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+  low: 'bg-green-100 text-green-800 border-green-200'
+}
+
+const impactLabels = {
+  high: 'Alto Impacto',
+  medium: 'Médio Impacto',
+  low: 'Baixo Impacto'
+}
+
 export default function ChangelogPage() {
   const [filteredChangelog, setFilteredChangelog] = useState<ChangelogEntry[]>(changelog)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedType, setSelectedType] = useState<string>('all')
   const [selectedVersion, setSelectedVersion] = useState<string>('all')
+  const [selectedImpact, setSelectedImpact] = useState<string>('all')
 
   useEffect(() => {
     filterChangelog()
-  }, [searchTerm, selectedType, selectedVersion])
+  }, [searchTerm, selectedType, selectedVersion, selectedImpact])
 
   const filterChangelog = () => {
     let filtered = changelog
 
+    // Filtrar por termo de busca
     if (searchTerm) {
-      filtered = filtered.filter(entry => 
+      filtered = filtered.filter(entry =>
         entry.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         entry.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        entry.items.some(item => item.toLowerCase().includes(searchTerm.toLowerCase()))
+        entry.items.some(item => item.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        entry.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
       )
     }
 
+    // Filtrar por tipo
     if (selectedType !== 'all') {
       filtered = filtered.filter(entry => entry.type === selectedType)
     }
 
+    // Filtrar por versão
     if (selectedVersion !== 'all') {
       filtered = filtered.filter(entry => entry.version === selectedVersion)
+    }
+
+    // Filtrar por impacto
+    if (selectedImpact !== 'all') {
+      filtered = filtered.filter(entry => entry.impact === selectedImpact)
     }
 
     setFilteredChangelog(filtered)
@@ -147,7 +188,9 @@ export default function ChangelogPage() {
     const link = document.createElement('a')
     link.href = url
     link.download = `changelog-${new Date().toISOString().split('T')[0]}.json`
+    document.body.appendChild(link)
     link.click()
+    document.body.removeChild(link)
     URL.revokeObjectURL(url)
   }
 
@@ -159,198 +202,257 @@ export default function ChangelogPage() {
     return changelog.filter(entry => entry.type === type).length
   }
 
+  const getImpactCount = (impact: string) => {
+    return changelog.filter(entry => entry.impact === impact).length
+  }
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Changelog da Plataforma</h1>
-          <p className="text-gray-600 mt-2">
-            Histórico completo de mudanças e atualizações da Yoobe Platform
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="text-lg px-3 py-1">
-            v2.0.0
-          </Badge>
-        </div>
-      </div>
-
-      {/* Estatísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Total de Versões</p>
-                <p className="text-2xl font-bold">{changelog.length}</p>
-              </div>
-              <GitBranch className="h-8 w-8 text-blue-500" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="container mx-auto p-6 space-y-8">
+        {/* Header com gradiente */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2">📋 Changelog da Plataforma</h1>
+              <p className="text-blue-100 text-lg">
+                Histórico completo de mudanças e atualizações da Yoobe Platform
+              </p>
             </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Funcionalidades</p>
-                <p className="text-2xl font-bold">{getTypeCount('feature')}</p>
-              </div>
-              <Star className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Melhorias</p>
-                <p className="text-2xl font-bold">{getTypeCount('improvement')}</p>
-              </div>
-              <Wrench className="h-8 w-8 text-yellow-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Correções</p>
-                <p className="text-2xl font-bold">{getTypeCount('fix')}</p>
-              </div>
-              <Shield className="h-8 w-8 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-600">Performance</p>
-                <p className="text-2xl font-bold">{getTypeCount('performance')}</p>
-              </div>
-              <Zap className="h-8 w-8 text-purple-500" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Filtros */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Buscar no changelog..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
+            <div className="flex items-center gap-4">
+              <Badge variant="secondary" className="text-lg px-4 py-2 bg-white/20 text-white border-white/30">
+                v2.0.0
+              </Badge>
+              <div className="text-right">
+                <div className="text-sm text-blue-100">Última atualização</div>
+                <div className="font-semibold">17 de Janeiro, 2024</div>
               </div>
             </div>
-            <Select value={selectedType} onValueChange={setSelectedType}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os tipos</SelectItem>
-                <SelectItem value="feature">Funcionalidades</SelectItem>
-                <SelectItem value="improvement">Melhorias</SelectItem>
-                <SelectItem value="fix">Correções</SelectItem>
-                <SelectItem value="security">Segurança</SelectItem>
-                <SelectItem value="performance">Performance</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={selectedVersion} onValueChange={setSelectedVersion}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Versão" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas as versões</SelectItem>
-                {getVersions().map(version => (
-                  <SelectItem key={version} value={version}>
-                    v{version}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Button variant="outline" onClick={exportChangelog}>
-              <Download className="h-4 w-4 mr-2" />
-              Exportar
-            </Button>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Resultados */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">
-            Resultados ({filteredChangelog.length} de {changelog.length})
-          </h2>
         </div>
 
-        {filteredChangelog.length === 0 ? (
-          <Card>
-            <CardContent className="p-8 text-center">
-              <p className="text-gray-500">Nenhum resultado encontrado para os filtros aplicados.</p>
-            </Card>
+        {/* Estatísticas com cards coloridos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-sm">Total de Versões</p>
+                  <p className="text-3xl font-bold">{changelog.length}</p>
+                </div>
+                <GitBranch className="h-10 w-10 text-blue-200" />
+              </div>
+            </CardContent>
           </Card>
-        ) : (
-          <div className="space-y-6">
-            {filteredChangelog.map((entry, index) => {
-              const TypeIcon = typeIcons[entry.type]
-              return (
-                <Card key={entry.version} className="border-l-4 border-l-blue-500">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2">
-                          <TypeIcon className="h-6 w-6" />
-                          <Badge className={typeColors[entry.type]}>
-                            {typeLabels[entry.type]}
-                          </Badge>
-                        </div>
-                        <div>
-                          <CardTitle className="text-xl">{entry.title}</CardTitle>
-                          <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
-                            <div className="flex items-center gap-1">
-                              <Tag className="h-3 w-3" />
-                              <span>v{entry.version}</span>
+          
+          <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-sm">Funcionalidades</p>
+                  <p className="text-3xl font-bold">{getTypeCount('feature')}</p>
+                </div>
+                <Star className="h-10 w-10 text-green-200" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-yellow-100 text-sm">Melhorias</p>
+                  <p className="text-3xl font-bold">{getTypeCount('improvement')}</p>
+                </div>
+                <Wrench className="h-10 w-10 text-yellow-200" />
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-sm">Performance</p>
+                  <p className="text-3xl font-bold">{getTypeCount('performance')}</p>
+                </div>
+                <Zap className="h-10 w-10 text-purple-200" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Filtros avançados */}
+        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="lg:col-span-2">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    placeholder="🔍 Buscar no changelog..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 border-2 focus:border-blue-500"
+                  />
+                </div>
+              </div>
+              
+              <Select value={selectedType} onValueChange={setSelectedType}>
+                <SelectTrigger className="border-2 focus:border-blue-500">
+                  <SelectValue placeholder="📊 Tipo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os tipos</SelectItem>
+                  <SelectItem value="feature">Funcionalidades</SelectItem>
+                  <SelectItem value="improvement">Melhorias</SelectItem>
+                  <SelectItem value="fix">Correções</SelectItem>
+                  <SelectItem value="security">Segurança</SelectItem>
+                  <SelectItem value="performance">Performance</SelectItem>
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedVersion} onValueChange={setSelectedVersion}>
+                <SelectTrigger className="border-2 focus:border-blue-500">
+                  <SelectValue placeholder="🏷️ Versão" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas as versões</SelectItem>
+                  {getVersions().map(version => (
+                    <SelectItem key={version} value={version}>
+                      v{version}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={selectedImpact} onValueChange={setSelectedImpact}>
+                <SelectTrigger className="border-2 focus:border-blue-500">
+                  <SelectValue placeholder="⚡ Impacto" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todos os impactos</SelectItem>
+                  <SelectItem value="high">Alto Impacto</SelectItem>
+                  <SelectItem value="medium">Médio Impacto</SelectItem>
+                  <SelectItem value="low">Baixo Impacto</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex justify-end mt-4">
+              <Button 
+                variant="outline" 
+                onClick={exportChangelog}
+                className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Exportar Changelog
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Resultados */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-800">
+              📈 Resultados ({filteredChangelog.length} de {changelog.length})
+            </h2>
+            <div className="flex gap-2">
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                Atualizado
+              </Badge>
+            </div>
+          </div>
+
+          {filteredChangelog.length === 0 ? (
+            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-lg">
+              <CardContent className="p-12 text-center">
+                <div className="text-gray-400 mb-4">
+                  <Search className="h-16 w-16 mx-auto" />
+                </div>
+                <p className="text-gray-500 text-lg">Nenhum resultado encontrado para os filtros aplicados.</p>
+                <p className="text-gray-400 text-sm mt-2">Tente ajustar os filtros ou termos de busca.</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-6">
+              {filteredChangelog.map((entry, index) => {
+                const TypeIcon = typeIcons[entry.type]
+                return (
+                  <Card key={entry.version} className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 border-l-4 border-l-blue-500">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex items-center gap-4">
+                          <div className="flex items-center gap-3">
+                            <div className={`p-3 rounded-full ${typeColors[entry.type]}`}>
+                              <TypeIcon className="h-6 w-6" />
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              <span>{formatDate(entry.date)}</span>
+                            <div className="flex flex-col gap-2">
+                              <Badge className={typeColors[entry.type]}>
+                                {typeLabels[entry.type]}
+                              </Badge>
+                              <Badge className={impactColors[entry.impact]}>
+                                {impactLabels[entry.impact]}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div>
+                            <CardTitle className="text-2xl text-gray-800 mb-2">{entry.title}</CardTitle>
+                            <div className="flex items-center gap-6 text-sm text-gray-600">
+                              <div className="flex items-center gap-1">
+                                <Tag className="h-4 w-4" />
+                                <span className="font-semibold">v{entry.version}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Calendar className="h-4 w-4" />
+                                <span>{formatDate(entry.date)}</span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <Users className="h-4 w-4" />
+                                <span>{entry.author}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-gray-600 mb-4">
-                      {entry.description}
-                    </p>
+                    </CardHeader>
+                    
+                    <CardContent>
+                      <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                        {entry.description}
+                      </p>
 
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-gray-900">Principais mudanças:</h4>
-                      <ul className="space-y-2">
-                        {entry.items.map((item, itemIndex) => (
-                          <li key={itemIndex} className="flex items-start gap-2">
-                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                            <span className="text-sm">{item}</span>
-                          </li>
+                      {/* Tags */}
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {entry.tags.map((tag, tagIndex) => (
+                          <Badge key={tagIndex} variant="outline" className="bg-gray-50 text-gray-700 border-gray-200">
+                            #{tag}
+                          </Badge>
                         ))}
-                      </ul>
-                    </div>
-                  </CardContent>
-                </Card>
-              )
-            })}
-          </div>
-        )}
+                      </div>
+
+                      <div className="space-y-4">
+                        <h4 className="font-semibold text-gray-800 text-lg flex items-center gap-2">
+                          <Package className="h-5 w-5 text-blue-500" />
+                          Principais mudanças:
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {entry.items.map((item, itemIndex) => (
+                            <div key={itemIndex} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                              <span className="text-sm text-gray-700 leading-relaxed">{item}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

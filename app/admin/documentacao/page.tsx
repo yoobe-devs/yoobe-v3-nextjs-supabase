@@ -14,7 +14,8 @@ import {
   ExternalLink,
   Download,
   Search,
-  Filter
+  Filter,
+  Eye
 } from 'lucide-react'
 
 interface DocumentationItem {
@@ -237,16 +238,28 @@ export default function DocumentacaoPage() {
                     <p className="text-gray-600 mb-4">
                       {doc.description}
                     </p>
-                    <div className="flex gap-2">
-                      {doc.url && (
-                        <Button variant="outline" size="sm" onClick={() => window.open(doc.url, '_blank')}>
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Ver
-                        </Button>
-                      )}
-                      <Button variant="outline" size="sm">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex gap-2">
+                        {doc.url && (
+                          <Button variant="outline" size="sm" onClick={() => window.open(doc.url, '_blank')} className="flex-1">
+                            <FileText className="h-4 w-4 mr-2" />
+                            Markdown
+                          </Button>
+                        )}
+                        {doc.url && (
+                          <Button 
+                            size="sm" 
+                            onClick={() => window.open(`/docs/visual/${doc.url.split('/').pop()?.replace('.md', '')}`, '_blank')}
+                            className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Visual
+                          </Button>
+                        )}
+                      </div>
+                      <Button variant="outline" size="sm" className="w-full">
                         <Download className="h-4 w-4 mr-2" />
-                        Download
+                        Download HTML
                       </Button>
                     </div>
                   </CardContent>
