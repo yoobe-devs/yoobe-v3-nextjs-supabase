@@ -19,7 +19,9 @@ import {
   Users,
   Store,
   Package,
-  BarChart3
+  BarChart3,
+  BookOpen,
+  ExternalLink
 } from "lucide-react"
 import { YoobeLogo } from "@/components/ui/yoobe-logo"
 
@@ -324,6 +326,79 @@ export default function AdminConfiguracoesPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Documentation */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5" />
+            Documentação
+          </CardTitle>
+          <CardDescription>Acesse a documentação completa da plataforma</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-3">
+              <h4 className="font-medium text-gray-900">Documentação Geral</h4>
+              <div className="space-y-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open('/admin/documentacao', '_blank')}
+                >
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Documentação Completa
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open('/docs/API_REFERENCE.md', '_blank')}
+                >
+                  <ExternalLink className="h-4 w-4 mr-2" />
+                  API Reference
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open('/docs/DATABASE_SCHEMA.md', '_blank')}
+                >
+                  <Database className="h-4 w-4 mr-2" />
+                  Database Schema
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <h4 className="font-medium text-gray-900">Integrações</h4>
+              <div className="space-y-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open('/docs/CUBBO_INTEGRATION.md', '_blank')}
+                >
+                  <Package className="h-4 w-4 mr-2" />
+                  Integração Cubbo
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open('/admin/integracoes', '_blank')}
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  Configurar Integrações
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open('/admin/changelog', '_blank')}
+                >
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Changelog
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* System Information */}
       <Card>
