@@ -95,7 +95,7 @@ export function StoreNavigationMenu() {
       <div className="p-6">
         <Link href="/store/dashboard">
           <div className="flex items-center space-x-2">
-            <YoobeLogo size="lg" />
+            <YoobeLogo size={40} />
             <span className="font-bold text-xl">Loja</span>
           </div>
         </Link>

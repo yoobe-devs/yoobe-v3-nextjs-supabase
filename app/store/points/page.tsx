@@ -29,7 +29,7 @@ export default function PointsPage() {
             <ArrowLeft className="h-4 w-4 mr-2" />
             Voltar
           </Button>
-          <YoobeLogo size="lg" />
+          <YoobeLogo size={40} />
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Meus Pontos</h1>
             <p className="text-gray-600">Gerencie e acompanhe seus pontos</p>

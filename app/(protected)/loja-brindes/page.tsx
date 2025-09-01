@@ -42,7 +42,6 @@ import {
   ChevronDown,
   ChevronUp
 } from "lucide-react"
-import { Product } from "@/types/supabase"
 import { useProducts } from "@/hooks/useProducts"
 
 interface CartItem {
@@ -94,7 +93,7 @@ export default function LojaBrindesHome() {
     }
   })
 
-  const addToCart = (product: Product, claimMethod: CartItem['claimMethod'] = 'points') => {
+  const addToCart = (product: any, claimMethod: CartItem['claimMethod'] = 'points') => {
     // Garantir que o produto tem todos os campos necessários
     const safeProduct = {
       ...product,

@@ -99,7 +99,7 @@ export default function LegacyPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <YoobeLogo size="lg" />
+        <YoobeLogo size={40} />
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Funcionalidades Legadas</h1>
           <p className="text-gray-600">Acesse as funcionalidades antigas do sistema</p>

@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer'
 
 // Configuração do transporter (para desenvolvimento)
-const transporter = nodemailer.createTransporter({
+const transporter = nodemailer.createTransport({
   host: 'localhost',
   port: 1025,
   secure: false,

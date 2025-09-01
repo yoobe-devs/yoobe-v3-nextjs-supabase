@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
-import { YoobeLogo, YoobeLogoWithText } from "@/components/ui/yoobe-logo"
+import YoobeLogo from "@/components/ui/yoobe-logo"
 import { 
   Store, 
   Settings, 
@@ -114,7 +114,7 @@ export default function MinhaLojaPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <YoobeLogo size="lg" />
+          <YoobeLogo size={40} />
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Minha Loja</h1>
             <p className="text-gray-600">Gerencie sua loja corporativa e configurações</p>

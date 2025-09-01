@@ -109,7 +109,7 @@ export function NavigationMenu() {
       <div className="p-6">
         <Link href="/">
           <div className="flex items-center space-x-2">
-            <YoobeLogo size="lg" />
+            <YoobeLogo size={40} />
             <span className="font-bold text-xl">Yoobe</span>
           </div>
         </Link>

@@ -143,7 +143,7 @@ export default function StoreOrdersPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <YoobeLogo size="lg" />
+          <YoobeLogo size={40} />
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Meus Pedidos</h1>
             <p className="text-gray-600">Acompanhe seus resgates e entregas</p>

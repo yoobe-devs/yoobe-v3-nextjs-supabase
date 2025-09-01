@@ -284,9 +284,11 @@ export default function EditLojaPage() {
               </CardHeader>
               <CardContent>
                 <ImageUpload
-                  onImageUpload={(url: string) => handleInputChange('logo_url', url)}
+                  onImageUpload={async (file: File) => {
+                    const objectUrl = URL.createObjectURL(file)
+                    handleInputChange('logo_url', objectUrl)
+                  }}
                   currentImage={formData.logo_url}
-                  bucket="company-logos"
                 />
               </CardContent>
             </Card>

@@ -28,7 +28,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
-    // Buscar loja do gestor
+    // Buscar loja do gestor (por company_id)
     const { data: store, error: storeError } = await supabase
       .from('stores')
       .select(`
@@ -40,7 +40,9 @@ export async function GET() {
           logo_url
         )
       `)
-      .eq('id', userData.store_id)
+      .eq('company_id', userData.company_id)
+      .order('created_at', { ascending: true })
+      .limit(1)
       .single()
 
     if (storeError) {
@@ -122,11 +124,13 @@ export async function PUT(request: NextRequest) {
       settings
     } = body
 
-    // Buscar loja do gestor
+    // Buscar loja do gestor (por company_id)
     const { data: store, error: storeError } = await supabase
       .from('stores')
       .select('id')
-      .eq('id', userData.store_id)
+      .eq('company_id', userData.company_id)
+      .order('created_at', { ascending: true })
+      .limit(1)
       .single()
 
     if (storeError) {

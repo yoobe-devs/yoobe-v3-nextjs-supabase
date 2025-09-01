@@ -128,6 +128,55 @@ curl -X GET http://localhost:3000/api/admin/cubbo-integration \
   -H "Authorization: Bearer <token>"
 ```
 
+### Catálogo Base (Base Products)
+
+#### GET /api/base-products
+Lista produtos-base
+
+#### POST /api/base-products
+Cria produto-base (admin)
+
+#### GET /api/base-products/{id}
+Detalhe do produto-base
+
+#### PUT /api/base-products/{id}
+Atualiza produto-base
+
+#### DELETE /api/base-products/{id}
+Remove produto-base
+
+#### Bulk Pricing Tiers
+- GET /api/base-products/{id}/tiers
+- POST /api/base-products/{id}/tiers
+  - body: { min_qty: number, unit_price?: number, discount_pct?: number }
+- DELETE /api/base-products/{id}/tiers?tierId={tierId}
+
+### Produtos do Cliente (Client Products)
+
+- GET /api/clients/{clientId}/products
+- POST /api/clients/{clientId}/products
+- GET /api/clients/{clientId}/products/{id}/price?qty={Q}
+- POST /api/clients/{clientId}/replicate-product/{baseProductId}
+  - body: { margin_pct?: number, rounding_rule?: 'none' | 'ceil-0.50' | 'ceil-1.00', copy_images?: boolean }
+
+### EAN
+- POST /api/ean/issue → { ean_13 }
+- POST /api/ean/assign → { client_product_id, ean_13 }
+
+### Orçamentos
+
+- POST /api/clients/{clientId}/orcamentos
+  - { title, description?, gestor_notes?, items: [{ client_product_id, quantity, unit_price }], attachments?: [{ file_name, file_url, file_size?, mime_type? }] }
+- GET /api/admin/orcamentos
+- POST /api/admin/orcamentos/{id}/approve
+
+### Importação / Scraping
+- POST /api/scraping/import-catalog { page?, limit?, category?, importAllCategories? }
+
+### Stripe
+- POST /api/stripe/create-payment-intent (guarded quando env ausentes)
+- POST /api/stripe/webhook (guarded quando env ausentes)
+
 #### POST /api/admin/cubbo-integration
 Configura integração Cubbo
 

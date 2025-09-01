@@ -145,13 +145,13 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar se o usuário existe
-    const { data: user } = await supabase
+    const { data: foundUser } = await supabase
       .from('users')
       .select('id')
       .eq('id', user_id)
       .single()
 
-    if (!user) {
+    if (!foundUser) {
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 400 })
     }
 

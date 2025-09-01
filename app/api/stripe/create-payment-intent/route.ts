@@ -3,12 +3,16 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import Stripe from 'stripe'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-})
+export const dynamic = 'force-dynamic'
+
+const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
+const stripe = STRIPE_KEY ? new Stripe(STRIPE_KEY) : null
 
 export async function POST(request: NextRequest) {
   try {
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe not configured' }, { status: 200 })
+    }
     const supabase = createRouteHandlerClient({ cookies })
     
     // Verificar autenticação

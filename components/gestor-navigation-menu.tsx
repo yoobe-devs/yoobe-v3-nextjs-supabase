@@ -38,6 +38,16 @@ const mainNav = [
     icon: Package
   },
   {
+    title: "Catálogo",
+    href: "/gestor/catalogo",
+    icon: Store
+  },
+  {
+    title: "Orçamentos",
+    href: "/gestor/orcamentos",
+    icon: ShoppingCart
+  },
+  {
     title: "Pedidos",
     href: "/gestor/pedidos",
     icon: ShoppingCart
@@ -116,7 +126,7 @@ export function GestorNavigationMenu() {
       <div className="p-6">
         <Link href="/gestor/dashboard">
           <div className="flex items-center space-x-2">
-            <YoobeLogo size="lg" />
+            <YoobeLogo size={40} />
             <span className="font-bold text-xl">Gestor</span>
           </div>
         </Link>

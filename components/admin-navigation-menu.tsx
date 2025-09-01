@@ -42,7 +42,29 @@ const mainNav = [
   {
     title: "Produtos",
     href: "/admin/produtos",
-    icon: Package
+    icon: Package,
+    items: [
+      {
+        title: "Gerenciar Produtos",
+        href: "/admin/produtos",
+        description: "Produtos das empresas"
+      },
+      {
+        title: "Catálogo Base",
+        href: "/admin/produtos",
+        description: "Repositório central de produtos"
+      },
+      {
+        title: "Importar Catálogo",
+        href: "/admin/produtos/import",
+        description: "Importar do catálogo externo"
+      }
+    ]
+  },
+  {
+    title: "Orçamentos",
+    href: "/admin/orcamentos",
+    icon: FileText
   },
   {
     title: "Pedidos",
@@ -113,7 +135,7 @@ export function AdminNavigationMenu() {
       <div className="p-6">
         <Link href="/admin/dashboard">
           <div className="flex items-center space-x-2">
-            <YoobeLogo size="lg" />
+            <YoobeLogo size={40} variant="default" />
             <span className="font-bold text-xl">Admin</span>
           </div>
         </Link>
@@ -122,18 +144,38 @@ export function AdminNavigationMenu() {
         <nav className="grid items-start px-4 text-sm font-medium">
           {mainNav.map((item) => {
             const Icon = item.icon
+            const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+            
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
-                  pathname === item.href ? "bg-gray-100 text-gray-900" : ""
+              <div key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
+                    isActive ? "bg-gray-100 text-gray-900" : ""
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.title}
+                </Link>
+                {item.items && isActive && (
+                  <div className="ml-6 mt-1 space-y-1">
+                    {item.items.map((subItem) => (
+                      <Link
+                        key={subItem.href}
+                        href={subItem.href}
+                        className={cn(
+                          "block rounded-lg px-3 py-2 text-xs text-gray-500 transition-all hover:text-gray-900",
+                          pathname === subItem.href ? "bg-gray-50 text-gray-900" : ""
+                        )}
+                        title={subItem.description}
+                      >
+                        {subItem.title}
+                      </Link>
+                    ))}
+                  </div>
                 )}
-              >
-                <Icon className="h-4 w-4" />
-                {item.title}
-              </Link>
+              </div>
             )
           })}
         </nav>

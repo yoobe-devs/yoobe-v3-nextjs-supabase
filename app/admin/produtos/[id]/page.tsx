@@ -1,116 +1,126 @@
 "use client"
 
-import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useAuth } from '@/components/auth/auth-provider-simple'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { SafeImage } from '@/components/ui/safe-image'
 import { 
   ArrowLeft, 
   Edit, 
   Trash2, 
   Package,
-  Building,
   Tag,
   DollarSign,
   Award,
-  Calendar,
-  Loader2
+  FileText,
+  Settings,
+  Loader2,
+  AlertCircle,
+  Clock,
+  Factory,
+  Box,
+  Minus,
+  Plus
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Label } from '@/components/ui/label'
+import BulkPricingEditor from '@/components/ui/bulk-pricing-editor'
+import { Input } from '@/components/ui/input'
 
-interface Product {
-  id: string
-  name: string
-  description: string
-  price: number
-  points_cost: number
-  stock_quantity: number
-  image_url?: string
-  status: string
-  created_at: string
-  companies?: { name: string }
-  categories?: { name: string }
-}
-
-export default function ProductViewPage() {
-  const params = useParams() as { id?: string }
+export default function ProdutoDetalhesPage() {
   const router = useRouter()
-  const id = params?.id as string
-  const [product, setProduct] = useState<Product | null>(null)
+  const params = useParams()
+  const { user } = useAuth()
+  const supabase = createClientComponentClient()
+  
+  const [product, setProduct] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
+  const productId = params.id as string
+
+  // Verificar se é admin
   useEffect(() => {
-    if (!id) {
-      setLoading(false)
-      return
+    if (user && user.user_metadata?.role !== 'admin') {
+      router.push('/admin/dashboard')
+      toast.error('Acesso negado - Apenas administradores podem acessar esta página')
     }
-    loadProduct()
-  }, [id])
+  }, [user, router])
 
-  const loadProduct = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/products/${id}`)
-      
-      if (response.ok) {
+  // Carregar produto
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        
+        const response = await fetch(`/api/base-products/${productId}`)
         const data = await response.json()
-        setProduct(data.product)
-      } else {
-        throw new Error('Produto não encontrado')
+        
+        if (response.ok) {
+          setProduct(data)
+        } else {
+          throw new Error(data.error || 'Erro ao carregar produto')
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Erro desconhecido')
+        console.error('Erro ao carregar produto:', err)
+      } finally {
+        setLoading(false)
       }
-    } catch (error) {
-      console.error('Erro ao carregar produto:', error)
-      toast.error('Erro ao carregar produto')
-      router.push('/admin/produtos')
-    } finally {
-      setLoading(false)
     }
-  }
+
+    if (productId) {
+      fetchProduct()
+    }
+  }, [productId])
 
   const handleDelete = async () => {
-    if (!confirm('Tem certeza que deseja excluir este produto?')) return
+    if (!confirm(`Tem certeza que deseja excluir "${product.name}"?`)) return
 
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`/api/base-products/${productId}`, {
         method: 'DELETE'
       })
 
       if (response.ok) {
-        toast.success('Produto excluído com sucesso!')
+        toast.success('Produto excluído com sucesso')
         router.push('/admin/produtos')
       } else {
-        const result = await response.json()
-        throw new Error(result.error || 'Erro ao excluir produto')
+        throw new Error('Erro ao excluir produto')
       }
     } catch (error) {
-      console.error('Erro ao excluir produto:', error)
-      toast.error(error instanceof Error ? error.message : 'Erro ao excluir produto')
-    }
-  }
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-      case 'inactive':
-        return <Badge variant="secondary">Inativo</Badge>
-      case 'out_of_stock':
-        return <Badge className="bg-red-100 text-red-800">Sem Estoque</Badge>
-      default:
-        return <Badge variant="outline">{status}</Badge>
+      toast.error('Erro ao excluir produto')
     }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p>Carregando produto...</p>
-            </div>
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-blue-600" />
+            <p className="mt-2 text-sm text-gray-600">Carregando produto...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <AlertCircle className="h-8 w-8 mx-auto text-red-600" />
+            <p className="mt-2 text-sm text-red-600">Erro: {error}</p>
+            <Button onClick={() => router.back()} className="mt-4">
+              Voltar
+            </Button>
           </div>
         </div>
       </div>
@@ -119,16 +129,13 @@ export default function ProductViewPage() {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-4xl mx-auto">
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Produto não encontrado
-            </h3>
-            <Button onClick={() => router.push('/admin/produtos')}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Voltar aos Produtos
+            <Package className="h-8 w-8 mx-auto text-gray-600" />
+            <p className="mt-2 text-sm text-gray-600">Produto não encontrado</p>
+            <Button onClick={() => router.back()} className="mt-4">
+              Voltar
             </Button>
           </div>
         </div>
@@ -137,141 +144,291 @@ export default function ProductViewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.push('/admin/produtos')}
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
-            Voltar aos Produtos
+            Voltar
           </Button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Imagem do Produto */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Imagem do Produto</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
-                {product.image_url ? (
-                  <img
-                    src={product.image_url}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      e.currentTarget.src = 'https://ui-avatars.com/api/?name=Produto&background=1e40af&color=ffffff&size=400'
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center">
-                    <img
-                      src="https://ui-avatars.com/api/?name=Produto&background=1e40af&color=ffffff&size=400"
-                      alt="Placeholder"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Informações do Produto */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-2xl">{product.name}</CardTitle>
-                    <CardDescription>
-                      {product.companies?.name || 'Empresa não definida'}
-                    </CardDescription>
-                  </div>
-                  {getStatusBadge(product.status)}
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-gray-600">{product.description}</p>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5 text-green-600" />
-                    <div>
-                      <p className="text-sm text-gray-600">Preço</p>
-                      <p className="font-semibold text-green-600">
-                        R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Award className="h-5 w-5 text-purple-600" />
-                    <div>
-                      <p className="text-sm text-gray-600">Pontos</p>
-                      <p className="font-semibold text-purple-600">{product.points_cost} pts</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Package className="h-5 w-5 text-blue-600" />
-                    <div>
-                      <p className="text-sm text-gray-600">Estoque</p>
-                      <p className="font-semibold text-blue-600">{product.stock_quantity} unidades</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Tag className="h-5 w-5 text-orange-600" />
-                    <div>
-                      <p className="text-sm text-gray-600">Categoria</p>
-                      <p className="font-semibold text-orange-600">
-                        {product.categories?.name || 'Sem categoria'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 pt-4 border-t">
-                  <Calendar className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm text-gray-500">
-                    Criado em {new Date(product.created_at).toLocaleDateString('pt-BR')}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Ações */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Ações</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={() => router.push(`/admin/produtos/editar/${product.id}`)}
-                    className="flex-1"
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Editar Produto
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleDelete}
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Excluir
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+          <div>
+            <h1 className="text-3xl font-bold">{product.name}</h1>
+            <p className="text-muted-foreground">
+              Detalhes completos do produto base
+            </p>
           </div>
         </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => router.push(`/admin/produtos/${productId}/editar`)}
+            className="flex items-center gap-2"
+          >
+            <Edit className="h-4 w-4" />
+            Editar
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="destructive"
+            className="flex items-center gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            Excluir
+          </Button>
+        </div>
       </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Imagem e Informações Básicas */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package className="h-5 w-5" />
+              Informações Básicas
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Imagem */}
+            <div className="aspect-square relative rounded-lg overflow-hidden bg-muted">
+              <SafeImage
+                src={product.image_url}
+                alt={product.name}
+                className="object-cover w-full h-full"
+              />
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center gap-2">
+              <Badge variant={product.status === 'active' ? 'default' : 'secondary'}>
+                {product.status === 'active' ? 'Ativo' : 'Inativo'}
+              </Badge>
+              {product.product_categories && (
+                <Badge variant="outline">
+                  {product.product_categories.name}
+                </Badge>
+              )}
+            </div>
+
+            {/* Descrição */}
+            <div>
+              <h3 className="font-medium mb-2">Descrição</h3>
+              <p className="text-muted-foreground">
+                {product.description || 'Nenhuma descrição disponível'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Informações Técnicas */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Informações Técnicas
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* SKU e NCM */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">SKU</Label>
+                <p className="font-mono text-lg">{product.specifications?.sku || 'N/A'}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">NCM</Label>
+                <p className="font-mono text-lg">{product.specifications?.ncm || 'N/A'}</p>
+              </div>
+            </div>
+
+            {/* Preços */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <DollarSign className="h-3 w-3" />
+                  Preço Unitário
+                </Label>
+                <p className="text-2xl font-bold text-green-600">
+                  R$ {product.base_price?.toFixed(2) || '0.00'}
+                </p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <Award className="h-3 w-3" />
+                  Pontos
+                </Label>
+                <p className="text-2xl font-bold text-blue-600">
+                  {product.base_points_cost || 0} pts
+                </p>
+              </div>
+            </div>
+
+            {/* Preço por Quantidade */}
+            {product.specifications?.price_quantity && (
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">
+                  Preço por Quantidade
+                </Label>
+                <p className="text-lg font-semibold">
+                  R$ {product.base_price?.toFixed(2) || '0.00'} por {product.specifications.price_quantity} unidades
+                </p>
+              </div>
+            )}
+
+            {/* Quantidade Mínima */}
+            {product.specifications?.min_quantity && (
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <Minus className="h-3 w-3" />
+                  Quantidade Mínima
+                </Label>
+                <p className="text-lg font-semibold">
+                  {product.specifications.min_quantity} unidades
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Informações de Produção e Estoque */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Box className="h-5 w-5" />
+              Estoque e Produção
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Estoque Disponível */}
+            {product.specifications?.stock_available !== undefined && (
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Estoque Disponível</Label>
+                <p className="text-2xl font-bold text-blue-600">
+                  {product.specifications.stock_available} unidades
+                </p>
+              </div>
+            )}
+
+            {/* Tempo de Produção */}
+            {product.specifications?.production_time && (
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <Clock className="h-3 w-3" />
+                  Tempo de Produção
+                </Label>
+                <p className="text-lg font-semibold">
+                  {product.specifications.production_time}
+                </p>
+              </div>
+            )}
+
+            {/* Material */}
+            {product.specifications?.material && (
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Material</Label>
+                <p className="text-lg font-semibold">
+                  {product.specifications.material}
+                </p>
+              </div>
+            )}
+
+            {/* Fabricante */}
+            {product.specifications?.manufacturer && (
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground flex items-center gap-1">
+                  <Factory className="h-3 w-3" />
+                  Fabricante
+                </Label>
+                <p className="text-lg font-semibold">
+                  {product.specifications.manufacturer}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Bulk Pricing (Faixas) */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="h-5 w-5" />
+              Preços por Quantidade
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <BulkPricingEditor baseProductId={productId} />
+          </CardContent>
+        </Card>
+
+        {/* Especificações Detalhadas */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Especificações Detalhadas
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {product.specifications && Object.keys(product.specifications).length > 0 ? (
+              <div className="space-y-3">
+                {Object.entries(product.specifications).map(([key, value]) => {
+                  // Pular campos já mostrados em outras seções
+                  const skipKeys = ['sku', 'ncm', 'price_quantity', 'min_quantity', 'stock_available', 'production_time', 'material', 'manufacturer', 'original_status']
+                  if (skipKeys.includes(key)) return null
+                  
+                  return (
+                    <div key={key} className="flex justify-between items-center py-2 border-b border-muted last:border-0">
+                      <span className="text-sm font-medium capitalize">
+                        {key.replace(/_/g, ' ')}:
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {Array.isArray(value) ? value.join(', ') : String(value)}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              <p className="text-muted-foreground">Nenhuma especificação detalhada disponível</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Informações Adicionais */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Tag className="h-5 w-5" />
+            Informações Adicionais
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <Label className="text-sm font-medium text-muted-foreground">ID do Produto</Label>
+              <p className="font-mono text-sm">{product.id}</p>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-muted-foreground">Criado em</Label>
+              <p className="text-sm">
+                {new Date(product.created_at).toLocaleDateString('pt-BR')}
+              </p>
+            </div>
+            <div>
+              <Label className="text-sm font-medium text-muted-foreground">Última atualização</Label>
+              <p className="text-sm">
+                {new Date(product.updated_at).toLocaleDateString('pt-BR')}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

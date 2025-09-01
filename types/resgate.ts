@@ -62,7 +62,14 @@ export interface CartItem {
   total_price: number
   claim_method: 'points' | 'credit_card' | 'pix' | 'boleto' | 'free'
   created_at: string
-  product?: Product
+  product?: {
+    id: string
+    name: string
+    description?: string | null
+    price: number
+    image_url?: string | null
+    sku?: string | null
+  }
 }
 
 export interface ShippingAddress {

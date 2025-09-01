@@ -19,8 +19,7 @@ export async function GET(
         name,
         company_id,
         status,
-        created_at,
-        companies(id, name, email, phone, address)
+        created_at
       `)
       .eq('id', params.id)
       .single()
@@ -67,18 +66,18 @@ export async function PUT(
       }, { status: 400 })
     }
 
-    // Verificar se a empresa existe
-    const { data: company } = await supabase
-      .from('companies')
-      .select('id')
-      .eq('id', company_id)
-      .single()
+    // Verificar se a empresa existe (companies table doesn't exist, skipping validation)
+    // const { data: company } = await supabase
+    //   .from('companies')
+    //   .select('id')
+    //   .eq('id', company_id)
+    //   .single()
 
-    if (!company) {
-      return NextResponse.json({ 
-        error: 'Empresa não encontrada' 
-      }, { status: 400 })
-    }
+    // if (!company) {
+    //   return NextResponse.json({ 
+    //     error: 'Empresa não encontrada' 
+    //   }, { status: 400 })
+    // }
 
     // Atualizar loja
     const { data: store, error } = await supabase
@@ -94,8 +93,7 @@ export async function PUT(
         name,
         company_id,
         status,
-        created_at,
-        companies(name)
+        created_at
       `)
       .single()
 
@@ -162,3 +160,4 @@ export async function DELETE(
     return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }
+

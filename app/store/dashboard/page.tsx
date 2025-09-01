@@ -98,7 +98,7 @@ export default function StoreDashboardPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <YoobeLogo size="lg" />
+          <YoobeLogo size={40} />
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Minha Loja</h1>
             <p className="text-gray-600">Bem-vindo à sua loja corporativa de resgate</p>

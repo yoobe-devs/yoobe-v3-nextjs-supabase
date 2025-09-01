@@ -287,9 +287,11 @@ export default function NovoProdutoLojaPage() {
             <div className="space-y-2">
               <Label>Imagem do Produto</Label>
               <ImageUpload
-                onUpload={handleImageUpload}
+                onImageUpload={async (file: File) => {
+                  const url = URL.createObjectURL(file)
+                  handleImageUpload(url)
+                }}
                 currentImage={form.image_url}
-                bucket="products"
               />
             </div>
 

@@ -378,9 +378,11 @@ export default function NovaEmpresaPage() {
               </CardHeader>
               <CardContent>
                 <ImageUpload
-                  value={formData.logo_url}
-                  onChange={(url) => handleInputChange('logo_url', url)}
-                  maxSize={2}
+                  currentImage={formData.logo_url}
+                  onImageUpload={async (file: File) => {
+                    const objectUrl = URL.createObjectURL(file)
+                    handleInputChange('logo_url', objectUrl)
+                  }}
                 />
               </CardContent>
             </Card>

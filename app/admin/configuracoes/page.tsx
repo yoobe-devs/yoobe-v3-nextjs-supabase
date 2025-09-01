@@ -23,7 +23,7 @@ import {
   BookOpen,
   ExternalLink
 } from "lucide-react"
-import { YoobeLogo } from "@/components/ui/yoobe-logo"
+import YoobeLogo from "@/components/ui/yoobe-logo"
 
 interface SystemConfig {
   siteName: string
@@ -89,7 +89,7 @@ export default function AdminConfiguracoesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <YoobeLogo size="lg" />
+          <YoobeLogo size={40} />
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Configurações do Sistema</h1>
             <p className="text-gray-600">Gerencie as configurações globais da plataforma</p>

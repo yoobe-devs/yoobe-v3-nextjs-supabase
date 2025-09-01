@@ -45,8 +45,8 @@ export async function GET(
       role: gestor.role,
       status: gestor.status,
       company_id: gestor.company_id,
-      company_name: gestor.companies?.name || 'Empresa não encontrada',
-      company_logo: gestor.companies?.logo_url || '',
+      company_name: (Array.isArray(gestor.companies) ? (gestor.companies[0]?.name) : (gestor as any).companies?.name) || 'Empresa não encontrada',
+      company_logo: (Array.isArray(gestor.companies) ? (gestor.companies[0]?.logo_url) : (gestor as any).companies?.logo_url) || '',
       created_at: gestor.created_at,
       updated_at: gestor.updated_at
     }
@@ -138,8 +138,8 @@ export async function PUT(
       role: gestor.role,
       status: gestor.status,
       company_id: gestor.company_id,
-      company_name: gestor.companies?.name || 'Empresa não encontrada',
-      company_logo: gestor.companies?.logo_url || '',
+      company_name: (Array.isArray(gestor.companies) ? (gestor.companies[0]?.name) : (gestor as any).companies?.name) || 'Empresa não encontrada',
+      company_logo: (Array.isArray(gestor.companies) ? (gestor.companies[0]?.logo_url) : (gestor as any).companies?.logo_url) || '',
       created_at: gestor.created_at,
       updated_at: gestor.updated_at
     }

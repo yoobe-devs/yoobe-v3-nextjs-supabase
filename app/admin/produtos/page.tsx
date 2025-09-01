@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useAuth } from '@/components/auth/auth-provider-simple'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -17,143 +18,171 @@ import {
   Eye,
   Package,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  Download,
+  RefreshCw,
+  Database,
+  Settings,
+  Import,
+  Grid3X3,
+  List
 } from 'lucide-react'
 import { toast } from 'sonner'
-
-interface Product {
-  id: string
-  name: string
-  description: string
-  price: number
-  points: number
-  stock: number
-  image_url?: string
-  is_featured: boolean
-  status: string
-  created_at: string
-  companies?: { name: string }
-  categories?: { name: string }
-}
 
 export default function ProdutosPage() {
   const router = useRouter()
   const { user } = useAuth()
-  const [products, setProducts] = useState<Product[]>([])
+  const supabase = createClientComponentClient()
+  
+  const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedCompany, setSelectedCompany] = useState('')
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
-  const [companies, setCompanies] = useState<{ id: string; name: string }[]>([])
-  const [stats, setStats] = useState({
-    total: 0,
-    active: 0,
-    outOfStock: 0,
-    totalValue: 0
-  })
+  const [error, setError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [filterCategory, setFilterCategory] = useState('')
+  const [importing, setImporting] = useState(false)
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
+  const [showImportModal, setShowImportModal] = useState(false)
 
+  // Verificar se é admin
   useEffect(() => {
-    loadProducts()
-    loadCategories()
-    loadCompanies()
-  }, [searchTerm, selectedCategory, selectedCompany])
+    if (user && user.user_metadata?.role !== 'admin') {
+      router.push('/admin/dashboard')
+      toast.error('Acesso negado - Apenas administradores podem acessar esta página')
+    }
+  }, [user, router])
 
-  const loadProducts = async () => {
-    setLoading(true)
+  // Carregar produtos
+  const fetchProducts = async () => {
     try {
-      const params = new URLSearchParams()
-      if (searchTerm) params.append('search', searchTerm)
-      if (selectedCategory) params.append('category', selectedCategory)
-      if (selectedCompany) params.append('company_id', selectedCompany)
-
-      const response = await fetch(`/api/products?${params.toString()}`)
+      setLoading(true)
+      setError(null)
+      
+      const response = await fetch('/api/base-products')
+      const data = await response.json()
+      
       if (response.ok) {
-        const data = await response.json()
-        setProducts(data.products || [])
-        
-        // Calcular estatísticas
-        const total = data.products?.length || 0
-        const active = data.products?.filter((p: Product) => p.status === 'active').length || 0
-        const outOfStock = data.products?.filter((p: Product) => p.stock === 0).length || 0
-        const totalValue = data.products?.reduce((sum: number, p: Product) => sum + (p.price * p.stock), 0) || 0
-        
-        setStats({ total, active, outOfStock, totalValue })
+        setProducts(data)
       } else {
-        throw new Error('Erro ao carregar produtos')
+        throw new Error(data.error || 'Erro ao carregar produtos')
       }
-    } catch (error) {
-      console.error('Erro ao carregar produtos:', error)
-      toast.error('Erro ao carregar produtos')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro desconhecido')
+      console.error('Erro ao carregar produtos:', err)
     } finally {
       setLoading(false)
     }
   }
 
-  const loadCategories = async () => {
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  const handleImportCatalog = async (importAllCategories = false, category?: string) => {
     try {
-      const response = await fetch('/api/categories')
+      setImporting(true)
+      
+      // Obter sessão atual
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        throw new Error('Usuário não autenticado')
+      }
+
+      const response = await fetch('/api/scraping/import-catalog', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          page: 1,
+          limit: 50,
+          category,
+          importAllCategories
+        })
+      })
+
+      const data = await response.json()
+
       if (response.ok) {
-        const data = await response.json()
-        setCategories(data.categories || [])
+        toast.success(data.message)
+        await fetchProducts() // Recarregar produtos
+        setShowImportModal(false)
+      } else {
+        throw new Error(data.error)
       }
     } catch (error) {
-      console.error('Erro ao carregar categorias:', error)
+      console.error('Erro na importação:', error)
+      toast.error(error instanceof Error ? error.message : 'Erro ao importar catálogo')
+    } finally {
+      setImporting(false)
     }
   }
 
-  const loadCompanies = async () => {
-    try {
-      const response = await fetch('/api/companies')
-      if (response.ok) {
-        const data = await response.json()
-        setCompanies(data.companies || [])
-      }
-    } catch (error) {
-      console.error('Erro ao carregar empresas:', error)
-    }
-  }
-
-  const handleDelete = async (productId: string) => {
-    if (!confirm('Tem certeza que deseja excluir este produto?')) return
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Tem certeza que deseja excluir "${name}"?`)) return
 
     try {
-      const response = await fetch(`/api/products/${productId}`, {
+      const response = await fetch(`/api/base-products/${id}`, {
         method: 'DELETE'
       })
 
       if (response.ok) {
         toast.success('Produto excluído com sucesso')
-        loadProducts()
+        await fetchProducts() // Recarregar produtos
       } else {
         throw new Error('Erro ao excluir produto')
       }
     } catch (error) {
-      console.error('Erro ao excluir produto:', error)
       toast.error('Erro ao excluir produto')
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800">Ativo</Badge>
-      case 'inactive':
-        return <Badge className="bg-red-100 text-red-800">Inativo</Badge>
-      case 'draft':
-        return <Badge className="bg-yellow-100 text-yellow-800">Rascunho</Badge>
-      default:
-        return <Badge variant="secondary">{status}</Badge>
+  const filteredProducts = products.filter(product => {
+    if (searchQuery) {
+      const searchLower = searchQuery.toLowerCase()
+      if (!product.name.toLowerCase().includes(searchLower) && 
+          !product.description?.toLowerCase().includes(searchLower)) {
+        return false
+      }
     }
-  }
+    
+    if (filterCategory && product.category_id) {
+      const category = product.product_categories
+      if (!category || category.name !== filterCategory) return false
+    }
+    
+    return true
+  })
+
+  const categories = Array.from(new Set(
+    products
+      .map(p => p.product_categories?.name)
+      .filter(Boolean)
+  ))
 
   if (loading) {
     return (
-      <div className="p-6">
+      <div className="container mx-auto p-6">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>Carregando produtos...</p>
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-blue-600" />
+            <p className="mt-2 text-sm text-gray-600">Carregando produtos...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <AlertCircle className="h-8 w-8 mx-auto text-red-600" />
+            <p className="mt-2 text-sm text-red-600">Erro: {error}</p>
+            <Button onClick={fetchProducts} className="mt-4">
+              Tentar novamente
+            </Button>
           </div>
         </div>
       </div>
@@ -161,218 +190,359 @@ export default function ProdutosPage() {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Gerenciar Produtos</h1>
-          <p className="text-gray-600">Gerencie todos os produtos do sistema</p>
+          <h1 className="text-3xl font-bold">Catálogo Base de Produtos</h1>
+          <p className="text-muted-foreground">
+            Gerencie o repositório central de produtos disponíveis para todas as lojas
+          </p>
         </div>
-        <Button onClick={() => router.push('/admin/produtos/novo')}>
-          <Plus className="h-4 w-4 mr-2" />
-          Novo Produto
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={() => setShowImportModal(true)}
+            disabled={importing}
+            className="flex items-center gap-2"
+          >
+            {importing ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Importando...
+              </>
+            ) : (
+              <>
+                <Import className="h-4 w-4" />
+                Importar Catálogo
+              </>
+            )}
+          </Button>
+          <Button 
+            onClick={() => router.push('/admin/produtos/novo')}
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Novo Produto
+          </Button>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Produtos</CardTitle>
-            <Package className="h-4 w-4 text-blue-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
-            <p className="text-sm text-gray-500">Produtos cadastrados</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Produtos Ativos</CardTitle>
-            <Package className="h-4 w-4 text-green-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{stats.active}</div>
-            <p className="text-sm text-gray-500">Em estoque</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Sem Estoque</CardTitle>
-            <Package className="h-4 w-4 text-red-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900">{stats.outOfStock}</div>
-            <p className="text-sm text-gray-500">Produtos esgotados</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
-            <Package className="h-4 w-4 text-purple-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-gray-900">
-              R$ {stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Package className="h-5 w-5 text-blue-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">Total de Produtos</p>
+                <p className="text-2xl font-bold">{products.length}</p>
+              </div>
             </div>
-            <p className="text-sm text-gray-500">Valor em estoque</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Filter className="h-5 w-5 text-green-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">Categorias</p>
+                <p className="text-2xl font-bold">{categories.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Database className="h-5 w-5 text-purple-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">Importados</p>
+                <p className="text-2xl font-bold">
+                  {products.filter(p => p.specifications?.sku).length}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-2">
+              <Settings className="h-5 w-5 text-orange-500" />
+              <div>
+                <p className="text-sm text-muted-foreground">Ativos</p>
+                <p className="text-2xl font-bold">
+                  {products.filter(p => p.status === 'active').length}
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Filters */}
+      {/* Filtros e Busca */}
       <Card>
-        <CardHeader>
-          <CardTitle>Filtros</CardTitle>
-          <CardDescription>Filtre os produtos por categoria, empresa ou nome</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-4">
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <div className="flex gap-2">
                 <Input
                   placeholder="Buscar produtos..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="max-w-sm"
                 />
+                <Button onClick={fetchProducts} variant="outline">
+                  <RefreshCw className="h-4 w-4" />
+                </Button>
               </div>
             </div>
             <div className="flex gap-2">
               <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2"
+                value={filterCategory}
+                onChange={(e) => setFilterCategory(e.target.value)}
+                className="px-3 py-2 border rounded-md"
               >
-                <option value="">Todas as Categorias</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
+                <option value="">Todas as categorias</option>
+                {categories.map(category => (
+                  <option key={category} value={category}>{category}</option>
                 ))}
               </select>
-              <select
-                value={selectedCompany}
-                onChange={(e) => setSelectedCompany(e.target.value)}
-                className="border border-gray-300 rounded-md px-3 py-2"
+              <Button
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('grid')}
               >
-                <option value="">Todas as Empresas</option>
-                {companies.map((company) => (
-                  <option key={company.id} value={company.id}>
-                    {company.name}
-                  </option>
-                ))}
-              </select>
-              <Button variant="outline">
-                <Filter className="h-4 w-4 mr-2" />
-                Filtros
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button
+                variant={viewMode === 'list' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('list')}
+              >
+                <List className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Products Grid */}
-      {products.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {products.map((product) => (
-            <Card key={product.id} className="overflow-hidden hover:shadow-lg transition-shadow">
-              <div className="aspect-square overflow-hidden relative bg-gray-100">
+      {/* Lista de Produtos */}
+      {viewMode === 'grid' ? (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredProducts.map((product) => (
+            <Card key={product.id} className="overflow-hidden">
+              <div className="aspect-square relative">
                 <SafeImage
                   src={product.image_url}
                   alt={product.name}
-                  size={300}
-                  className="w-full h-full"
+                  className="object-cover w-full h-full"
                 />
-                
-                {product.is_featured && (
-                  <Badge className="absolute top-2 left-2 bg-blue-500 text-white">
-                    Destaque
-                  </Badge>
-                )}
-                
                 <div className="absolute top-2 right-2">
-                  {getStatusBadge(product.status)}
+                  <Badge variant={product.status === 'active' ? 'default' : 'secondary'}>
+                    {product.status === 'active' ? 'Ativo' : 'Inativo'}
+                  </Badge>
                 </div>
               </div>
-              
               <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-2">
-                  <Badge variant="secondary" className="text-xs">
-                    {product.categories?.name || 'Sem categoria'}
-                  </Badge>
-                </div>
-                
-                <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
-                
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-purple-600">{product.points} pts</span>
+                <div className="space-y-2">
+                  <h3 className="font-semibold line-clamp-2">{product.name}</h3>
+                  {product.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2">
+                      {product.description}
+                    </p>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm">
+                      <p className="font-medium">R$ {product.base_price?.toFixed(2) || '0.00'}</p>
+                      <p className="text-muted-foreground">{product.base_points_cost || 0} pts</p>
+                    </div>
+                    {product.product_categories && (
+                      <Badge variant="outline" className="text-xs">
+                        {product.product_categories.name}
+                      </Badge>
+                    )}
                   </div>
-                  <span className="text-sm text-gray-500">{product.stock} em estoque</span>
-                </div>
-                
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-lg font-bold text-green-600">
-                    R$ {product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {product.companies?.name || 'Empresa não definida'}
-                  </span>
-                </div>
-                
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => router.push(`/admin/produtos/editar/${product.id}`)}
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Editar
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => router.push(`/admin/produtos/${product.id}`)}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    Ver
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => router.push(`/admin/produtos/${product.id}`)}
+                      className="flex-1"
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => router.push(`/admin/produtos/${product.id}/editar`)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDelete(product.id, product.name)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
+        <div className="space-y-2">
+          {filteredProducts.map((product) => (
+            <Card key={product.id}>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 relative">
+                    <SafeImage
+                      src={product.image_url}
+                      alt={product.name}
+                      className="object-cover w-full h-full rounded"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold">{product.name}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-1">
+                      {product.description}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Badge variant="outline" className="text-xs">
+                        {product.product_categories?.name || 'Sem categoria'}
+                      </Badge>
+                      <Badge variant={product.status === 'active' ? 'default' : 'secondary'} className="text-xs">
+                        {product.status === 'active' ? 'Ativo' : 'Inativo'}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">R$ {product.base_price?.toFixed(2) || '0.00'}</p>
+                    <p className="text-sm text-muted-foreground">{product.base_points_cost || 0} pts</p>
+                  </div>
+                  <div className="flex gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => router.push(`/admin/produtos/${product.id}`)}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => router.push(`/admin/produtos/${product.id}/editar`)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleDelete(product.id, product.name)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+
+      {filteredProducts.length === 0 && !loading && (
         <Card>
-          <CardContent className="p-12 text-center">
-            <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Nenhum produto encontrado
-            </h3>
-            <p className="text-gray-600 mb-6">
-              {searchTerm || selectedCategory || selectedCompany
+          <CardContent className="p-8 text-center">
+            <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Nenhum produto encontrado</h3>
+            <p className="text-muted-foreground mb-4">
+              {searchQuery || filterCategory 
                 ? 'Tente ajustar os filtros de busca'
-                : 'Comece criando seu primeiro produto'
+                : 'Comece importando produtos do catálogo externo'
               }
             </p>
-            <Button onClick={() => router.push('/admin/produtos/novo')}>
-              <Plus className="h-4 w-4 mr-2" />
-              Criar Primeiro Produto
-            </Button>
+            {!searchQuery && !filterCategory && (
+              <Button onClick={() => setShowImportModal(true)}>
+                <Import className="h-4 w-4 mr-2" />
+                Importar Catálogo
+              </Button>
+            )}
           </CardContent>
         </Card>
+      )}
+
+      {/* Modal de Importação */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Importar Catálogo</CardTitle>
+              <CardDescription>
+                Escolha como deseja importar os produtos
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Button
+                onClick={() => handleImportCatalog(true)}
+                disabled={importing}
+                className="w-full"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Importar Todas as Categorias
+              </Button>
+              
+              <div className="text-center text-sm text-muted-foreground">
+                ou importe uma categoria específica:
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => handleImportCatalog(false, '10')}
+                  disabled={importing}
+                  size="sm"
+                >
+                  Escritório
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleImportCatalog(false, '4')}
+                  disabled={importing}
+                  size="sm"
+                >
+                  Cool Swag
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleImportCatalog(false, '101')}
+                  disabled={importing}
+                  size="sm"
+                >
+                  Canecas
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => handleImportCatalog(false, '83')}
+                  disabled={importing}
+                  size="sm"
+                >
+                  Mochilas
+                </Button>
+              </div>
+              
+              <Button
+                variant="outline"
+                onClick={() => setShowImportModal(false)}
+                disabled={importing}
+                className="w-full"
+              >
+                Cancelar
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   )

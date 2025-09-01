@@ -429,9 +429,12 @@ export default function EditCompanyPage() {
               </CardHeader>
               <CardContent>
                 <ImageUpload
-                  onImageUpload={(url: string) => handleInputChange('logo_url', url)}
+                  onImageUpload={async (file: File) => {
+                    // Aqui você pode integrar com seu storage real; por enquanto usamos URL local
+                    const objectUrl = URL.createObjectURL(file)
+                    handleInputChange('logo_url', objectUrl)
+                  }}
                   currentImage={formData.logo_url}
-                  bucket="company-logos"
                 />
               </CardContent>
             </Card>

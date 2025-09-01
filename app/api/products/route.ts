@@ -48,10 +48,7 @@ export async function GET(request: NextRequest) {
         company_id,
         category_id,
         base_product_id,
-        companies (
-          id,
-          name
-        ),
+
         product_categories (
           id,
           name,

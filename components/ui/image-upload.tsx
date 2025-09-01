@@ -1,27 +1,25 @@
 "use client"
 
-import { useState, useRef } from "react"
-import { Button } from "@/components/ui/button"
-import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { useRef, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Upload, X, Loader2 } from 'lucide-react'
 
 interface ImageUploadProps {
-  onImageUpload: (url: string) => void
   currentImage?: string
-  bucket?: string
-  folder?: string
+  onImageUpload: (file: File) => Promise<void>
+  placeholder?: string
   className?: string
 }
 
 export function ImageUpload({ 
-  onImageUpload, 
   currentImage, 
-  bucket = 'products',
-  folder = '',
-  className = '' 
+  onImageUpload, 
+  placeholder = "Clique para fazer upload da imagem",
+  className = ""
 }: ImageUploadProps) {
-  const [isUploading, setIsUploading] = useState(false)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(currentImage || null)
+  const [uploading, setUploading] = useState(false)
+  const [imageUrl, setImageUrl] = useState(currentImage || '')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,78 +27,31 @@ export function ImageUpload({
     if (!file) return
 
     // Validar tipo de arquivo
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
-    if (!allowedTypes.includes(file.type)) {
-      toast.error('Tipo de arquivo não suportado. Use JPEG, PNG ou WebP')
+    if (!file.type.startsWith('image/')) {
+      alert('Por favor, selecione apenas arquivos de imagem')
       return
     }
 
-    // Validar tamanho (5MB)
+    // Validar tamanho (máximo 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Arquivo muito grande. Tamanho máximo: 5MB')
+      alert('A imagem deve ter no máximo 5MB')
       return
     }
 
-    // Criar preview
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      setPreviewUrl(e.target?.result as string)
-    }
-    reader.readAsDataURL(file)
-
-    // Fazer upload
-    await uploadFile(file)
-  }
-
-  const uploadFile = async (file: File) => {
-    setIsUploading(true)
-    
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('bucket', bucket)
-      if (folder) {
-        formData.append('folder', folder)
-      }
-
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro no upload')
-      }
-
-      onImageUpload(data.url)
-      toast.success('Imagem enviada com sucesso!')
+      setUploading(true)
+      await onImageUpload(file)
+      setImageUrl(URL.createObjectURL(file))
     } catch (error) {
       console.error('Erro no upload:', error)
-      toast.error(error instanceof Error ? error.message : 'Erro ao enviar imagem')
-      setPreviewUrl(null)
+      alert('Erro ao fazer upload da imagem')
     } finally {
-      setIsUploading(false)
+      setUploading(false)
     }
   }
 
-  const handleDrop = async (event: React.DragEvent) => {
-    event.preventDefault()
-    
-    const files = event.dataTransfer.files
-    if (files.length > 0) {
-      await handleFileSelect({ target: { files } } as any)
-    }
-  }
-
-  const handleDragOver = (event: React.DragEvent) => {
-    event.preventDefault()
-  }
-
-  const removeImage = () => {
-    setPreviewUrl(null)
-    onImageUpload('')
+  const handleRemoveImage = () => {
+    setImageUrl('')
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -108,76 +59,73 @@ export function ImageUpload({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <div
-        className={`relative border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-          previewUrl 
-            ? 'border-green-300 bg-green-50' 
-            : 'border-gray-300 hover:border-gray-400'
-        }`}
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-      >
-        {previewUrl ? (
-          <div className="relative">
-            <img
-              src={previewUrl}
-              alt="Preview"
-              className="mx-auto max-h-48 rounded-lg object-cover"
-            />
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              className="absolute -top-2 -right-2"
-              onClick={removeImage}
-              disabled={isUploading}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {isUploading ? (
-              <div className="flex items-center justify-center space-x-2">
-                <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-                <span className="text-sm text-gray-600">Enviando imagem...</span>
-              </div>
-            ) : (
-              <>
-                <Upload className="mx-auto h-12 w-12 text-gray-400" />
-                <div>
-                  <p className="text-sm text-gray-600">
-                    Clique para fazer upload ou arraste uma imagem
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    PNG, JPG, WebP até 5MB
-                  </p>
-                </div>
-              </>
-            )}
-          </div>
-        )}
+      {/* URL Input */}
+      <div className="space-y-2">
+        <Input
+          type="url"
+          placeholder="https://exemplo.com/imagem.jpg"
+          value={imageUrl}
+          onChange={(e) => setImageUrl(e.target.value)}
+        />
       </div>
 
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        onChange={handleFileSelect}
-        className="hidden"
-        disabled={isUploading}
-      />
-
-      {!previewUrl && !isUploading && (
+      {/* Upload Button */}
+      <div className="flex gap-2">
         <Button
           type="button"
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
-          className="w-full"
+          disabled={uploading}
+          className="flex items-center gap-2"
         >
-          <ImageIcon className="h-4 w-4 mr-2" />
-          Selecionar Imagem
+          {uploading ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Enviando...
+            </>
+          ) : (
+            <>
+              <Upload className="h-4 w-4" />
+              {placeholder}
+            </>
+          )}
         </Button>
+
+        {imageUrl && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleRemoveImage}
+            className="flex items-center gap-2 text-red-600 hover:text-red-700"
+          >
+            <X className="h-4 w-4" />
+            Remover
+          </Button>
+        )}
+      </div>
+
+      {/* Hidden file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileSelect}
+        className="hidden"
+      />
+
+      {/* Image Preview */}
+      {imageUrl && (
+        <div className="relative">
+          <img
+            src={imageUrl}
+            alt="Preview"
+            className="h-32 w-32 object-cover rounded-lg border"
+            onError={() => {
+              // Se a imagem falhar ao carregar, mostrar placeholder
+              setImageUrl('')
+            }}
+          />
+        </div>
       )}
     </div>
   )

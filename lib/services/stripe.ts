@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 
 export function stripeFor(currency: 'BRL' | 'USD') {
   const key = currency === 'BRL' ? process.env.STRIPE_SECRET_BR! : process.env.STRIPE_SECRET_US!;
-  return new Stripe(key, { apiVersion: '2023-10-16' });
+  return new Stripe(key);
 }
 
 export function getStripeWebhookSecret(currency: 'BRL' | 'USD') {

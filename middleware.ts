@@ -12,6 +12,7 @@ export async function middleware(req: NextRequest) {
 
   // Rotas públicas que não precisam de autenticação
   const publicRoutes = [
+    '/', // Landing page
     '/auth/login', 
     '/auth/register', 
     '/auth/callback', 
@@ -40,7 +41,9 @@ export async function middleware(req: NextRequest) {
     '/test-simple',
     '/api/auth/callback',
     '/test-system',
-    '/test-login-simple'
+    '/test-login-simple',
+    '/api-docs',
+    '/demo'
   ]
   
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))

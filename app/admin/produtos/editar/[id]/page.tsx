@@ -131,7 +131,7 @@ export default function EditProductPage() {
   }
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       [field]: value
     }))
@@ -397,9 +397,11 @@ export default function EditProductPage() {
               </CardHeader>
               <CardContent>
                 <ImageUpload
-                  onImageUpload={(url: string) => handleInputChange('image_url', url)}
+                  onImageUpload={async (file: File) => {
+                    const objectUrl = URL.createObjectURL(file)
+                    handleInputChange('image_url', objectUrl)
+                  }}
                   currentImage={formData.image_url}
-                  bucket="products"
                 />
               </CardContent>
             </Card>
