@@ -18,7 +18,7 @@ import {
   Store,
   UserPlus,
   Building2,
-  Link
+  Link as LinkIcon
 } from 'lucide-react'
 
 const mainNav = [
@@ -80,7 +80,7 @@ const mainNav = [
   {
     title: "Integração Cubbo",
     href: "/gestor/integracao-cubbo",
-    icon: Link
+    icon: LinkIcon
   }
 ]
 

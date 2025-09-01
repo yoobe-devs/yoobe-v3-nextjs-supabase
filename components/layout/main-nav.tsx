@@ -119,6 +119,18 @@ const footerNav = [
   {
     title: "Contato",
     href: "/contato"
+  },
+  {
+    title: "Documentação",
+    href: "/admin/documentacao"
+  },
+  {
+    title: "API Reference",
+    href: "/docs/API_REFERENCE.md"
+  },
+  {
+    title: "Database Schema",
+    href: "/docs/DATABASE_SCHEMA.md"
   }
 ]
 
