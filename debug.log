@@ -349,3 +349,4 @@
 ✅ Importação concluída: 0 produtos importados, 0 erros
  ✓ Compiled /admin/produtos/novo in 457ms (1605 modules)
  ✓ Compiled /auth/login in 318ms (790 modules)
+ ✓ Compiled in 2.2s (813 modules)
