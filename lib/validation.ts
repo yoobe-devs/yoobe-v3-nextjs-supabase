@@ -210,6 +210,29 @@ export const PaginatedResponseSchema = z.object({
   })
 })
 
+export const CheckoutEventDTO = z.object({
+  eventType: z.enum(['cart_updated', 'address_selected', 'payment_method_selected', 'checkout_completed']),
+  sessionId: z.string().optional(),
+  metadata: z.record(z.any()).optional()
+})
+
+export const PayDTO = z.object({
+  amount: z.number().positive('Valor deve ser positivo'),
+  paymentMethod: z.enum(['points', 'credit_card', 'pix', 'debit', 'boleto', 'donation']),
+  sessionId: z.string().optional()
+})
+
+export const QueueShipmentDTO = z.object({
+  orderId: z.string().uuid('ID do pedido inválido'),
+  addressId: z.string().uuid('ID do endereço inválido'),
+  priority: z.enum(['low', 'normal', 'high']).default('normal')
+})
+
+export const TinyExportDTO = z.object({
+  orderId: z.string().uuid('ID do pedido inválido'),
+  nfeType: z.enum(['saida', 'devolucao']).default('saida')
+})
+
 // Export types
 export type Address = z.infer<typeof AddressSchema>
 export type User = z.infer<typeof UserSchema>
@@ -235,5 +258,9 @@ export type Wallet = z.infer<typeof WalletSchema>
 export type Replication = z.infer<typeof ReplicationSchema>
 export type ApiResponse = z.infer<typeof ApiResponseSchema>
 export type PaginatedResponse = z.infer<typeof PaginatedResponseSchema>
+export type CheckoutEventDTO = z.infer<typeof CheckoutEventDTO>
+export type PayDTO = z.infer<typeof PayDTO>
+export type QueueShipmentDTO = z.infer<typeof QueueShipmentDTO>
+export type TinyExportDTO = z.infer<typeof TinyExportDTO>
 
 

@@ -36,8 +36,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Log audit
-    await audit('address_created', 'addresses', address.id, {
-      userId,
+    await audit('address_created', 'addresses', userId, address.id, {
       companyId,
       isDefault: addressData.is_default,
       city: addressData.city,

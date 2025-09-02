@@ -121,6 +121,7 @@ export async function processReplicationJob(jobId: string): Promise<ReplicationR
     await audit(
       'replication_completed',
       'product_replications',
+      'system',
       jobId,
       {
         quoteId: job.quoteId,
@@ -157,6 +158,7 @@ export async function processReplicationJob(jobId: string): Promise<ReplicationR
     await audit(
       'replication_failed',
       'product_replications',
+      'system',
       jobId,
       {
         error: error instanceof Error ? error.message : 'Erro desconhecido'
@@ -217,6 +219,7 @@ export async function processAllQueuedReplications(): Promise<{
     await audit(
       'replication_batch_completed',
       'system',
+      'system',
       undefined,
       {
         totalProcessed: queuedJobs.length,
@@ -237,6 +240,7 @@ export async function processAllQueuedReplications(): Promise<{
     // Log error
     await audit(
       'replication_batch_failed',
+      'system',
       'system',
       undefined,
       {

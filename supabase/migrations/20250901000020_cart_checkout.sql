@@ -314,3 +314,4 @@ LEFT JOIN public.shipment_intents si ON si.session_id = cs.id
 GROUP BY cs.user_id;
 
 
+

@@ -1,25 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireUser } from '@/lib/auth'
-import { AddToCartDTO } from '@/lib/validation'
-import { addToCart, getOrCreateCart } from '@/lib/cart'
-import { audit } from '@/lib/audit'
-
-export async function POST(req: NextRequest) {
-  try {
-    const { userId, companyId } = await requireUser()
-    const body = await req.json()
-    const dto = AddToCartDTO.parse(body)
-    const cartId = await getOrCreateCart(userId, companyId)
-    await addToCart(userId, dto.productId, dto.quantity, dto.unitPrice, dto.points, dto.metadata)
-    await audit('cart_item_added', 'cart', userId, cartId, { productId: dto.productId, qty: dto.quantity })
-    return NextResponse.json({ ok: true })
-  } catch (e: any) {
-    const status = e?.status || 400
-    return NextResponse.json({ error: e?.message || 'Bad request' }, { status })
-  }
-}
-
-import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 

@@ -15,6 +15,12 @@ export async function POST(req: NextRequest) {
     const { userId, companyId } = await requireUser()
     
     // Verificar se usuário tem permissão para criar usuários
+    if (!companyId) {
+      return NextResponse.json(
+        { success: false, error: 'ID da empresa é obrigatório' },
+        { status: 400 }
+      )
+    }
     const canCreate = await requireRole(userId, companyId, 'gestor')
     if (!canCreate) {
       await audit('user_creation_denied', 'users', userId, undefined, { companyId, reason: 'insufficient_permissions' })
@@ -53,7 +59,7 @@ export async function POST(req: NextRequest) {
         tax_id: userData.tax_id,
         fiscal_regime: userData.fiscal_regime,
         role: userData.role || 'funcionario',
-        status: userData.status || 'active'
+        status: 'active'
       })
       .select()
       .single()
@@ -103,12 +109,18 @@ export async function GET(req: NextRequest) {
     const { userId, companyId } = await requireUser()
     
     // Verificar se usuário tem permissão para listar usuários
+    if (!companyId) {
+      return NextResponse.json(
+        { success: false, error: 'ID da empresa é obrigatório' },
+        { status: 400 }
+      )
+    }
     const canRead = await requireRole(userId, companyId, 'gestor')
     if (!canRead) {
       await audit('users_list_denied', 'users', userId, undefined, { companyId, reason: 'insufficient_permissions' })
       return NextResponse.json(
         { success: false, error: 'Permissão insuficiente para listar usuários' },
-        { status: 403 }
+        { status: 400 }
       )
     }
 

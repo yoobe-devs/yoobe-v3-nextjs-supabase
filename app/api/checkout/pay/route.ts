@@ -12,6 +12,9 @@ export async function POST(req: NextRequest) {
   try {
     const { userId } = await requireUser()
     const { sessionId } = PayDTO.parse(await req.json())
+    if (!sessionId) {
+      return NextResponse.json({ error: 'sessionId é obrigatório' }, { status: 400 })
+    }
     await logCheckoutEvent(sessionId, userId, 'payment_started', {})
     await service.from('checkout_sessions').update({ status: 'paid', updated_at: new Date().toISOString() }).eq('id', sessionId)
     await logCheckoutEvent(sessionId, userId, 'payment_paid', {})
@@ -22,5 +25,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e?.message || 'Bad request' }, { status })
   }
 }
+
 
 

@@ -28,7 +28,8 @@ import {
   Edit,
   Trash2,
   Plus,
-  RefreshCw
+  RefreshCw,
+  Save
 } from 'lucide-react'
 
 interface CompanyUser {
@@ -78,9 +79,6 @@ export default function GestorUsersPage() {
     name: '',
     surname: '',
     email: '',
-    phone: '',
-    tax_id: '',
-    fiscal_regime: '',
     role: 'funcionario' as 'superadmin' | 'admin_gestor' | 'gestor' | 'funcionario',
     status: 'active' as 'active' | 'inactive'
   })
@@ -274,9 +272,6 @@ export default function GestorUsersPage() {
       name: '',
       surname: '',
       email: '',
-      phone: '',
-      tax_id: '',
-      fiscal_regime: '',
       role: 'funcionario',
       status: 'active'
     })
@@ -289,9 +284,6 @@ export default function GestorUsersPage() {
       name: user.name,
       surname: user.surname,
       email: user.email,
-      phone: user.phone || '',
-      tax_id: user.tax_id || '',
-      fiscal_regime: user.fiscal_regime || '',
       role: user.role,
       status: user.status
     })
@@ -781,33 +773,7 @@ export default function GestorUsersPage() {
               />
             </div>
             
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="text-sm font-medium">Telefone</label>
-                <Input
-                  value={userForm.phone}
-                  onChange={(e) => setUserForm(prev => ({ ...prev, phone: e.target.value }))}
-                  placeholder="(11) 99999-9999"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">CPF/CNPJ</label>
-                <Input
-                  value={userForm.tax_id}
-                  onChange={(e) => setUserForm(prev => ({ ...prev, tax_id: e.target.value }))}
-                  placeholder="000.000.000-00"
-                />
-              </div>
-            </div>
-            
-            <div>
-              <label className="text-sm font-medium">Regime Fiscal</label>
-              <Input
-                value={userForm.fiscal_regime}
-                onChange={(e) => setUserForm(prev => ({ ...prev, fiscal_regime: e.target.value }))}
-                placeholder="Simples Nacional"
-              />
-            </div>
+
             
             <div className="grid grid-cols-2 gap-4">
               <div>

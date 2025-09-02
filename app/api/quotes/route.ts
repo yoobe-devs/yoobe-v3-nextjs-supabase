@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     }
     
     // Log audit
-    await audit('quote_created', 'quotes', quoteId, {
+    await audit('quote_created', 'quotes', userId, quoteId, {
       companyId: dto.companyId,
       requestedBy: userId,
       itemCount: dto.items.length,
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     
     // Log error
     try {
-      await audit('quote_creation_error', 'quotes', undefined, {
+      await audit('quote_creation_error', 'quotes', 'system', undefined, {
         error: message,
         stack: error?.stack
       })

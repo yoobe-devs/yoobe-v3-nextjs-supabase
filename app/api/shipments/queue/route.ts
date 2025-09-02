@@ -10,13 +10,14 @@ const service = createClient(url, key)
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await requireUser()
-    const { sessionId } = QueueShipmentDTO.parse(await req.json())
-    await service.from('shipment_intents').update({ status: 'queued', updated_at: new Date().toISOString() }).eq('session_id', sessionId).eq('user_id', userId)
+    const { orderId, addressId, priority } = QueueShipmentDTO.parse(await req.json())
+    await service.from('shipment_intents').update({ status: 'queued', updated_at: new Date().toISOString() }).eq('order_id', orderId).eq('user_id', userId)
     return NextResponse.json({ queued: true })
   } catch (e: any) {
     const status = e?.status || 400
     return NextResponse.json({ error: e?.message || 'Bad request' }, { status })
   }
 }
+
 
 

@@ -11,7 +11,10 @@ const service = createClient(
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { token, name, surname, phone, tax_id, fiscal_regime, password } = AcceptInvitationDTO.parse(body)
+    const { token, user: userData } = AcceptInvitationDTO.parse(body)
+    const { name, surname, phone, tax_id, fiscal_regime } = userData
+    // Password deve ser enviado separadamente por segurança
+    const { password } = await req.json()
 
     // Buscar convite pelo token
     const { data: invitation, error: inviteError } = await service

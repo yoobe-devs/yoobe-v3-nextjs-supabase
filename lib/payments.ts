@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 import { audit } from './audit'
-import { processQuotePayment } from './replication'
 
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
@@ -62,6 +61,7 @@ export async function createPayment(paymentData: {
   await audit(
     'payment_created',
     'payments',
+    'system',
     data.id,
     {
       method: paymentData.method,
@@ -87,7 +87,7 @@ export async function processPaymentWebhook(webhook: PaymentWebhook): Promise<Pa
       .single()
     
     if (fetchError || !payment) {
-      throw new Error(`Pagamento não encontrado para external_id: ${webhook.exhook.externalId}`)
+      throw new Error(`Pagamento não encontrado para external_id: ${webhook.externalId}`)
     }
     
     // Check if already processed
@@ -134,6 +134,7 @@ export async function processPaymentWebhook(webhook: PaymentWebhook): Promise<Pa
     await audit(
       'payment_webhook_processed',
       'payments',
+      'system',
       payment.id,
       {
         externalId: webhook.externalId,
@@ -150,6 +151,7 @@ export async function processPaymentWebhook(webhook: PaymentWebhook): Promise<Pa
     await audit(
       'payment_webhook_error',
       'payments',
+      'system',
       undefined,
       {
         externalId: webhook.externalId,
@@ -256,6 +258,7 @@ export async function processPointsPayment(
     await audit(
       'points_payment_processed',
       'payments',
+      'system',
       payment.id,
       {
         userId,
@@ -273,6 +276,7 @@ export async function processPointsPayment(
     await audit(
       'points_payment_error',
       'payments',
+      'system',
       undefined,
       {
         userId,
@@ -342,6 +346,7 @@ export async function processMockPayment(
   await audit(
     'mock_payment_processed',
     'payments',
+    'system',
     payment.id,
     {
       success,

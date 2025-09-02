@@ -65,8 +65,8 @@ export async function POST(request: NextRequest) {
     // Enviar convite por email
     try {
       const emailRes = role === 'manager'
-        ? await sendManagerInvite({ email, name, company_id })
-        : await sendEmployeeInvite({ email, name, company_id })
+        ? await sendManagerInvite({ email, name, companyName: company_id, password: 'temp123' })
+        : await sendEmployeeInvite({ email, name, companyName: company_id, password: 'temp123' })
 
       // Auditoria sucesso
       try {
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       } catch {}
 
       if (emailRes?.success === false) {
-        throw new Error(emailRes?.error || 'email_send_failed')
+        throw new Error(typeof emailRes?.error === 'string' ? emailRes.error : 'email_send_failed')
       }
 
       return NextResponse.json({ message: 'Convite enviado com sucesso' }, { status: 201 })

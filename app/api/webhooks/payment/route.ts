@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const payment = await processPaymentWebhook(webhook)
     
     // Log successful webhook processing
-    await audit('payment_webhook_success', 'webhooks', undefined, {
+    await audit('payment_webhook_success', 'webhooks', 'system', undefined, {
       externalId: webhook.externalId,
       status: webhook.status,
       amount: webhook.amount,
@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     
     // Log webhook error
     try {
-      await audit('payment_webhook_error', 'webhooks', undefined, {
+      await audit('payment_webhook_error', 'webhooks', 'system', undefined, {
         error: message,
         body: await req.text().catch(() => 'Unable to read body'),
         headers: Object.fromEntries(req.headers.entries())

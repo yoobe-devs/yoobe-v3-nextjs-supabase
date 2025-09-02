@@ -284,7 +284,7 @@ export async function POST(request: NextRequest) {
         ...budget,
         items: createdItems
       }
-    }, { status: 201 })
+    })
 
   } catch (error) {
     console.error('Erro na API de criação de orçamentos:', error)

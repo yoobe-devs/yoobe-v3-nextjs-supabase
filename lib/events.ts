@@ -24,6 +24,7 @@ export type CheckoutEventType =
   | 'checkout_abandoned'
   | 'shipment_queued'
   | 'nfe_requested'
+  | 'cart_modified'
 
 /**
  * Log checkout event
@@ -53,9 +54,9 @@ export async function logCheckoutEvent(
   await audit(
     `checkout_${event}`,
     'checkout_sessions',
+    userId,
     sessionId,
     {
-      userId,
       event,
       payload
     }

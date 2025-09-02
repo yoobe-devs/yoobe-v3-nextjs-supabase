@@ -16,6 +16,12 @@ export async function POST(req: NextRequest) {
     const { userId, companyId } = await requireUser()
     
     // Verificar se usuário tem permissão para criar convites
+    if (!companyId) {
+      return NextResponse.json(
+        { success: false, error: 'ID da empresa é obrigatório' },
+        { status: 400 }
+      )
+    }
     const canCreate = await requireRole(userId, companyId, 'gestor')
     if (!canCreate) {
       await audit('invitation_creation_denied', 'invitations', userId, undefined, { companyId, reason: 'insufficient_permissions' })
@@ -96,6 +102,12 @@ export async function GET(req: NextRequest) {
     const { userId, companyId } = await requireUser()
     
     // Verificar se usuário tem permissão para listar convites
+    if (!companyId) {
+      return NextResponse.json(
+        { success: false, error: 'ID da empresa é obrigatório' },
+        { status: 400 }
+      )
+    }
     const canRead = await requireRole(userId, companyId, 'gestor')
     if (!canRead) {
       await audit('invitations_list_denied', 'invitations', userId, undefined, { companyId, reason: 'insufficient_permissions' })

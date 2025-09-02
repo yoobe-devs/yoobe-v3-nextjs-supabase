@@ -12,11 +12,11 @@ export async function POST(req: NextRequest) {
     const { userId } = await requireUser()
     const dto = TinyExportDTO.parse(await req.json())
     // stub export
-    const response = { ok: true, protocol: 'MOCK-' + dto.sessionId.slice(0, 8) }
+    const response = { ok: true, protocol: 'MOCK-' + dto.orderId.slice(0, 8) }
     await service.from('nfe_exports').insert({
-      session_id: dto.sessionId,
+      order_id: dto.orderId,
       user_id: userId,
-      request_payload: { series: dto.series, model: dto.model },
+      request_payload: { nfeType: dto.nfeType },
       response_payload: response,
       status: 'exported'
     })
@@ -26,5 +26,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: e?.message || 'Bad request' }, { status })
   }
 }
+
 
 

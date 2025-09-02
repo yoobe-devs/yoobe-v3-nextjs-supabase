@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const { data: product, error: productError } = await service
       .from('products')
       .select('*')
-      .eq('id', redemptionData.product_id)
+      .eq('id', redemptionData.productId)
       .eq('active', true)
       .single()
 
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       await audit('redemption_creation_failed', 'redemptions', userId, undefined, { 
         companyId, 
         reason: 'product_not_found_or_inactive',
-        product_id: redemptionData.product_id 
+        productId: redemptionData.productId 
       })
       return NextResponse.json(
         { success: false, error: 'Produto não encontrado ou inativo' },
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Se pagamento com pontos, verificar saldo da carteira
-    if (redemptionData.payment_method === 'points') {
+    if (redemptionData.paymentMethod === 'points') {
       const { data: wallet, error: walletError } = await service
         .from('wallets')
         .select('balance')
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
         await audit('redemption_creation_failed', 'redemptions', userId, undefined, { 
           companyId, 
           reason: 'wallet_not_found',
-          product_id: redemptionData.product_id 
+          productId: redemptionData.productId 
         })
         return NextResponse.json(
           { success: false, error: 'Carteira não encontrada' },
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
         await audit('redemption_creation_failed', 'redemptions', userId, undefined, { 
           companyId, 
           reason: 'insufficient_points',
-          product_id: redemptionData.product_id,
+          productId: redemptionData.productId,
           required: product.points,
           available: wallet.balance
         })
@@ -71,11 +71,11 @@ export async function POST(req: NextRequest) {
     }
 
     // Verificar se endereço existe e pertence ao usuário
-    if (redemptionData.address_id) {
+    if (redemptionData.addressId) {
       const { data: address, error: addressError } = await service
         .from('addresses')
         .select('id')
-        .eq('id', redemptionData.address_id)
+        .eq('id', redemptionData.addressId)
         .eq('user_id', userId)
         .single()
 
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         await audit('redemption_creation_failed', 'redemptions', userId, undefined, { 
           companyId, 
           reason: 'address_not_found_or_unauthorized',
-          address_id: redemptionData.address_id 
+          addressId: redemptionData.addressId 
         })
         return NextResponse.json(
           { success: false, error: 'Endereço não encontrado ou não autorizado' },
@@ -100,10 +100,10 @@ export async function POST(req: NextRequest) {
       .from('redemptions')
       .insert({
         user_id: userId,
-        product_id: redemptionData.product_id,
-        payment_method: redemptionData.payment_method,
+        productId: redemptionData.productId,
+        paymentMethod: redemptionData.paymentMethod,
         amount: total,
-        address_id: redemptionData.address_id,
+        addressId: redemptionData.addressId,
         status: 'pending'
       })
       .select(`
@@ -117,7 +117,7 @@ export async function POST(req: NextRequest) {
       await audit('redemption_creation_failed', 'redemptions', userId, undefined, { 
         companyId, 
         error: error.message,
-        product_id: redemptionData.product_id 
+        productId: redemptionData.productId 
       })
       return NextResponse.json(
         { success: false, error: 'Erro ao criar pedido' },
@@ -126,7 +126,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Se pagamento com pontos, debitar carteira
-    if (redemptionData.payment_method === 'points') {
+    if (redemptionData.paymentMethod === 'points') {
       const { error: debitError } = await service
         .from('wallets')
         .update({ 
@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
         await audit('redemption_creation_failed', 'redemptions', userId, undefined, { 
           companyId, 
           reason: 'wallet_debit_failed',
-          product_id: redemptionData.product_id 
+          productId: redemptionData.productId 
         })
         return NextResponse.json(
           { success: false, error: 'Erro ao debitar pontos da carteira' },
@@ -168,8 +168,8 @@ export async function POST(req: NextRequest) {
 
     await audit('redemption_created', 'redemptions', userId, redemption.id, { 
       companyId,
-      product_id: redemptionData.product_id,
-      payment_method: redemptionData.payment_method,
+      productId: redemptionData.productId,
+      paymentMethod: redemptionData.paymentMethod,
       amount: total
     })
 
@@ -194,7 +194,7 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams
     const targetUserId = searchParams.get('userId') || userId
     const status = searchParams.get('status')
-    const paymentMethod = searchParams.get('payment_method')
+    const paymentMethod = searchParams.get('paymentMethod')
 
     // Verificar se usuário pode ver pedidos de outros (gestor ou admin)
     if (targetUserId !== userId) {
@@ -232,7 +232,7 @@ export async function GET(req: NextRequest) {
       query = query.eq('status', status)
     }
     if (paymentMethod) {
-      query = query.eq('payment_method', paymentMethod)
+      query = query.eq('paymentMethod', paymentMethod)
     }
 
     const { data: redemptions, error } = await query.order('created_at', { ascending: false })

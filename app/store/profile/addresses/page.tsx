@@ -90,9 +90,10 @@ export default function AddressesPage() {
       setEditingId(null)
     } else {
       // Add new address
+      const { id, ...addressData } = formData as Address
       const newAddress: Address = {
         id: Date.now().toString(),
-        ...formData as Address,
+        ...addressData,
         isDefault: addresses.length === 0
       }
       setAddresses(prev => [...prev, newAddress])
@@ -382,3 +383,4 @@ export default function AddressesPage() {
     </div>
   )
 }
+

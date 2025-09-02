@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     const statsAfter = await getReplicationStats()
     
     // Log audit
-    await audit('replication_job_executed', 'system', userId, {
+    await audit('replication_job_executed', 'system', userId, undefined, {
       companyId,
       processed: result.processed,
       successful: result.successful,
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     
     // Log error
     try {
-      await audit('replication_job_error', 'system', undefined, {
+      await audit('replication_job_error', 'system', 'system', undefined, {
         error: message,
         stack: error?.stack
       })
