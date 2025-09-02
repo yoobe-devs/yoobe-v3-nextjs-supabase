@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { supabaseServiceKey as supabaseAdmin } from '@/lib/supabase-admin'
 import { CatalogScraper } from '@/lib/services/catalog-scraper'
 
 export async function POST(request: NextRequest) {

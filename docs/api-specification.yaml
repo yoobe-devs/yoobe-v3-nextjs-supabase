@@ -1,0 +1,721 @@
+openapi: 3.0.3
+info:
+  title: Yoobe V3 API - Sistema de Orçamentos e Replicação
+  description: |
+    API para gerenciamento de orçamentos e replicação de produtos base.
+    
+    ## Fluxo de Orçamento → Aprovação → Replicação
+    
+    1. **Gestor** cria orçamento com produtos desejados
+    2. **Admin Global** aprova ou rejeita o orçamento
+    3. **Gestor** pode replicar produtos apenas após aprovação
+    4. **Gestor** gerencia produtos replicados (ativar/inativar, editar)
+    
+    ## Autenticação
+    
+    Todas as rotas requerem autenticação via Bearer Token.
+    - Role `admin`: Acesso total ao sistema
+    - Role `manager`: Acesso limitado às funcionalidades de gestor
+    - Role `user`: Acesso apenas a funcionalidades básicas
+    
+  version: 2.1.0
+  contact:
+    name: Yoobe Team
+    email: support@yoobe.co
+
+servers:
+  - url: http://localhost:3000
+    description: Servidor de Desenvolvimento
+  - url: https://api.yoobe.co
+    description: Servidor de Produção
+
+security:
+  - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Budget:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único do orçamento
+        title:
+          type: string
+          description: Título do orçamento
+        description:
+          type: string
+          description: Descrição detalhada
+        status:
+          type: string
+          enum: [pending, approved, rejected]
+          description: Status atual do orçamento
+        total_amount:
+          type: number
+          format: float
+          description: Valor total do orçamento
+        company_id:
+          type: string
+          format: uuid
+          description: ID da empresa do gestor
+        manager_id:
+          type: string
+          format: uuid
+          description: ID do gestor
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+        reviewed_by:
+          type: string
+          format: uuid
+          nullable: true
+        admin_notes:
+          type: string
+          nullable: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/BudgetItem'
+
+    BudgetItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        budget_id:
+          type: string
+          format: uuid
+        base_product_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+        custom_price:
+          type: number
+          format: float
+        notes:
+          type: string
+          nullable: true
+        base_product:
+          $ref: '#/components/schemas/BaseProduct'
+
+    BaseProduct:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        base_price:
+          type: number
+          format: float
+        base_points_cost:
+          type: integer
+        image_url:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive]
+        category_id:
+          type: string
+          format: uuid
+          nullable: true
+
+    CompanyProduct:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+          format: float
+        points_cost:
+          type: integer
+        stock_quantity:
+          type: integer
+        is_active:
+          type: boolean
+        company_id:
+          type: string
+          format: uuid
+        base_product_id:
+          type: string
+          format: uuid
+        budget_id:
+          type: string
+          format: uuid
+        approved_at:
+          type: string
+          format: date-time
+        approved_by:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Mensagem de erro
+        code:
+          type: string
+          description: Código de erro (opcional)
+        details:
+          type: object
+          description: Detalhes adicionais do erro
+
+paths:
+  # ========================================
+  # GESTOR - ORÇAMENTOS
+  # ========================================
+  
+  /api/gestor/orcamentos:
+    get:
+      summary: Listar orçamentos do gestor
+      description: Retorna todos os orçamentos criados pelo gestor autenticado
+      tags: [Gestor - Orçamentos]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+          description: Filtrar por status
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Número da página
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+          description: Itens por página
+      responses:
+        '200':
+          description: Lista de orçamentos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  budgets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Budget'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+        '401':
+          description: Não autorizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Acesso negado - Role insuficiente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Criar novo orçamento
+      description: Cria um novo orçamento com produtos selecionados
+      tags: [Gestor - Orçamentos]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - items
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                description:
+                  type: string
+                  maxLength: 1000
+                items:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required:
+                      - base_product_id
+                      - quantity
+                    properties:
+                      base_product_id:
+                        type: string
+                        format: uuid
+                      quantity:
+                        type: integer
+                        minimum: 1
+                      custom_price:
+                        type: number
+                        format: float
+                        minimum: 0
+                      notes:
+                        type: string
+                        maxLength: 500
+      responses:
+        '201':
+          description: Orçamento criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  budget:
+                    $ref: '#/components/schemas/Budget'
+                  message:
+                    type: string
+        '400':
+          description: Dados inválidos
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Acesso negado - Role insuficiente
+
+  # ========================================
+  # GESTOR - PRODUTOS BASE
+  # ========================================
+  
+  /api/gestor/base-products:
+    get:
+      summary: Listar produtos base disponíveis
+      description: Retorna produtos base que podem ser replicados
+      tags: [Gestor - Produtos Base]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Termo de busca
+        - name: category
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filtrar por categoria
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de produtos base
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/BaseProduct'
+                        - type: object
+                          properties:
+                            is_replicated:
+                              type: boolean
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+
+    post:
+      summary: Replicar produto base
+      description: Replica um produto base para a loja do gestor (requer orçamento aprovado)
+      tags: [Gestor - Produtos Base]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - base_product_id
+              properties:
+                base_product_id:
+                  type: string
+                  format: uuid
+                custom_price:
+                  type: number
+                  format: float
+                  minimum: 0
+                custom_points_cost:
+                  type: integer
+                  minimum: 0
+                custom_stock_quantity:
+                  type: integer
+                  minimum: 0
+                custom_description:
+                  type: string
+                  maxLength: 1000
+      responses:
+        '201':
+          description: Produto replicado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company_product:
+                    $ref: '#/components/schemas/CompanyProduct'
+                  message:
+                    type: string
+        '403':
+          description: Orçamento não aprovado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # ========================================
+  # GESTOR - PRODUTOS REPLICADOS
+  # ========================================
+  
+  /api/gestor/produtos:
+    get:
+      summary: Listar produtos replicados
+      description: Retorna produtos replicados da loja do gestor
+      tags: [Gestor - Produtos Replicados]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive]
+          description: Filtrar por status ativo/inativo
+        - name: search
+          in: query
+          schema:
+            type: string
+          description: Termo de busca
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de produtos replicados
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CompanyProduct'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+
+  /api/gestor/produtos/{id}:
+    patch:
+      summary: Atualizar produto replicado
+      description: Atualiza informações permitidas do produto replicado
+      tags: [Gestor - Produtos Replicados]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                price:
+                  type: number
+                  format: float
+                  minimum: 0
+                points_cost:
+                  type: integer
+                  minimum: 0
+                stock_quantity:
+                  type: integer
+                  minimum: 0
+                description:
+                  type: string
+                  maxLength: 1000
+      responses:
+        '200':
+          description: Produto atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company_product:
+                    $ref: '#/components/schemas/CompanyProduct'
+                  message:
+                    type: string
+        '403':
+          description: Produto não pertence ao gestor
+        '404':
+          description: Produto não encontrado
+
+  /api/gestor/produtos/{id}/status:
+    patch:
+      summary: Ativar/Inativar produto
+      description: Altera o status ativo/inativo do produto replicado
+      tags: [Gestor - Produtos Replicados]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - is_active
+              properties:
+                is_active:
+                  type: boolean
+                  description: Status ativo/inativo do produto
+      responses:
+        '200':
+          description: Status atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  company_product:
+                    $ref: '#/components/schemas/CompanyProduct'
+                  message:
+                    type: string
+        '403':
+          description: Produto não pertence ao gestor
+        '404':
+          description: Produto não encontrado
+
+  # ========================================
+  # ADMIN - ORÇAMENTOS
+  # ========================================
+  
+  /api/admin/orcamentos:
+    get:
+      summary: Listar todos os orçamentos
+      description: Retorna todos os orçamentos recebidos (apenas Admin Global)
+      tags: [Admin - Orçamentos]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, approved, rejected]
+          description: Filtrar por status
+        - name: company_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filtrar por empresa
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Lista de orçamentos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  budgets:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Budget'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      totalPages:
+                        type: integer
+        '401':
+          description: Não autorizado
+        '403':
+          description: Acesso negado - Apenas Admin Global
+
+  /api/admin/orcamentos/{id}/approve:
+    post:
+      summary: Aprovar ou rejeitar orçamento
+      description: Aprova ou rejeita um orçamento (apenas Admin Global)
+      tags: [Admin - Orçamentos]
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - action
+                - admin_notes
+              properties:
+                action:
+                  type: string
+                  enum: [approve, reject]
+                  description: Ação a ser executada
+                admin_notes:
+                  type: string
+                  minLength: 1
+                  maxLength: 1000
+                  description: Observações obrigatórias do admin
+      responses:
+        '200':
+          description: Orçamento processado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  budget:
+                    $ref: '#/components/schemas/Budget'
+                  message:
+                    type: string
+        '400':
+          description: Dados inválidos ou orçamento não está pendente
+        '401':
+          description: Não autorizado
+        '403':
+          description: Acesso negado - Apenas Admin Global
+        '404':
+          description: Orçamento não encontrado
+
+tags:
+  - name: Gestor - Orçamentos
+    description: Endpoints para gestão de orçamentos pelo gestor
+  - name: Gestor - Produtos Base
+    description: Endpoints para visualização e replicação de produtos base
+  - name: Gestor - Produtos Replicados
+    description: Endpoints para gestão de produtos replicados na loja do gestor
+  - name: Admin - Orçamentos
+    description: Endpoints para gestão de orçamentos pelo Admin Global

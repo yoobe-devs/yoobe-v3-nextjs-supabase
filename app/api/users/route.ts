@@ -1,147 +1,159 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
-import { supabaseServiceKey } from '@/lib/supabase-admin'
+import { requireUser } from '@/lib/auth'
+import { requireRole } from '@/lib/rbac'
+import { UserSchema } from '@/lib/validation'
+import { audit } from '@/lib/audit'
+import { createClient } from '@supabase/supabase-js'
 
-// GET - Listar usuários
-export async function GET(request: NextRequest) {
+const service = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+export async function POST(req: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
+    const { userId, companyId } = await requireUser()
     
-    // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+    // Verificar se usuário tem permissão para criar usuários
+    const canCreate = await requireRole(userId, companyId, 'gestor')
+    if (!canCreate) {
+      await audit('user_creation_denied', 'users', userId, undefined, { companyId, reason: 'insufficient_permissions' })
+      return NextResponse.json(
+        { success: false, error: 'Permissão insuficiente para criar usuários' },
+        { status: 403 }
+      )
     }
 
-    const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '10')
-    const search = searchParams.get('search') || ''
-    const role = searchParams.get('role') || ''
-
-    let query = supabase
-      .from('users')
-      .select('*', { count: 'exact' })
-
-    // Aplicar filtros
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,email.ilike.%${search}%`)
-    }
-    if (role) {
-      query = query.eq('role', role)
-    }
-
-    // Paginação
-    const from = (page - 1) * limit
-    const to = from + limit - 1
-
-    const { data, error, count } = await query
-      .range(from, to)
-      .order('created_at', { ascending: false })
-
-    if (error) {
-      console.error('Erro ao buscar usuários:', error)
-      return NextResponse.json({ error: 'Erro ao buscar usuários' }, { status: 500 })
-    }
-
-    return NextResponse.json({
-      users: data,
-      pagination: {
-        page,
-        limit,
-        total: count || 0,
-        totalPages: Math.ceil((count || 0) / limit)
-      }
-    })
-
-  } catch (error) {
-    console.error('Erro na API de usuários:', error)
-    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
-  }
-}
-
-// POST - Criar usuário
-export async function POST(request: NextRequest) {
-  try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
-    // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    }
-
-    const body = await request.json()
-    const { name, email, role, company_id, department, position, password } = body
-
-    // Validações
-    if (!name || !email || !role) {
-      return NextResponse.json({ error: 'Nome, email e role são obrigatórios' }, { status: 400 })
-    }
+    const body = await req.json()
+    const userData = UserSchema.parse(body)
 
     // Verificar se email já existe
-    const { data: existingUser } = await supabase
+    const { data: existingUser, error: checkError } = await service
       .from('users')
       .select('id')
-      .eq('email', email)
+      .eq('email', userData.email)
       .single()
 
     if (existingUser) {
-      return NextResponse.json({ error: 'Email já cadastrado' }, { status: 409 })
+      await audit('user_creation_failed', 'users', userId, undefined, { companyId, reason: 'email_already_exists', email: userData.email })
+      return NextResponse.json(
+        { success: false, error: 'Email já cadastrado' },
+        { status: 409 }
+      )
     }
 
-    // Gerar senha aleatória se não fornecida
-    const userPassword = password || Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8)
-
-    // Criar usuário no Supabase Auth
-    const { data: authUser, error: createAuthError } = await supabaseServiceKey.auth.admin.createUser({
-      email,
-      password: userPassword,
-      email_confirm: true,
-      user_metadata: {
-        name,
-        role,
-        company_id
-      }
-    })
-
-    if (createAuthError) {
-      console.error('Erro ao criar usuário no Auth:', createAuthError)
-      return NextResponse.json({ error: 'Erro ao criar usuário no sistema de autenticação' }, { status: 500 })
-    }
-
-    // Criar usuário na tabela users
-    const { data, error } = await supabase
+    // Criar usuário
+    const { data: user, error } = await service
       .from('users')
       .insert({
-        id: authUser.user.id,
-        name,
-        email,
-        role,
-        company_id,
-        department,
-        position,
-        status: 'active'
+        email: userData.email,
+        name: userData.name,
+        surname: userData.surname,
+        phone: userData.phone,
+        tax_id: userData.tax_id,
+        fiscal_regime: userData.fiscal_regime,
+        role: userData.role || 'funcionario',
+        status: userData.status || 'active'
       })
       .select()
       .single()
 
     if (error) {
-      console.error('Erro ao criar usuário na tabela:', error)
-      // Tentar deletar o usuário do Auth se falhar na tabela
-      await supabaseServiceKey.auth.admin.deleteUser(authUser.user.id)
-      return NextResponse.json({ error: 'Erro ao criar usuário' }, { status: 500 })
+      await audit('user_creation_failed', 'users', userId, undefined, { companyId, error: error.message })
+      return NextResponse.json(
+        { success: false, error: 'Erro ao criar usuário' },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ 
-      user: data, 
-      message: 'Usuário criado com sucesso',
-      password: !password ? userPassword : undefined // Retornar senha gerada apenas se não foi fornecida
-    })
+    // Criar role na empresa
+    const { error: roleError } = await service
+      .from('user_company_roles')
+      .insert({
+        user_id: user.id,
+        company_id: companyId,
+        role: userData.role || 'funcionario'
+      })
 
-  } catch (error) {
-    console.error('Erro na API de usuários:', error)
-    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
+    if (roleError) {
+      // Rollback: deletar usuário criado
+      await service.from('users').delete().eq('id', user.id)
+      await audit('user_creation_failed', 'users', userId, undefined, { companyId, error: 'role_creation_failed' })
+      return NextResponse.json(
+        { success: false, error: 'Erro ao associar usuário à empresa' },
+        { status: 500 }
+      )
+    }
+
+    await audit('user_created', 'users', userId, user.id, { companyId, userRole: userData.role })
+    
+    return NextResponse.json({ success: true, data: user }, { status: 201 })
+  } catch (error: any) {
+    console.error('Error creating user:', error)
+    await audit('user_creation_error', 'users', 'system', undefined, { error: error.message })
+    return NextResponse.json(
+      { success: false, error: 'Erro interno do servidor' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { userId, companyId } = await requireUser()
+    
+    // Verificar se usuário tem permissão para listar usuários
+    const canRead = await requireRole(userId, companyId, 'gestor')
+    if (!canRead) {
+      await audit('users_list_denied', 'users', userId, undefined, { companyId, reason: 'insufficient_permissions' })
+      return NextResponse.json(
+        { success: false, error: 'Permissão insuficiente para listar usuários' },
+        { status: 403 }
+      )
+    }
+
+    const searchParams = req.nextUrl.searchParams
+    const role = searchParams.get('role')
+    const status = searchParams.get('status')
+    const search = searchParams.get('search')
+
+    let query = service
+      .from('users')
+      .select(`
+        *,
+        user_company_roles!inner(role, company_id)
+      `)
+      .eq('user_company_roles.company_id', companyId)
+
+    if (role) {
+      query = query.eq('user_company_roles.role', role)
+    }
+    if (status) {
+      query = query.eq('status', status)
+    }
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,surname.ilike.%${search}%,email.ilike.%${search}%`)
+    }
+
+    const { data: users, error } = await query.order('created_at', { ascending: false })
+
+    if (error) {
+      await audit('users_list_error', 'users', userId, undefined, { companyId, error: error.message })
+      return NextResponse.json(
+        { success: false, error: 'Erro ao buscar usuários' },
+        { status: 500 }
+      )
+    }
+
+    await audit('users_listed', 'users', userId, undefined, { companyId, count: users?.length || 0 })
+    
+    return NextResponse.json({ success: true, data: users || [] })
+  } catch (error: any) {
+    console.error('Error listing users:', error)
+    await audit('users_list_error', 'users', 'system', undefined, { error: error.message })
+    return NextResponse.json(
+      { success: false, error: 'Erro interno do servidor' },
+      { status: 500 }
+    )
   }
 }

@@ -110,12 +110,12 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert notifications
-INSERT INTO notifications (id, user_id, type, title, message, action_url, is_read)
+INSERT INTO notifications (id, user_id, company_id, type, title, message, data, is_read)
 VALUES 
-    ('550e8400-e29b-41d4-a716-446655440070', '550e8400-e29b-41d4-a716-446655440010', 'success', 'Pedido Entregue', 'Seu pedido #ORD-001 foi entregue com sucesso!', '/pedidos', false),
-    ('550e8400-e29b-41d4-a716-446655440071', '550e8400-e29b-41d4-a716-446655440011', 'info', 'Novo Produto', 'Nova mochila corporativa disponível na loja!', '/produtos', false),
-    ('550e8400-e29b-41d4-a716-446655440072', '550e8400-e29b-41d4-a716-446655440012', 'warning', 'Pontos Expiram', 'Seus pontos expiram em 30 dias. Aproveite!', '/pontos', true),
-    ('550e8400-e29b-41d4-a716-446655440073', '550e8400-e29b-41d4-a716-446655440014', 'success', 'Pedido Confirmado', 'Seu pedido #ORD-004 foi confirmado e está sendo preparado.', '/pedidos', false)
+    ('550e8400-e29b-41d4-a716-446655440070', '550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440002', 'pedido', 'Pedido Entregue', 'Seu pedido #ORD-001 foi entregue com sucesso!', '{"order_id": "550e8400-e29b-41d4-a716-446655440050"}', false),
+    ('550e8400-e29b-41d4-a716-446655440071', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440002', 'estoque', 'Novo Produto', 'Nova mochila corporativa disponível na loja!', '{"product_id": "550e8400-e29b-41d4-a716-446655440031"}', false),
+    ('550e8400-e29b-41d4-a716-446655440072', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440003', 'resgate', 'Pontos Expiram', 'Seus pontos expiram em 30 dias. Aproveite!', '{"points_balance": 800}', true),
+    ('550e8400-e29b-41d4-a716-446655440073', '550e8400-e29b-41d4-a716-446655440014', '550e8400-e29b-41d4-a716-446655440002', 'pedido', 'Pedido Confirmado', 'Seu pedido #ORD-004 foi confirmado e está sendo preparado.', '{"order_id": "550e8400-e29b-41d4-a716-446655440053"}', false)
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert points transactions

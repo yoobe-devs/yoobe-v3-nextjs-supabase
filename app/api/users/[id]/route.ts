@@ -87,7 +87,7 @@ export async function PUT(
     }
 
     // Atualizar usuário na tabela
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServiceKey
       .from('users')
       .update({
         name,
@@ -144,7 +144,7 @@ export async function DELETE(
     }
 
     // Excluir usuário da tabela
-    const { error } = await supabase
+    const { error } = await supabaseServiceKey
       .from('users')
       .delete()
       .eq('id', params.id)

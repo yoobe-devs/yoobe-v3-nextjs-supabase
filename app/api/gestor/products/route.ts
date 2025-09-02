@@ -3,10 +3,15 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
-const supabaseUrl = 'http://localhost:54321'
-const serviceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
 
 const supabaseService = createClient(supabaseUrl, serviceKey)
+
+function isValidUuid(value: unknown): value is string {
+  return typeof value === 'string' && /^[0-9a-fA-F-]{36}$/.test(value)
+}
+const DEV_TEST_COMPANY_ID = '00000000-0000-0000-0000-000000000001'
 
 // GET - Buscar produtos da empresa do gestor
 export async function GET() {
@@ -19,22 +24,18 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
-    // Buscar dados do usuário usando service role
-    const { data: userData, error: userError } = await supabaseService
-      .from('users')
-      .select('company_id, role, store_id')
-      .eq('id', user.id)
-      .single()
+    // Pegar dados de role e ids do token (user_metadata)
+    const role = user.user_metadata?.role
+    const companyIdRaw = user.user_metadata?.company_id
+    const storeId = user.user_metadata?.store_id
 
-    if (userError || !userData) {
-      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-    }
-
-    if (userData.role !== 'manager') {
+    if (role !== 'manager') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
-    // Buscar produtos da loja usando service role
+    const company_id = isValidUuid(companyIdRaw) ? companyIdRaw : DEV_TEST_COMPANY_ID
+
+    // Buscar produtos da empresa usando service role
     const { data: products, error: productsError } = await supabaseService
       .from('company_products')
       .select(`
@@ -52,7 +53,7 @@ export async function GET() {
           base_points_cost
         )
       `)
-      .eq('store_id', userData.store_id)
+      .eq('company_id', company_id)
       .order('created_at', { ascending: false })
 
     if (productsError) {
@@ -78,20 +79,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
 
-    // Buscar dados do usuário usando service role
-    const { data: userData, error: userError } = await supabaseService
-      .from('users')
-      .select('company_id, role, store_id')
-      .eq('id', user.id)
-      .single()
-
-    if (userError || !userData) {
-      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-    }
-
-    if (userData.role !== 'manager') {
+    const role = user.user_metadata?.role
+    const companyIdRaw = user.user_metadata?.company_id
+    const storeId = user.user_metadata?.store_id
+    if (role !== 'manager') {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
+
+    const company_id = isValidUuid(companyIdRaw) ? companyIdRaw : DEV_TEST_COMPANY_ID
 
     const body = await request.json()
     const {
@@ -117,8 +112,8 @@ export async function POST(request: NextRequest) {
         image_url,
         category_id,
         base_product_id,
-        company_id: userData.company_id,
-        store_id: userData.store_id,
+        company_id,
+        store_id: storeId,
         status: 'active'
       })
       .select()

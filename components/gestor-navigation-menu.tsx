@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/components/auth/auth-provider-simple"
 import { YoobeLogo } from "@/components/ui/yoobe-logo"
+import { NotificationBell } from "@/components/notifications/notification-bell"
 import { 
   LayoutDashboard, 
   Users, 
@@ -124,12 +125,15 @@ export function GestorNavigationMenu() {
   return (
     <div className="flex h-screen flex-col border-r bg-white">
       <div className="p-6">
-        <Link href="/gestor/dashboard">
-          <div className="flex items-center space-x-2">
-            <YoobeLogo size={40} />
-            <span className="font-bold text-xl">Gestor</span>
-          </div>
-        </Link>
+        <div className="flex items-center justify-between">
+          <Link href="/gestor/dashboard">
+            <div className="flex items-center space-x-2">
+              <YoobeLogo size={40} />
+              <span className="font-bold text-xl">Gestor</span>
+            </div>
+          </Link>
+          <NotificationBell />
+        </div>
       </div>
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-4 text-sm font-medium">

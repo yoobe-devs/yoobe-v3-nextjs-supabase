@@ -129,7 +129,8 @@ export default function LoginPage() {
               <div className="mt-4 space-y-2 text-xs text-gray-600">
                 <p><strong>Admin:</strong> admin@yoobe.com / admin123</p>
                 <p><strong>Gestor:</strong> gestor.join.tech@jointecnologia.com.br / gestor123</p>
-                <p><strong>Funcionário:</strong> maria.santos@jointecnologia.com.br / maria123</p>
+                <p><strong>Funcionário 1:</strong> funcionario1@jointecnologia.com.br / user123</p>
+                <p><strong>Funcionário 2:</strong> funcionario2@jointecnologia.com.br / user123</p>
               </div>
             </div>
           </CardContent>

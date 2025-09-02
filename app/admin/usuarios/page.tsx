@@ -72,33 +72,21 @@ export default function AdminUsuariosPage() {
   const fetchUsers = async () => {
     try {
       setLoading(true)
-      
-      let query = supabase
-        .from('users')
-        .select(`
-          *,
-          company:companies(name)
-        `)
-        .order('created_at', { ascending: false })
-
-      const { data, error } = await query
-
-      if (error) {
-        console.error('Erro ao buscar usuários:', error)
-        toast.error('Erro ao carregar usuários')
-        return
+      const res = await fetch('/api/admin/users')
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || 'Erro ao carregar usuários')
       }
-
-      // Adicionar contagem de pedidos (mockado por enquanto)
-      const usersWithOrders = data?.map(user => ({
-        ...user,
-        orders_count: Math.floor(Math.random() * 20) + 1 // Mock data
-      })) || []
-
+      const data = await res.json()
+      const list = Array.isArray(data) ? data : (data.users || [])
+      const usersWithOrders = list.map((u: any) => ({
+        ...u,
+        orders_count: Math.floor(Math.random() * 20) + 1
+      }))
       setUsers(usersWithOrders)
     } catch (error) {
       console.error('Erro ao buscar usuários:', error)
-      toast.error('Erro ao carregar usuários')
+      toast.error(error instanceof Error ? error.message : 'Erro ao carregar usuários')
     } finally {
       setLoading(false)
     }
@@ -146,12 +134,13 @@ export default function AdminUsuariosPage() {
       }
 
       // Criar usuário via API
-      const response = await fetch('/api/users', {
+      const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          full_name: name,
           name,
           email,
           role,

@@ -14,7 +14,7 @@ async function testFrontendLogin() {
     
     // Acessar página de login
     console.log('📱 Acessando página de login...')
-    await page.goto('http://localhost:3000/auth/login')
+    await page.goto('http://localhost:3001/auth/login')
     await page.waitForSelector('form')
     
     // Preencher credenciais do admin
@@ -24,11 +24,14 @@ async function testFrontendLogin() {
     
     // Clicar no botão de login
     console.log('🔘 Clicando no botão de login...')
-    await page.click('button[type="submit"]')
+    await Promise.all([
+      page.click('button[type="submit"]'),
+      page.waitForNavigation({ waitUntil: 'networkidle0', timeout: 15000 }).catch(() => {})
+    ])
     
     // Aguardar redirecionamento ou erro
     console.log('⏳ Aguardando resposta...')
-    await page.waitForTimeout(3000)
+    await new Promise(resolve => setTimeout(resolve, 1000))
     
     // Verificar se foi redirecionado
     const currentUrl = page.url()

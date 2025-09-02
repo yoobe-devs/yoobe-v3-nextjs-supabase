@@ -18,9 +18,14 @@ import {
   Search,
   Filter,
   Eye,
-  Loader2
+  Loader2,
+  DollarSign,
+  ShoppingCart,
+  ToggleLeft,
+  ToggleRight
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 interface Product {
   id: string
@@ -33,6 +38,8 @@ interface Product {
   status: string
   category_id: string
   base_product_id: string
+  is_active: boolean
+  status_fluxo: 'orcamento_aprovado' | 'em_producao' | 'enviado_logistica' | 'disponivel'
   product_categories: {
     id: string
     name: string
@@ -63,6 +70,7 @@ interface BaseProduct {
 
 export default function ProdutosPage() {
   const { user } = useAuth()
+  const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [baseProducts, setBaseProducts] = useState<BaseProduct[]>([])
@@ -148,20 +156,20 @@ export default function ProdutosPage() {
     }
   }
 
-  const handleUpdateProduct = async (formData: FormData) => {
+  const handleUpdateProduct = async (productId: string) => {
     if (!editingProduct) return
 
     try {
       setUpdatingProduct(true)
       
-      const name = formData.get('name') as string
-      const description = formData.get('description') as string
-      const price = parseFloat(formData.get('price') as string) || 0
-      const points_cost = parseInt(formData.get('points_cost') as string) || 0
-      const stock_quantity = parseInt(formData.get('stock_quantity') as string) || 0
-      const image_url = formData.get('image_url') as string
-      const category_id = formData.get('category_id') as string
-      const status = formData.get('status') as string
+      const name = editingProduct.name // Assuming editingProduct is the product being edited
+      const description = editingProduct.description
+      const price = editingProduct.price
+      const points_cost = editingProduct.points_cost
+      const stock_quantity = editingProduct.stock_quantity
+      const image_url = editingProduct.image_url
+      const category_id = editingProduct.category_id
+      const status = editingProduct.status
 
       // Validações
       if (!name || price <= 0) {
@@ -170,7 +178,7 @@ export default function ProdutosPage() {
       }
 
       // Atualizar produto via API
-      const response = await fetch(`/api/gestor/products/${editingProduct.id}`, {
+      const response = await fetch(`/api/gestor/products/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -225,6 +233,21 @@ export default function ProdutosPage() {
     } catch (error) {
       console.error('Erro ao excluir produto:', error)
       toast.error('Erro ao excluir produto')
+    }
+  }
+
+  const getStatusFluxoBadge = (statusFluxo: string) => {
+    switch (statusFluxo) {
+      case 'orcamento_aprovado':
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Orçamento Aprovado</Badge>
+      case 'em_producao':
+        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Em Produção</Badge>
+      case 'enviado_logistica':
+        return <Badge variant="outline" className="bg-orange-50 text-orange-700 border-orange-200">Enviado Logística</Badge>
+      case 'disponivel':
+        return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Disponível</Badge>
+      default:
+        return <Badge variant="outline">{statusFluxo}</Badge>
     }
   }
 
@@ -494,6 +517,15 @@ export default function ProdutosPage() {
                       </Badge>
                     </div>
                   )}
+                  <div className="flex justify-between text-sm items-center">
+                    <span className="text-gray-500">Status:</span>
+                    <div className="flex flex-col gap-1">
+                      {getStatusFluxoBadge(product.status_fluxo)}
+                      <Badge variant={product.is_active ? 'default' : 'secondary'} className="text-xs">
+                        {product.is_active ? 'Ativo na Loja' : 'Inativo na Loja'}
+                      </Badge>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -503,13 +535,27 @@ export default function ProdutosPage() {
         {filteredProducts.length === 0 && (
           <div className="text-center py-12">
             <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum produto encontrado</h3>
-            <p className="text-gray-600">
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {searchTerm || selectedCategory 
+                ? 'Nenhum produto encontrado' 
+                : 'Nenhum produto disponível ainda'
+              }
+            </h3>
+            <p className="text-gray-600 mb-4">
               {searchTerm || selectedCategory 
                 ? 'Tente ajustar os filtros de busca' 
-                : 'Comece adicionando seu primeiro produto'
+                : 'Para começar a usar, solicite um orçamento com os produtos do catálogo base.'
               }
             </p>
+            {!searchTerm && !selectedCategory && (
+              <Button 
+                onClick={() => router.push('/gestor/orcamentos/novo')}
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Solicitar Orçamento
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -523,7 +569,7 @@ export default function ProdutosPage() {
             <h2 className="text-xl font-bold mb-4">Editar Produto</h2>
             <form onSubmit={(e) => {
               e.preventDefault()
-              handleUpdateProduct(new FormData(e.currentTarget))
+              handleUpdateProduct(editingProduct.id)
             }}>
               <div className="space-y-4">
                 <div>

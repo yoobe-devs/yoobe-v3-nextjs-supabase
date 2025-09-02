@@ -5,10 +5,9 @@ import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { ImageUpload } from '@/components/ui/image-upload'
 import { 
   ArrowLeft, 
   Save, 
@@ -17,39 +16,45 @@ import {
   AlertCircle
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuth } from '@/components/auth/auth-provider-simple'
+
+interface BaseProduct {
+  id: string
+  name: string
+  description: string
+  category_id: string
+  base_price: number
+  base_points_cost: number
+  image_url: string
+  specifications: any
+  status: string
+  product_categories?: {
+    id: string
+    name: string
+    description: string
+    icon: string
+    color: string
+  }
+}
 
 interface Category {
   id: string
   name: string
-}
-
-interface Company {
-  id: string
-  name: string
-}
-
-interface Product {
-  id: string
-  name: string
   description: string
-  price: number
-  points_cost: number
-  stock_quantity: number
-  image_url?: string
-  status: string
-  category_id?: string
-  company_id: string
-  created_at: string
+  icon: string
+  color: string
 }
 
 export default function EditProductPage() {
   const params = useParams() as { id?: string }
   const router = useRouter()
   const id = params?.id as string
+  const { user, loading: authLoading } = useAuth()
+  
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [categories, setCategories] = useState<Category[]>([])
-  const [companies, setCompanies] = useState<Company[]>([])
+  const [product, setProduct] = useState<BaseProduct | null>(null)
 
   // Form state
   const [formData, setFormData] = useState({
@@ -59,43 +64,44 @@ export default function EditProductPage() {
     points_cost: '',
     stock_quantity: '',
     category_id: '',
-    company_id: '',
     image_url: '',
     status: 'active'
   })
 
   useEffect(() => {
-    if (!id) {
+    if (!authLoading && user && id) {
+      loadProduct()
+      loadCategories()
+    } else if (!authLoading && !user) {
+      // Usuário não autenticado será tratado pelo ProtectedRoute
       setLoading(false)
-      return
     }
-    loadProduct()
-    loadCategories()
-    loadCompanies()
-  }, [id])
+  }, [id, user, authLoading])
 
   const loadProduct = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`/api/products/${id}`)
+      const response = await fetch(`/api/base-products/${id}`)
       
       if (response.ok) {
-        const data = await response.json()
-        const product = data.product
+        const productData: BaseProduct = await response.json()
+        setProduct(productData)
         
         setFormData({
-          name: product.name || '',
-          description: product.description || '',
-          price: product.price?.toString() || '0',
-          points_cost: product.points_cost?.toString() || '0',
-          stock_quantity: product.stock_quantity?.toString() || '0',
-          category_id: product.category_id || '',
-          company_id: product.company_id || '',
-          image_url: product.image_url || '',
-          status: product.status || 'active'
+          name: productData.name || '',
+          description: productData.description || '',
+          price: productData.base_price?.toString() || '0',
+          points_cost: productData.base_points_cost?.toString() || '0',
+          stock_quantity: productData.specifications?.stock_available?.toString() || '0',
+          category_id: productData.category_id || '',
+          image_url: productData.image_url || '',
+          status: productData.status || 'active'
         })
+      } else if (response.status === 404) {
+        toast.error('Produto não encontrado')
+        router.push('/admin/produtos')
       } else {
-        throw new Error('Produto não encontrado')
+        throw new Error('Erro ao carregar produto')
       }
     } catch (error) {
       console.error('Erro ao carregar produto:', error)
@@ -111,22 +117,10 @@ export default function EditProductPage() {
       const response = await fetch('/api/categories')
       if (response.ok) {
         const data = await response.json()
-        setCategories(data.categories || [])
+        setCategories(Array.isArray(data) ? data : [])
       }
     } catch (error) {
       console.error('Erro ao carregar categorias:', error)
-    }
-  }
-
-  const loadCompanies = async () => {
-    try {
-      const response = await fetch('/api/companies')
-      if (response.ok) {
-        const data = await response.json()
-        setCompanies(data.companies || [])
-      }
-    } catch (error) {
-      console.error('Erro ao carregar empresas:', error)
     }
   }
 
@@ -140,7 +134,7 @@ export default function EditProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.name || !formData.description || !formData.company_id) {
+    if (!formData.name || !formData.description) {
       toast.error('Preencha todos os campos obrigatórios')
       return
     }
@@ -151,16 +145,18 @@ export default function EditProductPage() {
       const productData = {
         name: formData.name,
         description: formData.description,
-        price: parseFloat(formData.price) || 0,
-        points_cost: parseInt(formData.points_cost) || 0,
-        stock_quantity: parseInt(formData.stock_quantity) || 0,
+        base_price: parseFloat(formData.price) || 0,
+        base_points_cost: parseInt(formData.points_cost) || 0,
         category_id: formData.category_id || null,
-        company_id: formData.company_id,
         image_url: formData.image_url || null,
-        status: formData.status
+        status: formData.status,
+        specifications: {
+          ...product?.specifications,
+          stock_available: parseInt(formData.stock_quantity) || 0
+        }
       }
 
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`/api/base-products/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -168,31 +164,59 @@ export default function EditProductPage() {
         body: JSON.stringify(productData),
       })
 
-      const result = await response.json()
-
       if (response.ok) {
         toast.success('Produto atualizado com sucesso!')
         router.push('/admin/produtos')
       } else {
-        throw new Error(result.error || 'Erro ao atualizar produto')
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Erro ao atualizar produto')
       }
     } catch (error) {
       console.error('Erro ao atualizar produto:', error)
-      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar produto')
+      toast.error('Erro ao atualizar produto')
     } finally {
       setSubmitting(false)
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center h-64">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p>Carregando produto...</p>
-            </div>
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-blue-600" />
+            <p className="mt-2 text-sm text-gray-600">
+              {authLoading ? 'Verificando autenticação...' : 'Carregando produto...'}
+            </p>
+            <p className="mt-1 text-xs text-gray-500">ID: {id}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <AlertCircle className="h-8 w-8 mx-auto text-red-600" />
+            <p className="mt-2 text-sm text-gray-600">Acesso não autorizado</p>
+            <p className="mt-1 text-xs text-gray-500">ID: {id}</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="container mx-auto p-6">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <AlertCircle className="h-8 w-8 mx-auto text-orange-600" />
+            <p className="mt-2 text-sm text-gray-600">Produto não encontrado</p>
+            <p className="mt-1 text-xs text-gray-500">ID: {id}</p>
           </div>
         </div>
       </div>
@@ -200,230 +224,208 @@ export default function EditProductPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => router.push('/admin/produtos')}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Voltar aos Produtos
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Form */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Package className="h-5 w-5" />
-                  Editar Produto
-                </CardTitle>
-                <CardDescription>
-                  Atualize as informações do produto
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Nome */}
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Nome do Produto *</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      placeholder="Ex: Camiseta Corporativa"
-                      required
-                    />
-                  </div>
-
-                  {/* Descrição */}
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Descrição *</Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
-                      placeholder="Descreva o produto..."
-                      rows={3}
-                      required
-                    />
-                  </div>
-
-                  {/* Preço e Pontos */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="price">Preço (R$)</Label>
-                      <Input
-                        id="price"
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        value={formData.price}
-                        onChange={(e) => handleInputChange('price', e.target.value)}
-                        placeholder="0.00"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="points_cost">Pontos</Label>
-                      <Input
-                        id="points_cost"
-                        type="number"
-                        min="0"
-                        value={formData.points_cost}
-                        onChange={(e) => handleInputChange('points_cost', e.target.value)}
-                        placeholder="0"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Estoque e Categoria */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="stock_quantity">Estoque</Label>
-                      <Input
-                        id="stock_quantity"
-                        type="number"
-                        min="0"
-                        value={formData.stock_quantity}
-                        onChange={(e) => handleInputChange('stock_quantity', e.target.value)}
-                        placeholder="0"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Categoria</Label>
-                      <Select
-                        value={formData.category_id}
-                        onValueChange={(value) => handleInputChange('category_id', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecione uma categoria" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  {/* Empresa */}
-                  <div className="space-y-2">
-                    <Label htmlFor="company">Empresa *</Label>
-                    <Select
-                      value={formData.company_id}
-                      onValueChange={(value) => handleInputChange('company_id', value)}
-                      required
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma empresa" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {companies.map((company) => (
-                          <SelectItem key={company.id} value={company.id}>
-                            {company.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Status */}
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value) => handleInputChange('status', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Ativo</SelectItem>
-                        <SelectItem value="inactive">Inativo</SelectItem>
-                        <SelectItem value="out_of_stock">Sem Estoque</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Submit */}
-                  <div className="flex gap-4">
-                    <Button
-                      type="submit"
-                      disabled={submitting}
-                      className="flex-1"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Salvando...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="h-4 w-4 mr-2" />
-                          Salvar Alterações
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => router.push('/admin/produtos')}
-                      disabled={submitting}
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Image Upload */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>Imagem do Produto</CardTitle>
-                <CardDescription>
-                  Atualize a imagem do produto
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ImageUpload
-                  onImageUpload={async (file: File) => {
-                    const objectUrl = URL.createObjectURL(file)
-                    handleInputChange('image_url', objectUrl)
-                  }}
-                  currentImage={formData.image_url}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Dicas */}
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5" />
-                  Dicas
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-gray-600">
-                <p>• Campos marcados com * são obrigatórios</p>
-                <p>• Preço e pontos podem ser 0</p>
-                <p>• Imagem é opcional</p>
-                <p>• Clique em "Salvar" para aplicar as mudanças</p>
-              </CardContent>
-            </Card>
-          </div>
+    <div className="container mx-auto p-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button
+          variant="outline"
+          onClick={() => router.back()}
+          className="flex items-center gap-2"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold">Editar Produto Base</h1>
+          <p className="text-muted-foreground">
+            Edite as informações do produto base
+          </p>
+          <p className="text-xs text-gray-500">ID: {id}</p>
         </div>
       </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* Informações Básicas */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5" />
+                Informações Básicas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Nome */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Nome do Produto *</Label>
+                <Input
+                  id="name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  placeholder="Digite o nome do produto"
+                  required
+                />
+              </div>
+
+              {/* Descrição */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Descrição *</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => handleInputChange('description', e.target.value)}
+                  placeholder="Digite a descrição do produto"
+                  rows={4}
+                  required
+                />
+              </div>
+
+              {/* Categoria */}
+              <div className="space-y-2">
+                <Label htmlFor="category">Categoria</Label>
+                <Select
+                  value={formData.category_id || 'none'}
+                  onValueChange={(value) => handleInputChange('category_id', value === 'none' ? '' : value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione uma categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sem categoria</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Preços e Estoque */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Preços e Estoque</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Preço */}
+              <div className="space-y-2">
+                <Label htmlFor="price">Preço Base (R$)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={formData.price}
+                  onChange={(e) => handleInputChange('price', e.target.value)}
+                  placeholder="0.00"
+                />
+              </div>
+
+              {/* Pontos */}
+              <div className="space-y-2">
+                <Label htmlFor="points">Pontos Base</Label>
+                <Input
+                  id="points"
+                  type="number"
+                  min="0"
+                  value={formData.points_cost}
+                  onChange={(e) => handleInputChange('points_cost', e.target.value)}
+                  placeholder="0"
+                />
+              </div>
+
+              {/* Estoque */}
+              <div className="space-y-2">
+                <Label htmlFor="stock">Estoque Disponível</Label>
+                <Input
+                  id="stock"
+                  type="number"
+                  min="0"
+                  value={formData.stock_quantity}
+                  onChange={(e) => handleInputChange('stock_quantity', e.target.value)}
+                  placeholder="0"
+                />
+              </div>
+
+              {/* Status */}
+              <div className="space-y-2">
+                <Label htmlFor="status">Status</Label>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleInputChange('status', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Ativo</SelectItem>
+                    <SelectItem value="inactive">Inativo</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Imagem */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Imagem do Produto</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="image_url">URL da Imagem</Label>
+              <Input
+                id="image_url"
+                value={formData.image_url}
+                onChange={(e) => handleInputChange('image_url', e.target.value)}
+                placeholder="https://exemplo.com/imagem.jpg"
+              />
+            </div>
+            {formData.image_url && (
+              <div className="mt-4">
+                <img
+                  src={formData.image_url}
+                  alt="Preview"
+                  className="max-w-xs h-auto rounded-lg border"
+                  onError={() => {
+                    console.log('Erro ao carregar imagem')
+                  }}
+                />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Botões */}
+        <div className="flex gap-4">
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="flex items-center gap-2"
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Salvando...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                Salvar Alterações
+              </>
+            )}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.back()}
+          >
+            Cancelar
+          </Button>
+        </div>
+      </form>
     </div>
   )
 }

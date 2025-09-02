@@ -201,6 +201,14 @@ export default function ProdutosPage() {
         </div>
         <div className="flex gap-2">
           <Button 
+            variant="outline"
+            onClick={() => router.push('/admin/produtos/catalogo-base')}
+            className="flex items-center gap-2"
+          >
+            <Database className="h-4 w-4" />
+            Catálogo Base
+          </Button>
+          <Button 
             onClick={() => setShowImportModal(true)}
             disabled={importing}
             className="flex items-center gap-2"
@@ -374,7 +382,7 @@ export default function ProdutosPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => router.push(`/admin/produtos/${product.id}/editar`)}
+                      onClick={() => router.push(`/admin/produtos/editar/${product.id}`)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -433,7 +441,7 @@ export default function ProdutosPage() {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => router.push(`/admin/produtos/${product.id}/editar`)}
+                      onClick={() => router.push(`/admin/produtos/editar/${product.id}`)}
                     >
                       <Edit className="h-4 w-4" />
                     </Button>

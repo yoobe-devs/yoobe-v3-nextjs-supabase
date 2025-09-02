@@ -1,5 +1,4 @@
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { supabaseServiceKey as supabase } from '@/lib/supabase-admin'
 
 export interface ScrapedProduct {
   name: string
@@ -566,7 +565,6 @@ export class CatalogScraper {
   }
 
   async integrateToDatabase(products: ScrapedProduct[]): Promise<{ success: number; errors: number; details: string[] }> {
-    const supabase = createRouteHandlerClient({ cookies })
     let success = 0
     let errors = 0
     const details: string[] = []
@@ -631,7 +629,6 @@ export class CatalogScraper {
   }
 
   private async checkExistingProduct(sku: string, name: string): Promise<boolean> {
-    const supabase = createRouteHandlerClient({ cookies })
     
     // Verificar por SKU primeiro
     const { data: existingBySku } = await supabase
@@ -653,7 +650,6 @@ export class CatalogScraper {
   }
 
   private async saveImageToBucket(imageUrl: string, sku: string): Promise<string> {
-    const supabase = createRouteHandlerClient({ cookies })
     
     try {
       // Fazer download da imagem
@@ -699,7 +695,6 @@ export class CatalogScraper {
   }
 
   private async ensureCategory(categoryName: string): Promise<string> {
-    const supabase = createRouteHandlerClient({ cookies })
     
     // Normalizar nome da categoria
     const normalizedName = this.normalizeCategoryName(categoryName)
@@ -799,7 +794,6 @@ export class CatalogScraper {
   }
 
   private async createBaseProduct(productData: any) {
-    const supabase = createRouteHandlerClient({ cookies })
     
     const { error } = await supabase
       .from('base_products')

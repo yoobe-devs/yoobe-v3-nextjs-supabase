@@ -1,138 +1,80 @@
-# Changelog - Yoobe Platform
+# Changelog - Yoobe V3
 
-## [2.0.0] - 2024-12-31
+## [2.2.0] - 2025-09-01
 
-### 🚀 **NOVAS FUNCIONALIDADES**
+### ✅ Compatibilidade API/DB/Frontend
+- Ajuste de códigos de status e payloads nas rotas do Gestor:
+  - `POST /api/gestor/orcamentos` retorna 201 com `{ budget, message }`
+  - `POST /api/gestor/base-products` retorna 201 com `{ company_product }`
+  - `PATCH /api/gestor/produtos/{id}` retorna `{ company_product }`
+  - `PATCH /api/gestor/produtos/{id}/status` retorna `{ company_product }`
+- Suporte a Authorization header nas rotas do Gestor (cookies ou Bearer token)
+- Migrações ajustadas para evitar erros de IF NOT EXISTS em policies
 
-#### **Sistema de Integrações Global**
-- ✅ **Integração Cubbo Global**: Fulfillment centralizado para todas as lojas
-- ✅ **Sistema de Integrações para Gestores**: ERP, CRM, Gamificação, Automação
-- ✅ **Plataformas de Gamificação**: Workvivo, Applause, Human
-- ✅ **Automação**: Zapier, Floui, Make
-- ✅ **ERPs/CRMs**: SAP, Salesforce, Oracle
-- ✅ **Gestão de Usuários**: Active Directory, Google Workspace, Microsoft 365
+### 🧪 Testes
+- Todos os testes do fluxo de orçamentos e replicação passando (17/17)
+- Execução validada em ambiente local (Next 14 + Supabase local)
 
-#### **Melhorias na Gestão de Produtos**
-- ✅ **Visualização na Loja Pública**: Botão de visualizar produto abre loja pública
-- ✅ **Modais de Edição**: Interface completa para editar produtos
-- ✅ **Placeholders Robustos**: Tratamento adequado de imagens quebradas
-- ✅ **CRUD Completo**: Criar, visualizar, editar, excluir produtos
+### 📚 Documentação
+- `docs/API_REFERENCE.md` atualizado para refletir rotas, corpos e respostas reais
+- Notas de autenticação para endpoints protegidos
 
-#### **Sistema de Estoque Integrado**
-- ✅ **Sincronização com Cubbo**: Estoque centralizado via Cubbo
-- ✅ **Gestão por Loja**: Cada gestor gerencia estoque da sua loja
-- ✅ **Logs de Sincronização**: Rastreamento completo de sincronizações
-- ✅ **Status de Estoque**: Visualização em tempo real
-
-#### **Interface de Gestor Melhorada**
-- ✅ **Páginas Funcionais**: Dashboard, produtos, funcionários, pedidos
-- ✅ **Navegação Corrigida**: Links funcionais entre páginas
-- ✅ **Modais de Edição**: Interface para editar funcionários e produtos
-- ✅ **Integração de Loja**: Configuração e visualização da loja
-
-### 🔧 **MELHORIAS TÉCNICAS**
-
-#### **Banco de Dados**
-- ✅ **Nova Tabela**: `cubbo_integrations` para integração global
-- ✅ **Nova Tabela**: `store_integrations` para integrações por loja
-- ✅ **Nova Tabela**: `product_sync_log` para logs de sincronização
-- ✅ **Nova Tabela**: `inventory_sync` para sincronização de estoque
-- ✅ **Constraints**: Validação de integração global vs. por loja
-- ✅ **Índices**: Performance otimizada para consultas
-
-#### **APIs**
-- ✅ **API Cubbo Global**: `/api/admin/cubbo-integration`
-- ✅ **API Sincronização**: `/api/admin/cubbo-sync`
-- ✅ **API Integrações Gestor**: `/api/gestor/integrations`
-- ✅ **API Produtos Gestor**: `/api/gestor/products/[id]`
-- ✅ **API Funcionários Gestor**: `/api/gestor/employees/[id]`
-- ✅ **API Loja Pública**: `/api/store/product/[id]`
-
-#### **Frontend**
-- ✅ **Página Admin Integrações**: `/admin/integracoes`
-- ✅ **Página Gestor Integrações**: `/gestor/integracoes`
-- ✅ **Componentes UI**: Modais, formulários, status
-- ✅ **Navegação**: Menu atualizado com integrações
-- ✅ **Responsividade**: Interface adaptável
-
-### 🐛 **CORREÇÕES**
-
-#### **Problemas de Navegação**
-- ✅ **Links Quebrados**: Corrigidos todos os links do menu gestor
-- ✅ **Páginas Vazias**: Implementadas todas as páginas necessárias
-- ✅ **Redirecionamentos**: Fluxo de navegação corrigido
-
-#### **Problemas de Dados**
-- ✅ **Store ID**: Corrigida lógica de associação store_id
-- ✅ **RLS Policies**: Políticas de segurança ajustadas
-- ✅ **Dados Mockados**: Substituídos por dados reais
-- ✅ **Sincronização**: Dados consistentes entre tabelas
-
-#### **Problemas de Interface**
-- ✅ **Placeholders**: Imagens quebradas tratadas adequadamente
-- ✅ **Modais**: Funcionalidade de edição implementada
-- ✅ **Loading States**: Estados de carregamento adicionados
-- ✅ **Error Handling**: Tratamento de erros melhorado
-
-### 📚 **DOCUMENTAÇÃO**
-
-#### **Estrutura da Plataforma**
-- ✅ **Arquitetura**: Documentação completa da estrutura
-- ✅ **APIs**: Documentação de todas as APIs
-- ✅ **Banco de Dados**: Schema e relacionamentos
-- ✅ **Integrações**: Guia de integrações disponíveis
-
-#### **Guia de Desenvolvimento**
-- ✅ **Setup**: Como configurar o ambiente
-- ✅ **Deploy**: Processo de deploy
-- ✅ **Contribuição**: Como contribuir com o projeto
-- ✅ **Testes**: Como executar testes
-
-### 🔒 **SEGURANÇA**
-
-#### **Autenticação e Autorização**
-- ✅ **RLS Policies**: Row Level Security implementado
-- ✅ **Role-based Access**: Controle de acesso por papel
-- ✅ **API Security**: Validação de tokens e permissões
-- ✅ **Data Isolation**: Isolamento de dados por loja
-
-### 📊 **PERFORMANCE**
-
-#### **Otimizações**
-- ✅ **Índices**: Índices otimizados no banco
-- ✅ **Caching**: Cache de consultas frequentes
-- ✅ **Lazy Loading**: Carregamento sob demanda
-- ✅ **Bundle Size**: Tamanho do bundle otimizado
-
-### 🚀 **DEPLOY**
-
-#### **Infraestrutura**
-- ✅ **Supabase**: Banco de dados e autenticação
-- ✅ **Vercel**: Deploy da aplicação
-- ✅ **Environment**: Variáveis de ambiente configuradas
-- ✅ **CI/CD**: Pipeline de deploy automatizado
+### 📝 Auditoria (preparação)
+- Planejada tabela `user_audit_logs` e triggers para cadastro/convite/remoção (vide seção Segurança)
 
 ---
 
-## [1.5.0] - 2024-12-15
+## [2.1.0] - 2024-01-XX
 
-### 🚀 **FUNCIONALIDADES**
-- ✅ Sistema básico de gestão de produtos
-- ✅ Autenticação e autorização
-- ✅ Interface básica de gestor
-- ✅ Sistema de pontos
+### 🚀 Sistema de Orçamentos e Replicação
 
-### 🔧 **MELHORIAS**
-- ✅ Estrutura inicial do banco de dados
-- ✅ APIs básicas
-- ✅ Componentes UI fundamentais
+#### Novas Funcionalidades
+- **Fluxo completo:** Orçamento → Aprovação → Replicação
+- **Gestores:** Criam orçamentos, replicam produtos após aprovação
+- **Admin Global:** Aprova/rejeita orçamentos, controla replicação
+- **Controle de acesso:** Roles específicos para cada funcionalidade
+
+#### Novas APIs
+- `POST /api/gestor/orcamentos` - Criar orçamento
+- `GET /api/gestor/orcamentos` - Listar orçamentos do gestor
+- `POST /api/gestor/base-products` - Replicar produto (requer aprovação)
+- `GET /api/gestor/produtos` - Listar produtos replicados
+- `PATCH /api/gestor/produtos/{id}/status` - Ativar/inativar produto
+- `GET /api/admin/orcamentos` - Listar todos os orçamentos
+- `POST /api/admin/orcamentos/{id}/approve` - Aprovar/rejeitar orçamento
+
+#### Novas Tabelas
+- `budgets` - Orçamentos dos gestores
+- `budget_items` - Itens dos orçamentos
+- Campos adicionais em `company_products`: `is_active`, `budget_id`, `approved_at`, `approved_by`
+
+#### Interfaces
+- **Gestor:** Páginas de orçamentos, catálogo com bloqueio, gestão de produtos
+- **Admin:** Página de gestão de orçamentos com aprovação/rejeição
+
+#### Testes
+- Cobertura completa com Jest + Supertest
+- Testes de fluxo, permissões e casos de erro
+- Cobertura mínima de 80%
+
+#### Documentação
+- Especificação OpenAPI 3.0 completa
+- README atualizado com instruções
+
+### 🔧 Correções
+- Página de edição de produtos (Admin) - Endpoint corrigido
+- Página de produtos do gestor - API criada
+- Lógica de replicação - Bloqueio por orçamento implementado
+
+### 🔒 Segurança
+- Validação de orçamento aprovado para replicação
+- Controle de acesso por roles
+- Auditoria de aprovações/rejeições
 
 ---
 
-## [1.0.0] - 2024-12-01
-
-### 🚀 **LANÇAMENTO INICIAL**
-- ✅ Estrutura base da plataforma
-- ✅ Sistema de autenticação
-- ✅ Interface básica
-- ✅ Banco de dados inicial
+## [2.0.0] - 2024-01-XX
+- Sistema base implementado
+- Autenticação com Supabase
+- Painéis de Admin e Gestor
+- Importação de produtos

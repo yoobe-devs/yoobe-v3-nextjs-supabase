@@ -165,7 +165,7 @@ export default function ProdutoDetalhesPage() {
         </div>
         <div className="flex gap-2">
           <Button
-            onClick={() => router.push(`/admin/produtos/${productId}/editar`)}
+            onClick={() => router.push(`/admin/produtos/editar/${productId}`)}
             className="flex items-center gap-2"
           >
             <Edit className="h-4 w-4" />

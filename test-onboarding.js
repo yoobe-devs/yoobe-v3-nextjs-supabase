@@ -3,7 +3,7 @@
 const https = require('https');
 const http = require('http');
 
-const BASE_URL = 'http://localhost:3001'; // Usando porta 3001 conforme terminal
+const BASE_URL = 'http://localhost:3000';
 
 // Função para fazer requisições HTTP
 function makeRequest(url, method = 'GET', data = null) {

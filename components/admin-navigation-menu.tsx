@@ -51,12 +51,12 @@ const mainNav = [
       },
       {
         title: "Catálogo Base",
-        href: "/admin/produtos",
+        href: "/admin/produtos/catalogo-base",
         description: "Repositório central de produtos"
       },
       {
         title: "Importar Catálogo",
-        href: "/admin/produtos/import",
+        href: "/admin/produtos/catalogo-base/importar",
         description: "Importar do catálogo externo"
       }
     ]

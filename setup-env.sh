@@ -29,6 +29,7 @@ GOOGLE_CLIENT_SECRET=
 # App Configuration
 NEXT_PUBLIC_APP_URL=http://localhost:3001
 NEXT_PUBLIC_SITE_URL=http://localhost:3001
+EMAIL_DEV_FALLBACK=true
 EOF
 
 echo "✅ Arquivo .env.local criado com sucesso!"
