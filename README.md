@@ -1,4 +1,4 @@
-# 🚀 **YOOBE v3.0.0 - Plataforma Completa de Gestão Corporativa**
+# 🚀 **YOOBE v3.1.0 - Plataforma Completa de Gestão Corporativa**
 
 > **Sistema completo de orçamentos, replicação de produtos, RBAC e checkout com multi-tenancy**
 

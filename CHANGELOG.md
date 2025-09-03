@@ -1,5 +1,55 @@
 # Changelog - Yoobe V3
 
+## [3.1.0] - 2025-09-03
+
+### 🚀 Módulo de Replicação Avançada
+
+#### Novas Funcionalidades
+- **Edição Avançada:** Modal completo para edição de produtos replicados
+- **Gestão de Tags:** Sistema de tags com adição/remoção dinâmica
+- **Gestão de Imagens:** Upload, preview e controle de imagem principal
+- **Ativação/Inativação:** Toggle para controle de status ativo/inativo
+- **Geração EAN-13:** Código automático baseado no SKU personalizado
+- **Preview do Produto:** Visualização completa do estado atual
+
+#### Novas APIs
+- `POST /api/products/generate-ean13` - Geração automática de EAN-13
+- `GET /api/products/[productId]` - Buscar produto completo
+- `PATCH /api/products/[productId]` - Atualizar produto com validações
+- `DELETE /api/products/[productId]` - Soft delete (inativação)
+
+#### Novos Campos na Tabela `client_products`
+- `tags` (JSONB), `images` (JSONB), `advanced_description` (TEXT)
+- `is_active` (BOOLEAN), `custom_sku` (VARCHAR), `ean_13` (VARCHAR)
+- `metadata` (JSONB), `activated_at`, `deactivated_at`, `deactivation_reason`
+
+#### Novos Componentes
+- **ProductEditModal:** Modal completo de edição com todas as funcionalidades
+- **Validações:** Campos obrigatórios, feedback visual, toasts
+- **Interface:** Responsiva, intuitiva e otimizada
+
+#### Scripts de Automação
+- `apply-advanced-fields.js` - Migration local
+- `apply-production-migration.js` - Migration para produção
+- `check-client-products-schema.js` - Verificação de schema
+
+#### Documentação
+- Resumos técnicos completos
+- Instruções para deploy em produção
+- Guias de uso e troubleshooting
+
+### 🔧 Correções
+- Página do gestor agora exibe produtos replicados corretamente
+- Consulta SQL otimizada, removendo JOIN problemático
+- Validações de campos obrigatórios implementadas
+
+### 🔒 Segurança
+- Autenticação em todas as novas APIs
+- Validação de roles e company_id
+- RLS aplicado para separação de dados
+
+---
+
 ## [3.0.0] - 2025-09-02
 
 ### 🚀 Sistema Completo de Orçamentos e Replicação

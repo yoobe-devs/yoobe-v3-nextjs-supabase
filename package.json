@@ -1,6 +1,6 @@
 {
   "name": "yoobe-v3",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Sistema completo de gestão de produtos e orçamentos com RBAC e multi-tenancy",
   "private": true,
   "scripts": {

@@ -3,6 +3,7 @@
 ## 📋 **Pré-requisitos**
 
 ### **1. Configuração de Ambiente**
+
 ```bash
 # Configurar variáveis de ambiente de produção
 export NEXT_PUBLIC_SUPABASE_URL="https://seu-projeto.supabase.co"
@@ -11,6 +12,7 @@ export NODE_ENV="production"
 ```
 
 ### **2. Verificar Acesso**
+
 - ✅ Acesso ao Supabase de produção
 - ✅ Chave de serviço válida
 - ✅ Permissões para alterar schema
@@ -18,6 +20,7 @@ export NODE_ENV="production"
 ## 🔧 **Execução da Migration**
 
 ### **Opção 1: Script Automático (Recomendado)**
+
 ```bash
 # 1. Configurar ambiente
 export NEXT_PUBLIC_SUPABASE_URL="https://seu-projeto.supabase.co"
@@ -28,12 +31,14 @@ node apply-production-migration.js
 ```
 
 ### **Opção 2: Manual via Supabase Studio**
+
 1. Acessar [Supabase Dashboard](https://supabase.com/dashboard)
 2. Selecionar seu projeto
 3. Ir para **SQL Editor**
 4. Copiar e executar o conteúdo de `migrations/add-advanced-product-fields.sql`
 
 ### **Opção 3: Via CLI do Supabase**
+
 ```bash
 # 1. Instalar Supabase CLI
 npm install -g supabase
@@ -48,6 +53,7 @@ supabase db push --db-url "postgresql://..."
 ## 📊 **Verificação da Migration**
 
 ### **1. Verificar Campos Criados**
+
 ```sql
 -- Executar no SQL Editor do Supabase
 SELECT column_name, data_type, is_nullable, column_default
@@ -61,6 +67,7 @@ ORDER BY column_name;
 ```
 
 ### **2. Verificar Índices**
+
 ```sql
 -- Verificar índices criados
 SELECT indexname, indexdef
@@ -70,6 +77,7 @@ AND indexname LIKE 'idx_client_products%';
 ```
 
 ### **3. Verificar Constraints**
+
 ```sql
 -- Verificar constraints
 SELECT conname, contype, pg_get_constraintdef(oid)
@@ -80,6 +88,7 @@ WHERE conrelid = 'client_products'::regclass;
 ## 🧪 **Testes em Produção**
 
 ### **1. Testar APIs**
+
 ```bash
 # Testar geração de EAN-13
 curl -X POST https://sua-app.vercel.app/api/products/generate-ean13 \
@@ -93,6 +102,7 @@ curl -X GET https://sua-app.vercel.app/api/products/PRODUTO_ID \
 ```
 
 ### **2. Testar Frontend**
+
 - ✅ Acessar página de produtos do gestor
 - ✅ Verificar se produtos aparecem corretamente
 - ✅ Testar modal de edição
@@ -100,16 +110,18 @@ curl -X GET https://sua-app.vercel.app/api/products/PRODUTO_ID \
 - ✅ Testar ativação/inativação
 
 ### **3. Verificar Performance**
+
 ```sql
 -- Verificar performance das consultas
 EXPLAIN ANALYZE
-SELECT * FROM client_products 
+SELECT * FROM client_products
 WHERE client_id = 'uuid' AND is_active = true;
 ```
 
 ## 🚨 **Rollback (Se Necessário)**
 
 ### **1. Reverter Migration**
+
 ```sql
 -- Remover campos adicionados
 ALTER TABLE client_products DROP COLUMN IF EXISTS tags;
@@ -134,17 +146,20 @@ DROP INDEX IF EXISTS idx_client_products_images;
 ## 📝 **Checklist de Deploy**
 
 ### **Antes da Migration:**
+
 - [ ] Backup do banco de produção
 - [ ] Teste em ambiente de staging
 - [ ] Validação da migration localmente
 - [ ] Notificação da equipe
 
 ### **Durante a Migration:**
+
 - [ ] Executar em horário de baixo tráfego
 - [ ] Monitorar logs do Supabase
 - [ ] Verificar performance das consultas
 
 ### **Após a Migration:**
+
 - [ ] Validar campos criados
 - [ ] Testar todas as APIs
 - [ ] Verificar frontend
@@ -154,16 +169,19 @@ DROP INDEX IF EXISTS idx_client_products_images;
 ## 🔍 **Monitoramento**
 
 ### **1. Logs do Supabase**
+
 - Monitorar logs de queries
 - Verificar erros de constraint
 - Acompanhar performance
 
 ### **2. Métricas da Aplicação**
+
 - Tempo de resposta das APIs
 - Taxa de erro
 - Uso de memória/CPU
 
 ### **3. Alertas**
+
 - Configurar alertas para erros
 - Monitorar performance degradada
 - Acompanhar uso de recursos
@@ -171,12 +189,14 @@ DROP INDEX IF EXISTS idx_client_products_images;
 ## 📞 **Suporte**
 
 ### **Em caso de problemas:**
+
 1. **Verificar logs** do Supabase e da aplicação
 2. **Consultar documentação** da migration
 3. **Executar rollback** se necessário
 4. **Contatar equipe** de desenvolvimento
 
 ### **Contatos:**
+
 - **Desenvolvedor:** Equipe YOOBE
 - **Documentação:** Este arquivo e `RESUMO_IMPLEMENTACAO_REPLICACAO_AVANCADA.md`
 - **Issues:** [GitHub Issues](https://github.com/yoobe-devs/yoobe-v3-nextjs-supabase/issues)
