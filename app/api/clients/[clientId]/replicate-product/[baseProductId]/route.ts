@@ -1,108 +1,162 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
-type RoundingRule = 'none' | 'ceil-0.50' | 'ceil-1.00'
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+const service = createClient(supabaseUrl, serviceKey)
 
-function applyRounding(value: number, rule: RoundingRule): number {
-  if (rule === 'none') return Number(value.toFixed(2))
-  if (rule === 'ceil-0.50') {
-    const cents = Math.ceil(value * 2) / 2
-    return Number(cents.toFixed(2))
+function isValidId(v: any) {
+  return typeof v === 'string' && v.length >= 8
+}
+
+function applyMarginAndRounding(
+  base: number,
+  marginPct?: number,
+  rounding?: 'none' | 'ceil-0.50' | 'ceil-1.00'
+) {
+  const withMargin = base * (1 + (marginPct || 0) / 100)
+  if (!rounding || rounding === 'none') return withMargin
+  if (rounding === 'ceil-0.50') {
+    const cents = Math.ceil(withMargin * 2) / 2 // steps of 0.5
+    return cents
   }
-  if (rule === 'ceil-1.00') {
-    const whole = Math.ceil(value)
-    return Number(whole.toFixed(2))
+  if (rounding === 'ceil-1.00') {
+    return Math.ceil(withMargin)
   }
-  return Number(value.toFixed(2))
+  return withMargin
+}
+
+async function authenticate(request: NextRequest) {
+  const sb = createRouteHandlerClient({ cookies })
+  let {
+    data: { user },
+    error,
+  } = await sb.auth.getUser()
+  if (!user) {
+    const h = request.headers.get('authorization')
+    if (h?.startsWith('Bearer ')) {
+      const tok = h.substring(7)
+      const info = await service.auth.getUser(tok)
+      user = info.data.user || null
+      error = info.error || null
+    }
+  }
+  return { user, error }
 }
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { clientId: string, baseProductId: string } }
+  { params }: { params: { clientId: string; baseProductId: string } }
 ) {
-  const supabase = createRouteHandlerClient({ cookies })
   try {
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    if (user.user_metadata?.role !== 'admin') {
-      return NextResponse.json({ error: 'Apenas admin pode replicar' }, { status: 403 })
+    const { user, error } = await authenticate(request)
+    if (error || !user)
+      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+    const role = (user.user_metadata as any)?.role
+    if (!['admin', 'admin_global', 'superadmin'].includes(role)) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    }
+
+    const clientId = params.clientId
+    const baseProductId = params.baseProductId
+    if (!isValidId(clientId) || !isValidId(baseProductId)) {
+      return NextResponse.json({ error: 'IDs inválidos' }, { status: 400 })
     }
 
     const body = await request.json().catch(() => ({}))
-    const margin_pct = typeof body?.margin_pct === 'number' ? body.margin_pct : 0
-    const rounding_rule: RoundingRule = (body?.rounding_rule as RoundingRule) || 'none'
-    const copyImages: boolean = Boolean(body?.copy_images)
+    const marginPct = typeof body?.margin_pct === 'number' ? body.margin_pct : 0
+    const rounding: 'none' | 'ceil-0.50' | 'ceil-1.00' =
+      body?.rounding_rule || 'none'
+    const copyImages = !!body?.copy_images
 
-    // Buscar produto base
-    const { data: base, error: baseErr } = await supabase
+    // Confirm client exists
+    const { data: client } = await service
+      .from('companies')
+      .select('id,name')
+      .eq('id', clientId)
+      .single()
+    if (!client)
+      return NextResponse.json(
+        { error: 'Cliente não encontrado' },
+        { status: 404 }
+      )
+
+    // Load base product
+    const { data: base } = await service
       .from('base_products')
-      .select('*')
-      .eq('id', params.baseProductId)
+      .select(
+        'id,name,description,base_price,base_points_cost,category_id,image_url'
+      )
+      .eq('id', baseProductId)
+      .eq('status', 'active')
       .single()
-    if (baseErr || !base) return NextResponse.json({ error: 'Produto base não encontrado' }, { status: 404 })
+    if (!base)
+      return NextResponse.json(
+        { error: 'Produto base não encontrado' },
+        { status: 404 }
+      )
 
-    const computedPrice = applyRounding(base.base_price * (1 + margin_pct / 100), rounding_rule)
-
-    // Criar client_product
-    const { data: clientProduct, error: cpErr } = await supabase
+    // Check existing
+    const { data: exists } = await service
       .from('client_products')
-      .insert({
-        client_id: params.clientId,
-        base_product_id: params.baseProductId,
-        name: base.name,
-        description: base.description,
-        price: computedPrice,
-        status: 'active',
-        stock_quantity: 0,
-        margin_pct,
-      })
-      .select('*')
-      .single()
-    if (cpErr || !clientProduct) {
-      return NextResponse.json({ error: 'Falha ao criar produto do cliente' }, { status: 500 })
+      .select('id')
+      .eq('client_id', clientId)
+      .eq('base_product_id', base.id)
+      .maybeSingle()
+    if (exists)
+      return NextResponse.json(
+        { error: 'Produto já replicado para este cliente' },
+        { status: 409 }
+      )
+
+    const price = applyMarginAndRounding(
+      base.base_price || 0,
+      marginPct,
+      rounding
+    )
+    const points = Math.round(base.base_points_cost || 0)
+
+    const insert: any = {
+      client_id: clientId,
+      base_product_id: base.id,
+      name: base.name,
+      description: base.description,
+      price,
+      status: 'active',
+      stock_quantity: 0,
+      margin_pct: marginPct,
+      final_sku: `${base.id.slice(0, 8)}-${clientId.slice(0, 8)}`,
+      ean_13: null,
     }
 
-    // Replicar faixas de preço
-    const { data: tiers } = await supabase
-      .from('base_pricing_tiers')
-      .select('*')
-      .eq('base_product_id', params.baseProductId)
-      .order('min_qty', { ascending: true })
-    if (tiers && tiers.length) {
-      const mapped = tiers.map(t => ({
-        client_product_id: clientProduct.id,
-        min_qty: t.min_qty,
-        unit_price: t.unit_price ? applyRounding(t.unit_price * (1 + margin_pct / 100), rounding_rule) : null,
-        discount_pct: t.discount_pct ?? null,
-      }))
-      await supabase.from('client_pricing_tiers').insert(mapped)
-    }
-
-    // Copiar imagens (opcional)
-    if (copyImages) {
-      const { data: images } = await supabase
-        .from('base_product_images')
+    // Tentar inserir
+    let created: any = null
+    let insErr: any = null
+    try {
+      const resp = await service
+        .from('client_products')
+        .insert(insert)
         .select('*')
-        .eq('base_product_id', params.baseProductId)
-        .order('sort_order', { ascending: true })
-      if (images && images.length) {
-        const mappedImgs = images.map(img => ({
-          client_product_id: clientProduct.id,
-          image_url: img.image_url,
-          bucket_key: img.bucket_key,
-          is_cover: img.is_cover,
-          sort_order: img.sort_order,
-        }))
-        await supabase.from('client_product_images').insert(mappedImgs)
-      }
+        .single()
+      created = resp.data
+      insErr = resp.error || null
+    } catch (e: any) {
+      insErr = e
     }
 
-    return NextResponse.json(clientProduct, { status: 201 })
-  } catch (error) {
-    console.error('Error replicating product:', error)
-    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
+    if (insErr) {
+      console.error('replicate-product insert error', insErr)
+      return NextResponse.json(
+        { error: `Falha ao replicar produto: ${insErr.message || insErr}` },
+        { status: 500 }
+      )
+    }
+    return NextResponse.json({ message: 'Produto replicado', product: created })
+  } catch (e) {
+    console.error('replicate-product error', e)
+    return NextResponse.json({ error: 'Erro interno' }, { status: 500 })
   }
 }
-
-

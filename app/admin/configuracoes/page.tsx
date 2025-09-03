@@ -352,7 +352,7 @@ export default function AdminConfiguracoesPage() {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.open('/docs/API_REFERENCE.md', '_blank')}
+                  onClick={() => window.open('/admin/documentacao/viva/API_REFERENCE', '_blank')}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   API Reference
@@ -360,7 +360,7 @@ export default function AdminConfiguracoesPage() {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.open('/docs/DATABASE_SCHEMA.md', '_blank')}
+                  onClick={() => window.open('/admin/documentacao/viva/DATABASE_SCHEMA', '_blank')}
                 >
                   <Database className="h-4 w-4 mr-2" />
                   Database Schema
@@ -373,7 +373,7 @@ export default function AdminConfiguracoesPage() {
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.open('/docs/CUBBO_INTEGRATION.md', '_blank')}
+                  onClick={() => window.open('/admin/documentacao/viva/CUBBO_INTEGRATION', '_blank')}
                 >
                   <Package className="h-4 w-4 mr-2" />
                   Integração Cubbo
@@ -450,5 +450,4 @@ export default function AdminConfiguracoesPage() {
     </div>
   )
 }
-
 

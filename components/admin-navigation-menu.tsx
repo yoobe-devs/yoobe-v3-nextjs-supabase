@@ -19,7 +19,8 @@ import {
   Store,
   FileText,
   GitBranch,
-  BookOpen
+  BookOpen,
+  Code
 } from 'lucide-react'
 import { ChangelogNotification } from "@/components/ui/changelog-notification"
 
@@ -40,7 +41,7 @@ const mainNav = [
     icon: Users
   },
   {
-    title: "Produtos",
+    title: "Ativação de Produtos",
     href: "/admin/produtos",
     icon: Package,
     items: [
@@ -100,6 +101,11 @@ const mainNav = [
     title: "Documentação",
     href: "/admin/documentacao",
     icon: BookOpen
+  },
+  {
+    title: "Desenvolvimento",
+    href: "/admin/desenvolvimento",
+    icon: Code
   }
 ]
 
@@ -213,5 +219,4 @@ export function AdminNavigationMenu() {
     </div>
   )
 }
-
 

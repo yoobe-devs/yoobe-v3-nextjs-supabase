@@ -1,6 +1,10 @@
-# 🚀 **YOOBE v3 - Plataforma Completa de Gestão Corporativa**
+# 🚀 **YOOBE v3.0.0 - Plataforma Completa de Gestão Corporativa**
 
 > **Sistema completo de orçamentos, replicação de produtos, RBAC e checkout com multi-tenancy**
+
+**Versão:** 3.0.0  
+**Status:** 🚀 **PRODUÇÃO**  
+**Data:** 2 de Setembro, 2025
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)

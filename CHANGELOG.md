@@ -1,6 +1,55 @@
 # Changelog - Yoobe V3
 
-## [2.2.0] - 2025-09-01
+## [3.0.0] - 2025-09-02
+
+### 🚀 Sistema Completo de Orçamentos e Replicação
+
+#### Novas Funcionalidades
+- **Fluxo completo:** Orçamento → Aprovação → Replicação
+- **Gestores:** Criam orçamentos, replicam produtos após aprovação
+- **Admin Global:** Aprova/rejeita orçamentos, controla replicação
+- **Controle de acesso:** Roles específicos para cada funcionalidade
+
+#### Novas APIs
+- `POST /api/gestor/orcamentos` - Criar orçamento
+- `GET /api/gestor/orcamentos` - Listar orçamentos do gestor
+- `POST /api/gestor/base-products` - Replicar produto (requer aprovação)
+- `GET /api/gestor/produtos` - Listar produtos replicados
+- `PATCH /api/gestor/produtos/{id}/status` - Ativar/inativar produto
+- `GET /api/admin/orcamentos` - Listar todos os orçamentos
+- `POST /api/admin/orcamentos/{id}/approve` - Aprovar/rejeitar orçamento
+
+#### Novas Tabelas
+- `budgets` - Orçamentos dos gestores
+- `budget_items` - Itens dos orçamentos
+- Campos adicionais em `company_products`: `is_active`, `budget_id`, `approved_at`, `approved_by`
+
+#### Interfaces
+- **Gestor:** Páginas de orçamentos, catálogo com bloqueio, gestão de produtos
+- **Admin:** Página de gestão de orçamentos com aprovação/rejeição
+
+#### Testes
+- Cobertura completa com Jest + Supertest
+- Testes de fluxo, permissões e casos de erro
+- Cobertura mínima de 80%
+
+#### Documentação
+- Especificação OpenAPI 3.0 completa
+- README atualizado com instruções
+
+### 🔧 Correções
+- Página de edição de produtos (Admin) - Endpoint corrigido
+- Página de produtos do gestor - API criada
+- Lógica de replicação - Bloqueio por orçamento implementado
+
+### 🔒 Segurança
+- Validação de orçamento aprovado para replicação
+- Controle de acesso por roles
+- Auditoria de aprovações/rejeições
+
+---
+
+## [2.2.0] - 2025-09-02
 
 ### ✅ Compatibilidade API/DB/Frontend
 - Ajuste de códigos de status e payloads nas rotas do Gestor:

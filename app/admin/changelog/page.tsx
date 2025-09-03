@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { MarkdownRenderer } from '@/components/ui/markdown-renderer'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { GitBranch, Calendar, Tag, User, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 
 interface ChangelogEntry {
   version: string
@@ -18,6 +20,41 @@ interface ChangelogEntry {
 }
 
 const changelogData: ChangelogEntry[] = [
+  {
+    version: 'v3.0.0',
+    date: 'Janeiro 2025',
+    title: 'Sistema Completo de Orçamentos e Replicação',
+    description: 'Lançamento principal com sistema de orçamentos, RBAC robusto e multi-tenancy avançado',
+    author: 'Equipe Yoobe',
+    type: 'feature',
+    changes: [
+      '🔄 Sistema completo de orçamentos com aprovação',
+      '🔐 RBAC avançado com 4 níveis de acesso',
+      '🏢 Multi-tenancy robusto com empresas independentes',
+      '🛒 Checkout inteligente com múltiplos pagamentos',
+      '💳 Sistema de carteira com pontos e transações',
+      '📋 Replicação automática de produtos após pagamento',
+      '👥 Sistema de convites e gestão de usuários',
+      '📍 Gestão de endereços com validação',
+      '📊 Dashboards em tempo real com métricas',
+      '🔍 Auditoria completa de todas as ações'
+    ]
+  },
+  {
+    version: 'v2.2.0',
+    date: '2 de Setembro, 2025',
+    title: 'Compatibilidade API/DB/Frontend',
+    description: 'Ajustes de compatibilidade e correções de APIs para melhor integração',
+    author: 'Equipe Yoobe',
+    type: 'improvement',
+    changes: [
+      '✅ Ajuste de códigos de status e payloads nas rotas do Gestor',
+      '🔐 Suporte a Authorization header nas rotas do Gestor',
+      '🧪 Todos os testes do fluxo de orçamentos passando (17/17)',
+      '📚 Documentação API atualizada com rotas reais',
+      '📝 Preparação para sistema de auditoria avançado'
+    ]
+  },
   {
     version: 'v2.1.0',
     date: '17 de Janeiro, 2024',
@@ -33,6 +70,26 @@ const changelogData: ChangelogEntry[] = [
       '📚 Documentações visuais completas em formato HTML',
       '🎨 Interface moderna com gradientes e cards',
       '📱 Design responsivo e acessível'
+    ]
+  },
+  {
+    version: 'v3.0.0',
+    date: 'Janeiro 2025',
+    title: 'Sistema Completo de Orçamentos e Replicação',
+    description: 'Lançamento principal com sistema de orçamentos, RBAC robusto e multi-tenancy avançado',
+    author: 'Equipe Yoobe',
+    type: 'feature',
+    changes: [
+      '🔄 Sistema completo de orçamentos com aprovação',
+      '🔐 RBAC avançado com 4 níveis de acesso',
+      '🏢 Multi-tenancy robusto com empresas independentes',
+      '🛒 Checkout inteligente com múltiplos pagamentos',
+      '💳 Sistema de carteira com pontos e transações',
+      '📋 Replicação automática de produtos após pagamento',
+      '👥 Sistema de convites e gestão de usuários',
+      '📍 Gestão de endereços com validação',
+      '📊 Dashboards em tempo real com métricas',
+      '🔍 Auditoria completa de todas as ações'
     ]
   },
   {
@@ -133,6 +190,35 @@ const getTypeIcon = (type: string) => {
 
 export default function ChangelogPage() {
   const [selectedVersion, setSelectedVersion] = useState<string | null>(null)
+  const [md, setMd] = useState<string | null>(null)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await fetch('/api/admin/changelog/markdown')
+        if (res.ok) {
+          const data = await res.json()
+          setMd(data.content as string)
+        }
+      } catch (e) {}
+    }
+    load()
+  }, [])
+
+  if (md) {
+    const version = (md.match(/v\d+\.\d+\.\d+/) || [null])[0]
+    return (
+      <div className="space-y-4">
+        <div className="container mx-auto p-4 flex items-center gap-2">
+          {version && (
+            <span className="inline-flex items-center rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-700">{version}</span>
+          )}
+          <span className="inline-flex items-center rounded border border-green-200 bg-green-50 px-2 py-1 text-xs text-green-700">Sincronizado do CHANGELOG.md</span>
+        </div>
+        <MarkdownRenderer content={md} title="Changelog (CHANGELOG.md)" />
+      </div>
+    )
+  }
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -150,7 +236,7 @@ export default function ChangelogPage() {
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             <Tag className="h-3 w-3 mr-1" />
-            v2.1.0
+            v3.0.0
           </Badge>
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             Ativo
@@ -219,6 +305,45 @@ export default function ChangelogPage() {
           </Card>
         ))}
       </div>
+
+      {/* Links Úteis */}
+      <Card className="bg-gradient-to-r from-blue-50 to-purple-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            🔗 Links Úteis
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="text-center p-4 border rounded-lg bg-white">
+              <GitBranch className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+              <h4 className="font-semibold">Documentação</h4>
+              <p className="text-sm text-gray-600 mb-3">Acesse a documentação completa da v3.0.0</p>
+              <Link href="/docs" className="text-blue-600 text-sm hover:underline">
+                Acessar Documentação →
+              </Link>
+            </div>
+            
+            <div className="text-center p-4 border rounded-lg bg-white">
+              <GitBranch className="h-8 w-8 text-green-600 mx-auto mb-2" />
+              <h4 className="font-semibold">Monitoramento</h4>
+              <p className="text-sm text-gray-600 mb-3">Acompanhe o desenvolvimento da plataforma</p>
+              <Link href="/admin/desenvolvimento" className="text-green-600 text-sm hover:underline">
+                Ver Desenvolvimento →
+              </Link>
+            </div>
+            
+            <div className="text-center p-4 border rounded-lg bg-white">
+              <GitBranch className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+              <h4 className="font-semibold">Manual do Usuário</h4>
+              <p className="text-sm text-gray-600 mb-3">Guia completo para usuários</p>
+              <Link href="/docs/USER_GUIDE" className="text-purple-600 text-sm hover:underline">
+                Acessar Manual →
+              </Link>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Footer */}
       <div className="mt-12 text-center">

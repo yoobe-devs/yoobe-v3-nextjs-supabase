@@ -22,7 +22,8 @@ import {
   Star,
   CreditCard,
   Truck,
-  CheckCircle
+  CheckCircle,
+  UserPlus
 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -188,41 +189,66 @@ export const getAdminGlobalSidebarItems = (): SidebarItem[] => [
 export const getGestorSidebarItems = (): SidebarItem[] => [
   {
     title: "Dashboard",
-    href: "/gestor",
+    href: "/gestor/dashboard",
     icon: Home
   },
   {
-    title: "Usuários",
-    href: "/gestor/users",
+    title: "Minha Loja",
+    href: "/gestor/minha-loja",
+    icon: Building
+  },
+  {
+    title: "Loja de Brindes",
+    href: "/gestor/loja-brindes",
+    icon: Package
+  },
+  {
+    title: "Swag Track",
+    href: "/gestor/swag-track",
+    icon: Truck
+  },
+  {
+    title: "Onboarding",
+    href: "/gestor/onboarding",
+    icon: UserPlus
+  },
+  {
+    title: "Funcionários",
+    href: "/gestor/funcionarios",
     icon: Users,
     badge: "12"
   },
   {
     title: "Produtos",
-    href: "/gestor/products",
+    href: "/gestor/produtos",
     icon: Package,
     badge: "24"
   },
   {
     title: "Orçamentos",
-    href: "/gestor/quotes",
+    href: "/gestor/orcamentos",
     icon: FileText,
     badge: "8"
   },
   {
     title: "Pedidos",
-    href: "/gestor/orders",
+    href: "/gestor/pedidos",
     icon: ShoppingCart,
     badge: "15"
   },
   {
-    title: "Relatórios",
-    href: "/gestor/reports",
+    title: "Estoque",
+    href: "/gestor/estoque",
     icon: BarChart3
   },
   {
+    title: "Usuários",
+    href: "/gestor/usuarios",
+    icon: User
+  },
+  {
     title: "Configurações",
-    href: "/gestor/settings",
+    href: "/gestor/configuracoes",
     icon: Settings
   }
 ]

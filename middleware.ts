@@ -6,6 +6,49 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
   const supabase = createMiddlewareClient({ req, res })
 
+  // Observabilidade básica: request id e logs
+  const reqId = crypto.randomUUID()
+  res.headers.set('x-request-id', reqId)
+
+  // Redirecionar rotas antigas do gestor-app para a nova estrutura /gestor
+  try {
+    const path = req.nextUrl.pathname
+    if (path === '/gestor-app') {
+      const url = req.nextUrl.clone(); url.pathname = '/gestor/dashboard'
+      return NextResponse.redirect(url)
+    }
+    const redirects: Record<string, string> = {
+      '/gestor-app/users': '/gestor/usuarios',
+      '/gestor-app/products': '/gestor/produtos',
+      '/gestor-app/quotes': '/gestor/orcamentos',
+      '/gestor-app/orders': '/gestor/pedidos',
+    }
+    if (redirects[path]) {
+      const url = req.nextUrl.clone(); url.pathname = redirects[path]
+      return NextResponse.redirect(url)
+    }
+  } catch {}
+
+  // Rate limit simples (in-memory, dev) para endpoints críticos
+  try {
+    const path = req.nextUrl.pathname
+    if (path.startsWith('/api/gestor/products/') && (path.includes('/images') || path.includes('/dupes'))) {
+      const ip = req.headers.get('x-forwarded-for') || req.ip || 'local'
+      ;(globalThis as any).__rate__ = (globalThis as any).__rate__ || new Map()
+      const key = `${ip}:${path}`
+      const now = Date.now()
+      const windowMs = 60_000
+      const limit = 30
+      const entry = (globalThis as any).__rate__.get(key) || { count: 0, reset: now + windowMs }
+      if (now > entry.reset) { entry.count = 0; entry.reset = now + windowMs }
+      entry.count += 1
+      (globalThis as any).__rate__.set(key, entry)
+      if (entry.count > limit) {
+        return new NextResponse(JSON.stringify({ error: 'Rate limit exceeded' }), { status: 429, headers: { 'Content-Type': 'application/json', 'Retry-After': '60' } })
+      }
+    }
+  } catch {}
+
   const {
     data: { session },
   } = await supabase.auth.getSession()
@@ -43,7 +86,8 @@ export async function middleware(req: NextRequest) {
     '/test-system',
     '/test-login-simple',
     '/api-docs',
-    '/demo'
+    '/demo',
+    '/docs' // Documentação pública
   ]
   
   const isPublicRoute = publicRoutes.some(route => req.nextUrl.pathname.startsWith(route))
@@ -53,6 +97,17 @@ export async function middleware(req: NextRequest) {
     const redirectUrl = req.nextUrl.clone()
     redirectUrl.pathname = '/auth/login'
     return NextResponse.redirect(redirectUrl)
+  }
+
+  // RBAC básico: restringe área do gestor a perfis permitidos
+  if (session && req.nextUrl.pathname.startsWith('/gestor')) {
+    const role = (session.user?.user_metadata as any)?.role
+    const allowed = ['gestor', 'manager', 'admin', 'admin_global', 'superadmin']
+    if (!allowed.includes(role)) {
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = '/choose-environment'
+      return NextResponse.redirect(redirectUrl)
+    }
   }
 
   // Se há sessão e está tentando acessar login, redirecionar para choose-environment
@@ -83,5 +138,3 @@ export const config = {
     '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
   ],
 }
-
-

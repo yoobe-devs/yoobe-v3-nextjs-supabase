@@ -14,7 +14,7 @@ function isValidUuid(value: unknown): value is string {
 const DEV_TEST_COMPANY_ID = '00000000-0000-0000-0000-000000000001'
 
 // GET - Buscar produtos da empresa do gestor
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
     
@@ -29,31 +29,40 @@ export async function GET() {
     const companyIdRaw = user.user_metadata?.company_id
     const storeId = user.user_metadata?.store_id
 
-    if (role !== 'manager') {
+    if (!['manager','gestor'].includes(role)) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
     const company_id = isValidUuid(companyIdRaw) ? companyIdRaw : DEV_TEST_COMPANY_ID
 
-    // Buscar produtos da empresa usando service role
-    const { data: products, error: productsError } = await supabaseService
-      .from('company_products')
+    // Filtros e paginação
+    const { searchParams } = new URL(request.url)
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
+    const pageSize = Math.min(100, Math.max(1, parseInt(searchParams.get('pageSize') || '20')))
+    const q = (searchParams.get('q') || '').trim()
+    const status = (searchParams.get('status') || '').trim()
+
+    let query = supabaseService
+      .from('client_products')
       .select(`
         *,
-        product_categories (
-          id,
-          name,
-          icon,
-          color
-        ),
         base_products (
           id,
           name,
           base_price,
           base_points_cost
         )
-      `)
-      .eq('company_id', company_id)
+      `, { count: 'exact' })
+      .eq('client_id', company_id)
+
+    if (q) query = query.or(`name.ilike.%${q}%,description.ilike.%${q}%`)
+    if (status) query = query.eq('status', status)
+
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    const { data: products, error: productsError, count } = await query
+      .range(from, to)
       .order('created_at', { ascending: false })
 
     if (productsError) {
@@ -61,7 +70,17 @@ export async function GET() {
       return NextResponse.json({ error: 'Erro ao buscar produtos' }, { status: 500 })
     }
 
-    return NextResponse.json(products || [])
+    return NextResponse.json({
+      data: products || [],
+      pagination: {
+        page,
+        pageSize,
+        total: count || 0,
+        totalPages: Math.ceil((count || 0) / pageSize),
+        hasPrev: page > 1,
+        hasNext: from + (products?.length || 0) < (count || 0)
+      }
+    })
   } catch (error) {
     console.error('Erro na API de produtos do gestor:', error)
     return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
@@ -82,7 +101,7 @@ export async function POST(request: NextRequest) {
     const role = user.user_metadata?.role
     const companyIdRaw = user.user_metadata?.company_id
     const storeId = user.user_metadata?.store_id
-    if (role !== 'manager') {
+    if (!['manager','gestor'].includes(role)) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
@@ -102,17 +121,15 @@ export async function POST(request: NextRequest) {
 
     // Criar novo produto usando service role
     const { data: newProduct, error: createError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .insert({
         name,
         description,
         price,
-        points_cost,
         stock_quantity,
         image_url,
-        category_id,
         base_product_id,
-        company_id,
+        client_id: company_id,
         store_id: storeId,
         status: 'active'
       })

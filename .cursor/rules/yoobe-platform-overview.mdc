@@ -1,0 +1,43 @@
+# Plataforma Yoobe v3.0.0 - Visão Geral
+
+## Estrutura da Plataforma
+
+A plataforma Yoobe v3.0.0 é um sistema completo de gestão de produtos e orçamentos com RBAC e multi-tenancy, construído com:
+
+- **Frontend**: Next.js 14.0.3 com React 18 e TypeScript
+- **Backend**: Supabase (PostgreSQL + APIs REST + Auth + Storage)
+- **UI**: Tailwind CSS + Radix UI components
+- **Estado**: React Hook Form + Zod para validação
+
+## Arquitetura Principal
+
+- **Multi-tenancy**: Sistema de empresas e lojas independentes
+- **RBAC**: Controle de acesso baseado em roles (admin, gestor, user)
+- **Sistema de Pontos**: Gestão de pontos e recompensas
+- **Orçamentos**: Sistema completo de criação e aprovação
+- **Produtos**: Catálogo base + produtos por empresa
+- **Integrações**: Cubbo, Olist, APIs externas
+
+## Estrutura de Diretórios
+
+- `app/`: Aplicação Next.js (App Router)
+- `components/`: Componentes React reutilizáveis
+- `lib/`: Utilitários e configurações
+- `types/`: Definições TypeScript
+- `supabase/`: Configurações e migrações do banco
+- `scripts/`: Scripts de setup e manutenção
+
+## Serviços Ativos
+
+- Frontend: http://localhost:3001
+- Supabase API: http://127.0.0.1:54321
+- Studio: http://127.0.0.1:54323
+- Database: PostgreSQL na porta 54322
+- Storage: Sistema de arquivos integrado
+- Auth: Sistema de autenticação completo
+- Realtime: Subscrições em tempo real
+  description:
+  globs:
+  alwaysApply: true
+
+---

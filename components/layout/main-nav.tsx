@@ -127,11 +127,11 @@ const footerNav = [
   },
   {
     title: "API Reference",
-    href: "/docs/API_REFERENCE.md"
+    href: "/admin/documentacao/viva/API_REFERENCE"
   },
   {
     title: "Database Schema",
-    href: "/docs/DATABASE_SCHEMA.md"
+    href: "/admin/documentacao/viva/DATABASE_SCHEMA"
   }
 ]
 
@@ -197,4 +197,3 @@ export function MainNav() {
     </div>
   )
 }
-

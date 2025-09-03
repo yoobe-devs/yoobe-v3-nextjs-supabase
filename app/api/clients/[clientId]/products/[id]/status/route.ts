@@ -52,8 +52,8 @@ export async function PATCH(
 
     // Verificar role do usuário
     const userRole = user.user_metadata?.role
-    if (userRole !== 'manager') {
-      return NextResponse.json({ error: 'Acesso negado - Apenas gestores podem ativar/inativar produtos' }, { status: 403 })
+    if (!['manager','gestor','admin','admin_global','superadmin'].includes(userRole)) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
     const companyId = user.user_metadata?.company_id
@@ -75,10 +75,10 @@ export async function PATCH(
 
     // Verificar se o produto existe e pertence à empresa
     const { data: existingProduct, error: fetchError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .select('*')
       .eq('id', productId)
-      .eq('company_id', companyId)
+      .eq('client_id', companyId)
       .single()
 
     if (fetchError || !existingProduct) {
@@ -92,10 +92,10 @@ export async function PATCH(
     }
 
     const { data: updatedProduct, error: updateError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .update(updateData)
       .eq('id', productId)
-      .eq('company_id', companyId)
+      .eq('client_id', companyId)
       .select(`
         *,
         product_categories (

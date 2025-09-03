@@ -6,16 +6,31 @@ import { useAuth } from '@/components/auth/auth-provider-simple'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 export default function ChooseEnvironmentPage() {
   const { user, loading } = useAuth()
   const router = useRouter()
+  const supabase = createClientComponentClient()
+  const [role, setRole] = useState<string>('')
+  const [actionMsg, setActionMsg] = useState<string>('')
 
   useEffect(() => {
     if (!loading && user) {
       console.log('ChooseEnvironment: User logged in:', user.email)
     }
   }, [user, loading])
+
+  useEffect(() => {
+    const loadRole = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        const r = (session?.user?.user_metadata as any)?.role || ''
+        setRole(r)
+      } catch {}
+    }
+    loadRole()
+  }, [supabase])
 
   if (loading) {
     return (
@@ -43,6 +58,13 @@ export default function ChooseEnvironmentPage() {
           <p className="text-gray-600">
             Bem-vindo, {user.email}! Escolha o ambiente que deseja acessar.
           </p>
+          {(role === 'superadmin' || role === 'admin_global') && (
+            <div className="mt-4">
+              <Button onClick={() => router.push('/admin/dashboard')}>
+                Entrar no Admin Global
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -126,11 +148,47 @@ export default function ChooseEnvironmentPage() {
           </Button>
         </div>
 
+        {process.env.NODE_ENV !== 'production' && (
+          <div className="mt-8 p-4 bg-purple-50 rounded-lg">
+            <h3 className="text-sm font-medium text-purple-900 mb-2">Ações de Desenvolvimento</h3>
+            <div className="flex gap-2 flex-wrap">
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  setActionMsg('')
+                  try {
+                    const r = await fetch('/api/admin/promote-self', { method: 'POST' })
+                    const j = await r.json().catch(()=>({}))
+                    setActionMsg(r.ok ? '✅ Promovido a superadmin (recarregue a página)' : (j?.error || 'Falha ao promover'))
+                  } catch (e) { setActionMsg('Falha ao promover') }
+                }}
+              >
+                Promover-me a Superadmin
+              </Button>
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  setActionMsg('')
+                  try {
+                    const r = await fetch('/api/admin/superadmin/seed', { method: 'POST' })
+                    const j = await r.json().catch(()=>({}))
+                    setActionMsg(r.ok ? '✅ Superadmin de teste criado (veja logs do servidor)' : (j?.error || 'Falha no seed'))
+                  } catch (e) { setActionMsg('Falha no seed') }
+                }}
+              >
+                Seed Superadmin (dev)
+              </Button>
+            </div>
+            {actionMsg && (<div className="mt-2 text-sm text-purple-800">{actionMsg}</div>)}
+          </div>
+        )}
+
         <div className="mt-8 p-4 bg-blue-50 rounded-lg">
           <h3 className="text-sm font-medium text-blue-900 mb-2">Informações do Usuário:</h3>
           <p className="text-sm text-blue-700">Email: {user.email}</p>
           <p className="text-sm text-blue-700">ID: {user.id}</p>
           <p className="text-sm text-blue-700">Criado em: {new Date(user.created_at).toLocaleString()}</p>
+          {role && <p className="text-sm text-blue-700">Role (metadados): {role}</p>}
         </div>
       </div>
     </div>

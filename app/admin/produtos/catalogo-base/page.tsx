@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
+import { ProductImage } from '@/components/ui/safe-image'
 
 interface BaseProduct {
   id: string
@@ -56,6 +57,21 @@ export default function CatalogoBasePage() {
   const [importLoading, setImportLoading] = useState(false)
   const [importPage, setImportPage] = useState(1)
   const [importProgress, setImportProgress] = useState(0)
+  const [clients, setClients] = useState<{ id: string; name: string }[]>([])
+  const [selectedClient, setSelectedClient] = useState<string>('')
+  const [clientQuery, setClientQuery] = useState('')
+  const [replicateModal, setReplicateModal] = useState<{ open: boolean; product?: BaseProduct }>({ open: false })
+  const [replicateMargin, setReplicateMargin] = useState<number>(0)
+  const [replicateRounding, setReplicateRounding] = useState<'none' | 'ceil-0.50' | 'ceil-1.00'>('none')
+  const [replicateCopyImages, setReplicateCopyImages] = useState<boolean>(true)
+  const [replicating, setReplicating] = useState<boolean>(false)
+  const [replicatedMap, setReplicatedMap] = useState<Record<string, boolean>>({})
+  const [selectedBaseIds, setSelectedBaseIds] = useState<Set<string>>(new Set())
+  const [batchMargin, setBatchMargin] = useState<number>(0)
+  const [batchRounding, setBatchRounding] = useState<'none' | 'ceil-0.50' | 'ceil-1.00'>('none')
+  const [batchCopyImages, setBatchCopyImages] = useState<boolean>(true)
+  const [batchResult, setBatchResult] = useState<any | null>(null)
+  const [batchDialogOpen, setBatchDialogOpen] = useState(false)
 
   // Buscar produtos base
   const fetchProducts = async () => {
@@ -83,6 +99,36 @@ export default function CatalogoBasePage() {
       setCategories(Array.isArray(data) ? data : (data.categories || []))
     } catch (error) {
       console.error('Erro ao buscar categorias:', error)
+    }
+  }
+
+  // Buscar clientes (companies) para replicação
+  const fetchClients = async () => {
+    try {
+      const { data, error } = await supabase.from('companies').select('id, name').order('name')
+      if (error) throw error
+      setClients(data || [])
+    } catch (e) {
+      console.error('Erro ao buscar clientes:', e)
+    }
+  }
+
+  // Buscar status de replicação para o cliente selecionado
+  const fetchReplicationStatus = async (clientId: string) => {
+    if (!clientId || products.length === 0) return
+    try {
+      const { data, error } = await supabase
+        .from('client_products')
+        .select('base_product_id')
+        .eq('client_id', clientId)
+      if (error) throw error
+      const setIds = new Set((data || []).map((r: any) => r.base_product_id))
+      const map: Record<string, boolean> = {}
+      products.forEach(p => { map[p.id] = setIds.has(p.id) })
+      setReplicatedMap(map)
+    } catch (e) {
+      console.error('Erro ao buscar status de replicação:', e)
+      setReplicatedMap({})
     }
   }
 
@@ -133,11 +179,71 @@ export default function CatalogoBasePage() {
     }
   }
 
+  // Carregamento inicial
+  useEffect(() => {
+    fetchProducts()
+    fetchCategories()
+    fetchClients()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Atualiza o status de replicação quando muda cliente ou lista de produtos
+  useEffect(() => {
+    if (selectedClient) fetchReplicationStatus(selectedClient)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClient, products])
+
+  const openReplicate = (product: BaseProduct) => {
+    if (!selectedClient) {
+      toast.error('Selecione um cliente antes de replicar')
+      return
+    }
+    // Usar os valores padrão do lote
+    setReplicateMargin(batchMargin)
+    setReplicateRounding(batchRounding)
+    setReplicateCopyImages(batchCopyImages)
+    setReplicateModal({ open: true, product })
+  }
+
+  const confirmReplicate = async () => {
+    if (!replicateModal.product || !selectedClient) return
+    try {
+      setReplicating(true)
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(`/api/clients/${selectedClient}/replicate-product/${replicateModal.product.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({
+          margin_pct: replicateMargin,
+          rounding_rule: replicateRounding,
+          copy_images: replicateCopyImages,
+        }),
+      })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err?.error || 'Erro ao replicar produto')
+      }
+      toast.success('Produto replicado com sucesso')
+      setReplicateModal({ open: false })
+      fetchReplicationStatus(selectedClient)
+    } catch (e) {
+      console.error(e)
+      toast.error(e instanceof Error ? e.message : 'Falha ao replicar')
+    } finally {
+      setReplicating(false)
+    }
+  }
+
   // Filtrar produtos
   const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+    const name = (product.name || '').toLowerCase()
+    const desc = (product.description || '').toLowerCase()
+    const sku = ((product as any).sku || (product as any).specifications?.sku || '').toLowerCase()
+    const term = (searchTerm || '').toLowerCase()
+    const matchesSearch = name.includes(term) || desc.includes(term) || sku.includes(term)
     
     const matchesCategory = selectedCategory === 'all' || product.product_categories?.id === selectedCategory
     
@@ -185,7 +291,30 @@ export default function CatalogoBasePage() {
           <h1 className="text-2xl font-bold text-gray-900">Catálogo Base de Produtos</h1>
           <p className="text-gray-600">Gerencie o catálogo base de produtos disponíveis para orçamentos</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3 items-center">
+          <div className="flex items-center gap-2">
+            <Label className="text-sm">Cliente:</Label>
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="Buscar cliente..."
+                value={clientQuery}
+                onChange={(e) => setClientQuery(e.target.value)}
+                className="h-9 w-48"
+              />
+              <select
+                className="px-3 py-2 border rounded-md"
+                value={selectedClient}
+                onChange={(e) => setSelectedClient(e.target.value)}
+              >
+                <option value="">Selecione um cliente</option>
+                {clients
+                  .filter(c => !clientQuery || c.name.toLowerCase().includes(clientQuery.toLowerCase()))
+                  .map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+              </select>
+            </div>
+          </div>
           <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
             <DialogTrigger asChild>
               <Button className="flex items-center gap-2">
@@ -235,6 +364,11 @@ export default function CatalogoBasePage() {
               </div>
             </DialogContent>
           </Dialog>
+          {selectedClient && (
+            <Button variant="outline" onClick={() => router.push(`/admin/clientes/${selectedClient}/produtos`)}>
+              Ver replicados
+            </Button>
+          )}
           
           <Button 
             onClick={() => router.push('/admin/produtos/novo')}
@@ -372,10 +506,15 @@ export default function CatalogoBasePage() {
                   <div className="flex-1">
                     <CardTitle className="text-lg line-clamp-2">{product.name}</CardTitle>
                     <CardDescription className="line-clamp-1">
-                      SKU: {product.sku}
+                      SKU: {(product as any).sku || (product as any).specifications?.sku || '—'}
                     </CardDescription>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-2 items-center">
+                    {selectedClient && (
+                      <Badge variant={replicatedMap[product.id] ? 'default' : 'secondary'} title={replicatedMap[product.id] ? 'Já existe em client_products' : 'Ainda não replicado para este cliente'}>
+                        {replicatedMap[product.id] ? 'Replicado' : 'Não replicado'}
+                      </Badge>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
@@ -390,23 +529,23 @@ export default function CatalogoBasePage() {
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => openReplicate(product)}
+                      disabled={!selectedClient || !!replicatedMap[product.id]}
+                      title={!selectedClient ? 'Selecione um cliente' : (replicatedMap[product.id] ? 'Já replicado para este cliente' : 'Replicar para cliente')}
+                    >
+                      Replicar
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
               
               <CardContent className="space-y-3">
-                {product.image_url && (
-                  <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
-                    <img
-                      src={product.image_url}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none'
-                      }}
-                    />
-                  </div>
-                )}
+                <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                  <ProductImage src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
+                </div>
                 
                 <div className="space-y-2">
                   <p className="text-sm text-gray-600 line-clamp-2">
@@ -441,6 +580,156 @@ export default function CatalogoBasePage() {
           ))}
         </div>
       )}
+
+      {/* Ações em lote */}
+      <div className="flex items-center justify-between">
+        <div className="text-sm text-gray-600">Selecionados: {selectedBaseIds.size}</div>
+        <div className="flex gap-2">
+          {selectedClient && (
+            <Button
+              variant="default"
+              disabled={selectedBaseIds.size === 0}
+              onClick={async () => {
+                try {
+                  const { data: { session } } = await supabase.auth.getSession()
+                  const res = await fetch(`/api/clients/${selectedClient}/replicate-products`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+                    },
+                    body: JSON.stringify({ 
+                      base_product_ids: Array.from(selectedBaseIds),
+                      margin_pct: batchMargin,
+                      rounding_rule: batchRounding,
+                      copy_images: batchCopyImages
+                    }),
+                  })
+                  const data = await res.json().catch(() => ({}))
+                  if (!res.ok) throw new Error(data?.error || 'Falha ao replicar em lote')
+                  toast.success(`Replicação em lote: ${data?.summary?.created || 0} criados, ${data?.summary?.existed || 0} existentes${(data?.errors?.length||0)>0?`, ${data.errors.length} com erro`:''}`)
+                  setBatchResult({
+                    ...data,
+                    resolved: Array.from(selectedBaseIds).filter((id) => !(data?.errors||[]).some((e:any)=>e.id===id)),
+                  })
+                  setBatchDialogOpen(true)
+                  setSelectedBaseIds(new Set())
+                  fetchReplicationStatus(selectedClient)
+                } catch (e) {
+                  console.error(e)
+                  toast.error(e instanceof Error ? e.message : 'Erro na replicação em lote')
+                }
+              }}
+            >
+              Replicar em lote
+            </Button>
+          )}
+          {selectedClient && (
+            <Button variant="outline" onClick={() => router.push(`/admin/clientes/${selectedClient}/produtos`)}>
+              Ver replicados
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Parâmetros de replicação em lote */}
+      {selectedClient && (
+        <div className="flex flex-wrap gap-3 items-end">
+          <div>
+            <Label>Margem (%)</Label>
+            <Input type="number" className="w-28" value={batchMargin} onChange={(e) => setBatchMargin(Number(e.target.value))} />
+          </div>
+          <div>
+            <Label>Arredondamento</Label>
+            <select className="px-3 py-2 border rounded-md" value={batchRounding} onChange={(e) => setBatchRounding(e.target.value as any)}>
+              <option value="none">Sem arred.</option>
+              <option value="ceil-0.50">Para 0,50</option>
+              <option value="ceil-1.00">Para 1,00</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <input id="batchCopy" type="checkbox" checked={batchCopyImages} onChange={(e) => setBatchCopyImages(e.target.checked)} />
+            <Label htmlFor="batchCopy">Copiar imagens</Label>
+          </div>
+        </div>
+      )}
+
+      {/* Dialog de resultado do lote */}
+      <Dialog open={batchDialogOpen} onOpenChange={setBatchDialogOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Resultado da Replicação em Lote</DialogTitle>
+            <DialogDescription>
+              Resumo e detalhes por item replicado
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 text-sm">
+            <div className="grid grid-cols-3 gap-3">
+              <div><span className="text-gray-600">Criados:</span> <strong>{batchResult?.summary?.created || 0}</strong></div>
+              <div><span className="text-gray-600">Já existiam:</span> <strong>{batchResult?.summary?.existed || 0}</strong></div>
+              <div><span className="text-gray-600">Com erro:</span> <strong>{(batchResult?.errors || []).length}</strong></div>
+            </div>
+            {(batchResult?.errors || []).length > 0 && (
+              <div className="mt-2">
+                <div className="font-medium mb-2">Erros</div>
+                <div className="max-h-56 overflow-auto border rounded">
+                  {(batchResult?.errors || []).map((err: any, idx: number) => {
+                    const prod = products.find(p => p.id === err.id)
+                    return (
+                      <div key={idx} className="px-3 py-2 border-b last:border-b-0 flex items-center justify-between gap-3">
+                        <div className="truncate">
+                          <div className="font-medium truncate">{prod?.name || err.id}</div>
+                          <div className="text-xs text-red-700 truncate">{err.error}</div>
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={() => prod && router.push(`/admin/produtos/${prod.id}`)}>Ver base</Button>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+            <div className="flex justify-end">
+              <Button onClick={() => setBatchDialogOpen(false)}>Fechar</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Replicação */}
+      <Dialog open={replicateModal.open} onOpenChange={(open) => setReplicateModal({ open })}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Replicar produto</DialogTitle>
+            <DialogDescription>
+              Cliente: {clients.find(c => c.id === selectedClient)?.name || '—'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Margem (%)</Label>
+              <Input type="number" value={replicateMargin} onChange={(e) => setReplicateMargin(Number(e.target.value))} />
+            </div>
+            <div>
+              <Label>Arredondamento</Label>
+              <select className="px-3 py-2 border rounded-md w-full" value={replicateRounding} onChange={(e) => setReplicateRounding(e.target.value as any)}>
+                <option value="none">Sem arredondamento</option>
+                <option value="ceil-0.50">Arredondar para 0,50</option>
+                <option value="ceil-1.00">Arredondar para 1,00</option>
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <input id="copyImages" type="checkbox" checked={replicateCopyImages} onChange={(e) => setReplicateCopyImages(e.target.checked)} />
+              <Label htmlFor="copyImages">Copiar imagens</Label>
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setReplicateModal({ open: false })}>Cancelar</Button>
+              <Button onClick={confirmReplicate} disabled={replicating}>
+                {replicating ? 'Replicando...' : 'Confirmar'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

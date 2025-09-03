@@ -33,7 +33,7 @@ export async function PUT(
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    if (userData.role !== 'manager') {
+    if (!['manager','gestor'].includes(userData.role)) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
@@ -42,7 +42,7 @@ export async function PUT(
 
     // Verificar se o produto pertence à loja do gestor
     const { data: product, error: productError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .select('id, store_id')
       .eq('id', params.id)
       .eq('store_id', userData.store_id)
@@ -54,15 +54,13 @@ export async function PUT(
 
     // Atualizar produto
     const { data: updatedProduct, error: updateError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .update({
         name,
         description,
         price,
-        points_cost,
         stock_quantity,
         image_url,
-        category_id,
         status,
         updated_at: new Date().toISOString()
       })
@@ -110,13 +108,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
     }
 
-    if (userData.role !== 'manager') {
+    if (!['manager','gestor'].includes(userData.role)) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
     // Verificar se o produto pertence à loja do gestor
     const { data: product, error: productError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .select('id, store_id')
       .eq('id', params.id)
       .eq('store_id', userData.store_id)
@@ -128,7 +126,7 @@ export async function DELETE(
 
     // Excluir produto
     const { error: deleteError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .delete()
       .eq('id', params.id)
 

@@ -1,117 +1,241 @@
 const { createClient } = require('@supabase/supabase-js')
-require('dotenv').config()
 
-const supabaseUrl = 'http://127.0.0.1:54321'
-const serviceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+const supabaseUrl = 'http://localhost:54321'
+const supabaseServiceKey =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
 
-const supabase = createClient(supabaseUrl, serviceKey)
+const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
 async function createTablesDirect() {
-  console.log('🗄️ Criando tabelas diretamente no banco local...\n')
-
   try {
-    // 1. Criar tabela budgets
-    console.log('1. Criando tabela budgets...')
-    const { error: budgetError } = await supabase
-      .from('budgets')
-      .select('*')
-      .limit(1)
-    
-    if (budgetError && budgetError.code === 'PGRST205') {
-      // Tabela não existe, vamos criar usando SQL direto
-      console.log('   Tabela não existe, criando...')
-      
-      // Como não temos exec_sql, vamos tentar criar via API REST
-      const { data: testBudget, error: insertError } = await supabase
-        .from('budgets')
-        .insert({
-          company_id: '00000000-0000-0000-0000-000000000000',
-          manager_id: '00000000-0000-0000-0000-000000000000',
-          title: 'Teste',
-          description: 'Teste',
-          total_amount: 0,
-          status: 'pending'
-        })
-        .select()
-      
-      if (insertError) {
-        console.log(`   ❌ Erro ao criar tabela: ${insertError.message}`)
-        console.log('   💡 Execute o SQL manualmente no Supabase Studio')
-        console.log('   🌐 Acesse: http://127.0.0.1:54323')
-        return
+    console.log('🚀 Criando tabelas do sistema de pontos diretamente...')
+
+    // 1. Carteira por usuário/tenant
+    console.log('💰 Criando tabela wallet_accounts...')
+    try {
+      const { error } = await supabase.from('wallet_accounts').insert({
+        tenant_id: '00000000-0000-0000-0000-000000000000',
+        user_id: '00000000-0000-0000-0000-000000000000',
+        status: 'active',
+      })
+
+      if (
+        error &&
+        error.message.includes('relation "wallet_accounts" does not exist')
+      ) {
+        console.log(
+          '   📝 Tabela wallet_accounts não existe, será criada quando necessário'
+        )
+      } else if (error) {
+        console.log('   ❌ Erro:', error.message)
       } else {
-        console.log('   ✅ Tabela budgets criada com sucesso')
-        // Remover o registro de teste
+        console.log('   ✅ Tabela wallet_accounts existe')
+        // Remover registro de teste
         await supabase
-          .from('budgets')
+          .from('wallet_accounts')
           .delete()
-          .eq('title', 'Teste')
+          .eq('tenant_id', '00000000-0000-0000-0000-000000000000')
       }
-    } else {
-      console.log('   ✅ Tabela budgets já existe')
+    } catch (err) {
+      console.log('   📝 Tabela wallet_accounts não existe')
     }
 
-    // 2. Criar tabela budget_items
-    console.log('\n2. Criando tabela budget_items...')
-    const { error: itemsError } = await supabase
-      .from('budget_items')
-      .select('*')
-      .limit(1)
-    
-    if (itemsError && itemsError.code === 'PGRST205') {
-      console.log('   Tabela não existe, criando...')
-      
-      const { data: testItem, error: insertError } = await supabase
-        .from('budget_items')
-        .insert({
-          budget_id: '00000000-0000-0000-0000-000000000000',
-          base_product_id: '00000000-0000-0000-0000-000000000000',
-          quantity: 1,
-          custom_price: 0,
-          custom_points_cost: 0,
-          notes: 'Teste'
-        })
-        .select()
-      
-      if (insertError) {
-        console.log(`   ❌ Erro ao criar tabela: ${insertError.message}`)
-        console.log('   💡 Execute o SQL manualmente no Supabase Studio')
-        return
+    // 2. Ledger append-only (crédito/débito)
+    console.log('📊 Criando tabela wallet_entries...')
+    try {
+      const { error } = await supabase.from('wallet_entries').insert({
+        wallet_id: '00000000-0000-0000-0000-000000000000',
+        direction: 'credit',
+        amount_points: 100,
+        reason: 'test_creation',
+        ref_type: 'test',
+        idempotency_key: 'test_' + Date.now(),
+      })
+
+      if (
+        error &&
+        error.message.includes('relation "wallet_entries" does not exist')
+      ) {
+        console.log('   📝 Tabela wallet_entries não existe')
+      } else if (error) {
+        console.log('   ❌ Erro:', error.message)
       } else {
-        console.log('   ✅ Tabela budget_items criada com sucesso')
-        // Remover o registro de teste
+        console.log('   ✅ Tabela wallet_entries existe')
+        // Remover registro de teste
         await supabase
-          .from('budget_items')
+          .from('wallet_entries')
           .delete()
-          .eq('notes', 'Teste')
+          .eq('idempotency_key', 'test_' + Date.now())
       }
-    } else {
-      console.log('   ✅ Tabela budget_items já existe')
+    } catch (err) {
+      console.log('   📝 Tabela wallet_entries não existe')
     }
 
-    // 3. Verificar se as colunas foram adicionadas em company_products
-    console.log('\n3. Verificando company_products...')
-    const { data: testProduct, error: productError } = await supabase
-      .from('company_products')
-      .select('is_active, budget_id, approved_at, approved_by')
-      .limit(1)
-    
-    if (productError) {
-      console.log(`   ❌ Erro ao verificar company_products: ${productError.message}`)
-    } else {
-      console.log('   ✅ Colunas de orçamento existem em company_products')
+    // 3. Provedores de pontos (gamificação externa)
+    console.log('🎮 Criando tabela point_providers...')
+    try {
+      const { error } = await supabase.from('point_providers').insert({
+        tenant_id: '00000000-0000-0000-0000-000000000000',
+        name: 'Test Provider',
+        hmac_secret: 'test_secret_' + Date.now(),
+        is_active: true,
+      })
+
+      if (
+        error &&
+        error.message.includes('relation "point_providers" does not exist')
+      ) {
+        console.log('   📝 Tabela point_providers não existe')
+      } else if (error) {
+        console.log('   ❌ Erro:', error.message)
+      } else {
+        console.log('   ✅ Tabela point_providers existe')
+        // Remover registro de teste
+        await supabase
+          .from('point_providers')
+          .delete()
+          .eq('name', 'Test Provider')
+      }
+    } catch (err) {
+      console.log('   📝 Tabela point_providers não existe')
     }
 
-    console.log('\n🎉 Verificação concluída!')
-    console.log('\n📋 Próximos passos:')
-    console.log('1. Acesse o Supabase Studio: http://127.0.0.1:54323')
-    console.log('2. Vá para SQL Editor')
-    console.log('3. Cole o conteúdo do arquivo create-budget-tables-complete.sql')
-    console.log('4. Execute o SQL')
-    console.log('5. Teste com: node test-budget-apis.js')
-    
+    // 4. Inbox de webhooks (para auditoria e reprocessamento)
+    console.log('📨 Criando tabela webhook_inbox...')
+    try {
+      const { error } = await supabase.from('webhook_inbox').insert({
+        tenant_id: '00000000-0000-0000-0000-000000000000',
+        event_type: 'test_event',
+        payload: { test: true },
+        idempotency_key: 'test_' + Date.now(),
+      })
+
+      if (
+        error &&
+        error.message.includes('relation "webhook_inbox" does not exist')
+      ) {
+        console.log('   📝 Tabela webhook_inbox não existe')
+      } else if (error) {
+        console.log('   ❌ Erro:', error.message)
+      } else {
+        console.log('   ✅ Tabela webhook_inbox existe')
+        // Remover registro de teste
+        await supabase
+          .from('webhook_inbox')
+          .delete()
+          .eq('idempotency_key', 'test_' + Date.now())
+      }
+    } catch (err) {
+      console.log('   📝 Tabela webhook_inbox não existe')
+    }
+
+    // 5. Regras de conversão de pontos (tenant-level, versionadas)
+    console.log('🔄 Criando tabela points_conversion_rules...')
+    try {
+      const { error } = await supabase.from('points_conversion_rules').insert({
+        tenant_id: '00000000-0000-0000-0000-000000000000',
+        status: 'active',
+        base_currency: 'BRL',
+        points_per_currency: 10,
+        rounding_mode: 'ceil',
+        min_points: 0,
+      })
+
+      if (
+        error &&
+        error.message.includes(
+          'relation "points_conversion_rules" does not exist'
+        )
+      ) {
+        console.log('   📝 Tabela points_conversion_rules não existe')
+      } else if (error) {
+        console.log('   ❌ Erro:', error.message)
+      } else {
+        console.log('   ✅ Tabela points_conversion_rules existe')
+        // Remover registro de teste
+        await supabase
+          .from('points_conversion_rules')
+          .delete()
+          .eq('tenant_id', '00000000-0000-0000-0000-000000000000')
+      }
+    } catch (err) {
+      console.log('   📝 Tabela points_conversion_rules não existe')
+    }
+
+    // 6. Resgates (checkout por pontos)
+    console.log('🎁 Criando tabela redemptions...')
+    try {
+      const { error } = await supabase.from('redemptions').insert({
+        tenant_id: '00000000-0000-0000-0000-000000000000',
+        user_id: '00000000-0000-0000-0000-000000000000',
+        store_product_id: '00000000-0000-0000-0000-000000000000',
+        qty: 1,
+        payment_method: 'points',
+        total_points: 100,
+        status: 'requested',
+        idempotency_key: 'test_' + Date.now(),
+      })
+
+      if (
+        error &&
+        error.message.includes('relation "redemptions" does not exist')
+      ) {
+        console.log('   📝 Tabela redemptions não existe')
+      } else if (error) {
+        console.log('   ❌ Erro:', error.message)
+      } else {
+        console.log('   ✅ Tabela redemptions existe')
+        // Remover registro de teste
+        await supabase
+          .from('redemptions')
+          .delete()
+          .eq('idempotency_key', 'test_' + Date.now())
+      }
+    } catch (err) {
+      console.log('   📝 Tabela redemptions não existe')
+    }
+
+    // 7. Catálogo de erros para aprendizado e prevenção
+    console.log('📚 Criando tabela errors_catalog...')
+    try {
+      const { error } = await supabase.from('errors_catalog').insert({
+        error_type: 'test_error',
+        route: '/test',
+        stack_trace_hash: 'test_hash_' + Date.now(),
+        context: { test: true },
+      })
+
+      if (
+        error &&
+        error.message.includes('relation "errors_catalog" does not exist')
+      ) {
+        console.log('   📝 Tabela errors_catalog não existe')
+      } else if (error) {
+        console.log('   ❌ Erro:', error.message)
+      } else {
+        console.log('   ✅ Tabela errors_catalog existe')
+        // Remover registro de teste
+        await supabase
+          .from('errors_catalog')
+          .delete()
+          .eq('stack_trace_hash', 'test_hash_' + Date.now())
+      }
+    } catch (err) {
+      console.log('   📝 Tabela errors_catalog não existe')
+    }
+
+    console.log('\n📋 Resumo:')
+    console.log('   As tabelas não existem no banco atual')
+    console.log('   Para criar as tabelas, você precisa:')
+    console.log('   1. Executar o SQL diretamente no banco PostgreSQL')
+    console.log('   2. Ou usar uma ferramenta como pgAdmin/DBeaver')
+    console.log('   3. Ou criar as tabelas via interface do Supabase')
+    console.log('\n💡 Alternativa:')
+    console.log(
+      '   Use o arquivo create-points-system.sql com um cliente PostgreSQL'
+    )
   } catch (error) {
-    console.error('❌ Erro durante criação:', error)
+    console.error('💥 Erro fatal:', error)
   }
 }
 

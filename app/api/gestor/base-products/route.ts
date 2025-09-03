@@ -54,8 +54,9 @@ export async function GET(request: NextRequest) {
 
     // Verificar role do usuário
     const userRole = user.user_metadata?.role
-    if (userRole !== 'manager') {
-      return NextResponse.json({ error: 'Acesso negado - Apenas gestores podem acessar' }, { status: 403 })
+    const allowed = ['manager','gestor','admin','admin_global','superadmin']
+    if (!allowed.includes(userRole)) {
+      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
     const companyIdRaw = user.user_metadata?.company_id
@@ -91,7 +92,19 @@ export async function GET(request: NextRequest) {
       query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`)
     }
     if (category) {
-      query = query.eq('category_id', category)
+      if (isValidUuid(category)) {
+        query = query.eq('category_id', category)
+      } else {
+        try {
+          const { data: cat } = await supabaseService
+            .from('product_categories')
+            .select('id')
+            .ilike('name', category)
+            .limit(1)
+            .single()
+          if (cat?.id) query = query.eq('category_id', cat.id)
+        } catch {}
+      }
     }
 
     // Paginação
@@ -109,9 +122,9 @@ export async function GET(request: NextRequest) {
 
     // Verificar quais produtos já foram replicados para esta empresa
     const { data: existingProducts, error: existingError } = await supabaseService
-      .from('company_products')
+      .from('client_products')
       .select('base_product_id')
-      .eq('company_id', companyId)
+      .eq('client_id', companyId)
 
     if (existingError) {
       console.error('Erro ao verificar produtos existentes:', existingError)

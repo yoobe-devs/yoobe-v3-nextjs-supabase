@@ -43,9 +43,11 @@ export default function ProdutosPage() {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [showImportModal, setShowImportModal] = useState(false)
 
-  // Verificar se é admin
+  // Verificar se é admin (aceita admin, admin_global, superadmin)
   useEffect(() => {
-    if (user && user.user_metadata?.role !== 'admin') {
+    const role = user?.user_metadata?.role
+    const allowed = ['admin', 'admin_global', 'superadmin']
+    if (user && (!role || !allowed.includes(role))) {
       router.push('/admin/dashboard')
       toast.error('Acesso negado - Apenas administradores podem acessar esta página')
     }
@@ -555,5 +557,4 @@ export default function ProdutosPage() {
     </div>
   )
 }
-
 

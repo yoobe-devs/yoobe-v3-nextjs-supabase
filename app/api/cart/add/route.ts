@@ -1,55 +1,95 @@
+// =====================================================
+// API: ADICIONAR AO CARRINHO
+// YOOBE v3.0.0 - Cart API
+// =====================================================
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import { cartService } from '@/lib/services/cart-service'
+import { auditService } from '@/lib/services/audit-service'
+import { AddToCartRequest, CartResponse } from '@/types/cart'
 
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const supabase = createRouteHandlerClient({ cookies })
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
     if (authError || !user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+      return NextResponse.json(
+        { success: false, error: 'Não autorizado' },
+        { status: 401 }
+      )
     }
 
-    const { productId, quantity } = await request.json()
+    // Obter dados da requisição
+    const body: AddToCartRequest = await request.json()
+    const { product_id, quantity, metadata } = body
 
-    if (!productId || !quantity || quantity <= 0) {
-      return NextResponse.json({ error: 'Dados inválidos' }, { status: 400 })
+    // Validação básica
+    if (!product_id || !quantity || quantity <= 0) {
+      return NextResponse.json(
+        { success: false, error: 'Dados inválidos' },
+        { status: 400 }
+      )
     }
 
-    // Verificar se o produto existe
-    const { data: product, error: productError } = await supabase
-      .from('company_products')
-      .select('*')
-      .eq('id', productId)
-      .single()
+    // Obter tenant_id do usuário (em produção, viria do contexto)
+    const tenantId = request.headers.get('x-tenant-id') || 'default'
 
-    if (productError || !product) {
-      return NextResponse.json({ error: 'Produto não encontrado' }, { status: 404 })
+    // Adicionar ao carrinho
+    const cartItem = await cartService.addToCart(
+      { product_id, quantity, metadata },
+      tenantId
+    )
+
+    // Registrar auditoria
+    try {
+      await auditService.logCreate(
+        tenantId,
+        'cart_items',
+        cartItem.id,
+        { product_id, quantity, metadata },
+        {
+          user_id: user.id,
+          ip_address: request.ip || 'unknown',
+          session_id: request.headers.get('x-session-id'),
+        }
+      )
+    } catch (auditError) {
+      console.error('Erro ao registrar auditoria:', auditError)
+      // Não falhar a operação principal por erro de auditoria
     }
 
-    // Verificar estoque
-    if (product.stock < quantity) {
-      return NextResponse.json({ error: 'Estoque insuficiente' }, { status: 400 })
+    // Buscar carrinho completo com itens
+    const cart = await cartService.getCartWithItems(cartItem.cart_id)
+
+    const response: CartResponse = {
+      success: true,
+      data: cart,
     }
 
-    // Adicionar ao carrinho (mock - em produção seria uma tabela de carrinho)
-    // Por enquanto, vamos simular sucesso
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Produto adicionado ao carrinho',
-      cartItem: {
-        id: Date.now().toString(),
-        productId,
-        quantity,
-        product
-      }
-    })
-
+    return NextResponse.json(response, { status: 200 })
   } catch (error) {
     console.error('Erro ao adicionar ao carrinho:', error)
-    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
+
+    const response: CartResponse = {
+      success: false,
+      error:
+        error instanceof Error ? error.message : 'Erro interno do servidor',
+    }
+
+    return NextResponse.json(response, { status: 500 })
   }
+}
+
+export async function GET() {
+  return NextResponse.json(
+    { success: false, error: 'Método não permitido' },
+    { status: 405 }
+  )
 }

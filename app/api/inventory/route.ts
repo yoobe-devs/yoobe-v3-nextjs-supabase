@@ -21,11 +21,10 @@ export async function GET(request: NextRequest) {
     const low_stock = searchParams.get('low_stock') === 'true'
 
     let query = supabase
-      .from('company_products')
+      .from('client_products')
       .select(`
         *,
-        companies(name),
-        categories(name)
+        product_categories(name)
       `, { count: 'exact' })
 
     // Aplicar filtros
@@ -33,7 +32,7 @@ export async function GET(request: NextRequest) {
       query = query.or(`name.ilike.%${search}%,description.ilike.%${search}%`)
     }
     if (company_id) {
-      query = query.eq('company_id', company_id)
+      query = query.eq('client_id', company_id)
     }
     if (low_stock) {
       query = query.lte('stock', 10) // Produtos com estoque baixo (≤ 10)
@@ -54,9 +53,9 @@ export async function GET(request: NextRequest) {
 
     // Calcular estatísticas
     const totalProducts = data?.length || 0
-    const lowStockProducts = data?.filter(p => p.stock <= 10).length || 0
-    const outOfStockProducts = data?.filter(p => p.stock === 0).length || 0
-    const totalValue = data?.reduce((sum, p) => sum + (p.price * p.stock), 0) || 0
+    const lowStockProducts = data?.filter(p => (p as any).stock_quantity <= 10).length || 0
+    const outOfStockProducts = data?.filter(p => (p as any).stock_quantity === 0).length || 0
+    const totalValue = data?.reduce((sum, p) => sum + ((p as any).price * ((p as any).stock_quantity || 0)), 0) || 0
 
     return NextResponse.json({
       inventory: data,
@@ -105,8 +104,8 @@ export async function POST(request: NextRequest) {
 
     // Buscar produto atual
     const { data: product, error: productError } = await supabase
-      .from('company_products')
-      .select('stock')
+      .from('client_products')
+      .select('stock_quantity')
       .eq('id', product_id)
       .single()
 
@@ -114,7 +113,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Produto não encontrado' }, { status: 404 })
     }
 
-    let newStock = product.stock
+    let newStock = (product as any).stock_quantity
 
     // Calcular novo estoque baseado na operação
     switch (operation) {
@@ -136,9 +135,9 @@ export async function POST(request: NextRequest) {
 
     // Atualizar estoque
     const { data, error } = await supabase
-      .from('company_products')
+      .from('client_products')
       .update({
-        stock: newStock,
+        stock_quantity: newStock,
         updated_at: new Date().toISOString()
       })
       .eq('id', product_id)

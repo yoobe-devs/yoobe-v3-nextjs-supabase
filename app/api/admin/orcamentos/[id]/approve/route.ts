@@ -114,30 +114,29 @@ export async function POST(
         if (itemsError) {
           console.error('Erro ao buscar itens do orçamento:', itemsError)
         } else if (budgetItems && budgetItems.length > 0) {
-          // Criar produtos da empresa para cada item
+          // Criar produtos do cliente (empresa) para cada item
           for (const item of budgetItems) {
             // Verificar se o produto já existe
             const { data: existingProduct } = await supabaseService
-              .from('company_products')
+              .from('client_products')
               .select('id')
-              .eq('company_id', existingBudget.company_id)
+              .eq('client_id', existingBudget.company_id)
               .eq('base_product_id', item.base_product_id)
               .single()
 
             if (!existingProduct) {
               // Criar novo produto da empresa
               await supabaseService
-                .from('company_products')
+                .from('client_products')
                 .insert({
-                  company_id: existingBudget.company_id,
+                  client_id: existingBudget.company_id,
                   base_product_id: item.base_product_id,
-                  custom_price: item.custom_price || 0,
-                  custom_points_cost: item.custom_points_cost || 0,
-                  is_active: false, // Inicialmente inativo
+                  price: item.custom_price || 0,
+                  points_cost: item.custom_points_cost || 0,
+                  is_active: false,
                   budget_id: budgetId,
                   approved_at: new Date().toISOString(),
-                  approved_by: user.id,
-                  status_fluxo: 'orcamento_aprovado' // Status inicial
+                  approved_by: user.id
                 })
             }
           }
@@ -194,5 +193,3 @@ export async function POST(
     return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
   }
 }
-
-

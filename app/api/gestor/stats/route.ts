@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = 'http://localhost:54321'
-const supabaseServiceKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
@@ -15,39 +15,39 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Company ID é obrigatório' }, { status: 400 })
     }
 
-    // Get total employees (usuários da empresa)
+    // Funcionários
     const { count: totalEmployees } = await supabase
       .from('users')
       .select('*', { count: 'exact', head: true })
       .eq('company_id', companyId)
 
-    // Get active employees
+    // Funcionários ativos
     const { count: activeEmployees } = await supabase
       .from('users')
       .select('*', { count: 'exact', head: true })
       .eq('company_id', companyId)
       .eq('status', 'active')
 
-    // Get total products
+    // Produtos (catálogo da empresa)
     const { count: totalProducts } = await supabase
       .from('company_products')
       .select('*', { count: 'exact', head: true })
       .eq('company_id', companyId)
 
-    // Get total orders
+    // Pedidos
     const { count: totalOrders } = await supabase
       .from('orders')
       .select('*', { count: 'exact', head: true })
       .eq('company_id', companyId)
 
-    // Get pending orders
+    // Pedidos pendentes
     const { count: pendingOrders } = await supabase
       .from('orders')
       .select('*', { count: 'exact', head: true })
       .eq('company_id', companyId)
       .eq('status', 'pending')
 
-    // Get total revenue
+    // Receita total (entregues)
     const { data: revenueData } = await supabase
       .from('orders')
       .select('total_amount')
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
     const totalRevenue = revenueData?.reduce((sum, order) => sum + order.total_amount, 0) || 0
 
-    // Get total points distributed
+    // Pontos distribuídos (saldo somado)
     const { data: pointsData } = await supabase
       .from('users')
       .select('points_balance')
@@ -64,8 +64,82 @@ export async function GET(request: NextRequest) {
 
     const totalPointsDistributed = pointsData?.reduce((sum, employee) => sum + employee.points_balance, 0) || 0
 
-    // Calculate average order value
+    // Ticket médio
     const averageOrderValue = totalOrders && totalOrders > 0 ? totalRevenue / totalOrders : 0
+
+    // Orçamentos (tabela: orcamentos)
+    const { count: totalBudgets } = await supabase
+      .from('orcamentos')
+      .select('*', { count: 'exact', head: true })
+      .eq('client_id', companyId)
+
+    const { count: pendingBudgets } = await supabase
+      .from('orcamentos')
+      .select('*', { count: 'exact', head: true })
+      .eq('client_id', companyId)
+      .in('status', ['novo', 'em_analise'])
+
+    const { count: approvedBudgets } = await supabase
+      .from('orcamentos')
+      .select('*', { count: 'exact', head: true })
+      .eq('client_id', companyId)
+      .eq('status', 'aprovado')
+
+    const { count: convertedBudgets } = await supabase
+      .from('orcamentos')
+      .select('*', { count: 'exact', head: true })
+      .eq('client_id', companyId)
+      .eq('status', 'convertido')
+
+    // Estoque (client_products, se existir) — baixos e zerados
+    let lowStockProducts = 0
+    let outOfStockProducts = 0
+    let inventoryValue = 0
+    try {
+      const { data: inv } = await supabase
+        .from('client_products')
+        .select('stock_quantity, price')
+        .eq('client_id', companyId)
+      if (inv?.length) {
+        lowStockProducts = inv.filter(p => (p as any).stock_quantity <= 10 && (p as any).stock_quantity > 0).length
+        outOfStockProducts = inv.filter(p => (p as any).stock_quantity === 0).length
+        inventoryValue = inv.reduce((sum, p) => sum + (((p as any).price || 0) * ((p as any).stock_quantity || 0)), 0)
+      }
+    } catch {}
+
+    // Receita últimos 30 dias
+    const since = new Date()
+    since.setDate(since.getDate() - 30)
+    const { data: recentRevenue } = await supabase
+      .from('orders')
+      .select('total_amount, created_at')
+      .eq('company_id', companyId)
+      .gte('created_at', since.toISOString())
+      .eq('status', 'delivered')
+    const last30dRevenue = recentRevenue?.reduce((s, o) => s + (o.total_amount || 0), 0) || 0
+
+    // Produtos aguardando ativação
+    let awaitingActivationCount = 0
+    try {
+      const { count: inactives } = await supabase
+        .from('client_products')
+        .select('*', { count: 'exact', head: true })
+        .eq('client_id', companyId)
+        .eq('is_active', false)
+      awaitingActivationCount = inactives || 0
+    } catch {}
+
+    // Orçamentos recentes
+    let budgetsRecent: Array<{ id: string, title: string, status: string, created_at: string, total_amount: number }> = []
+    try {
+      const { data: b } = await supabase
+        .from('budgets')
+        .select('id, title, status, created_at, total_amount')
+        .eq('company_id', companyId)
+        .order('created_at', { ascending: false })
+        .limit(5)
+      budgetsRecent = (b || []) as any
+    } catch {}
 
     const stats = {
       totalEmployees: totalEmployees || 0,
@@ -75,7 +149,21 @@ export async function GET(request: NextRequest) {
       activeEmployees: activeEmployees || 0,
       pendingOrders: pendingOrders || 0,
       totalPointsDistributed,
-      averageOrderValue
+      averageOrderValue,
+      budgets: {
+        total: totalBudgets || 0,
+        pending: pendingBudgets || 0,
+        approved: approvedBudgets || 0,
+        converted: convertedBudgets || 0
+      },
+      inventory: {
+        lowStock: lowStockProducts,
+        outOfStock: outOfStockProducts,
+        totalValue: inventoryValue
+      },
+      last30dRevenue,
+      awaitingActivationCount,
+      budgetsRecent
     }
 
     return NextResponse.json({ stats })

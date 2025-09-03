@@ -1,101 +1,297 @@
--- Corrigir políticas RLS da tabela users
-DROP POLICY IF EXISTS "Users can view own profile" ON users;
-DROP POLICY IF EXISTS "Users can update own profile" ON users;
-DROP POLICY IF EXISTS "Admins can view all users" ON users;
-DROP POLICY IF EXISTS "Admins can update all users" ON users;
-DROP POLICY IF EXISTS "Managers can view store users" ON users;
-DROP POLICY IF EXISTS "Managers can update store users" ON users;
+-- =====================================================
+-- CORREÇÃO DAS POLÍTICAS RLS PARA GLOBAL SUPERADMIN
+-- =====================================================
 
--- Criar políticas simples e funcionais
-CREATE POLICY "Enable read access for authenticated users" ON users
-    FOR SELECT USING (auth.role() = 'authenticated');
+-- 1. Criar função auth.role() se não existir
+CREATE OR REPLACE FUNCTION auth.role()
+RETURNS text
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT COALESCE(
+    (SELECT (user_metadata->>'role')::text 
+     FROM auth.users 
+     WHERE id = auth.uid()),
+    'user'
+  );
+$$;
 
-CREATE POLICY "Enable insert for authenticated users" ON users
-    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+-- 2. Criar função auth.tenant_id() se não existir
+CREATE OR REPLACE FUNCTION auth.tenant_id()
+RETURNS uuid
+LANGUAGE sql
+STABLE
+AS $$
+  SELECT COALESCE(
+    (SELECT company_id 
+     FROM users 
+     WHERE id = auth.uid()),
+    NULL
+  );
+$$;
 
-CREATE POLICY "Enable update for users based on id" ON users
-    FOR UPDATE USING (auth.uid() = id);
+-- 3. Políticas RLS para client_products
+ALTER TABLE client_products ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable delete for admins" ON users
-    FOR DELETE USING (
-        EXISTS (
-            SELECT 1 FROM users 
-            WHERE id = auth.uid() AND role = 'admin'
-        )
-    );
+-- Política para usuários verem seus próprios produtos
+DROP POLICY IF EXISTS "Users can view own client products" ON client_products;
+CREATE POLICY "Users can view own client products" ON client_products
+  FOR SELECT USING (client_id = auth.tenant_id());
 
--- Corrigir políticas RLS da tabela stores
-DROP POLICY IF EXISTS "Users can view own store" ON stores;
-DROP POLICY IF EXISTS "Admins can view all stores" ON stores;
-DROP POLICY IF EXISTS "Admins can update all stores" ON stores;
+-- Política para gestores verem produtos de sua empresa
+DROP POLICY IF EXISTS "Managers can view company client products" ON client_products;
+CREATE POLICY "Managers can view company client products" ON client_products
+  FOR SELECT USING (
+    client_id = auth.tenant_id() OR 
+    auth.role() IN ('manager', 'admin_gestor')
+  );
 
-CREATE POLICY "Enable read access for authenticated users" ON stores
-    FOR SELECT USING (auth.role() = 'authenticated');
+-- Política para admin_global e superadmin verem todos os produtos
+DROP POLICY IF EXISTS "Global admins can view all client products" ON client_products;
+CREATE POLICY "Global admins can view all client products" ON client_products
+  FOR SELECT USING (auth.role() IN ('admin_global', 'superadmin'));
 
-CREATE POLICY "Enable insert for authenticated users" ON stores
-    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+-- Política para inserção (apenas admin_global, superadmin e gestores)
+DROP POLICY IF EXISTS "Authorized users can insert client products" ON client_products;
+CREATE POLICY "Authorized users can insert client products" ON client_products
+  FOR INSERT WITH CHECK (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
 
-CREATE POLICY "Enable update for store managers" ON stores
-    FOR UPDATE USING (
-        EXISTS (
-            SELECT 1 FROM users 
-            WHERE id = auth.uid() AND (role = 'admin' OR (role = 'manager' AND store_id = stores.id))
-        )
-    );
+-- Política para atualização (apenas admin_global, superadmin e gestores)
+DROP POLICY IF EXISTS "Authorized users can update client products" ON client_products;
+CREATE POLICY "Authorized users can update client products" ON client_products
+  FOR UPDATE USING (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
 
--- Corrigir políticas RLS da tabela companies
-DROP POLICY IF EXISTS "Users can view own company" ON companies;
-DROP POLICY IF EXISTS "Admins can view all companies" ON companies;
-DROP POLICY IF EXISTS "Admins can update all companies" ON companies;
+-- Política para exclusão (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can delete client products" ON client_products;
+CREATE POLICY "Global admins can delete client products" ON client_products
+  FOR DELETE USING (auth.role() IN ('admin_global', 'superadmin'));
 
-CREATE POLICY "Enable read access for authenticated users" ON companies
-    FOR SELECT USING (auth.role() = 'authenticated');
+-- 4. Políticas RLS para base_products
+ALTER TABLE base_products ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable insert for authenticated users" ON companies
-    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+-- Política para todos os usuários autenticados verem produtos base
+DROP POLICY IF EXISTS "Authenticated users can view base products" ON base_products;
+CREATE POLICY "Authenticated users can view base products" ON base_products
+  FOR SELECT USING (auth.uid() IS NOT NULL);
 
-CREATE POLICY "Enable update for admins" ON companies
-    FOR UPDATE USING (
-        EXISTS (
-            SELECT 1 FROM users 
-            WHERE id = auth.uid() AND role = 'admin'
-        )
-    );
+-- Política para inserção (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can insert base products" ON base_products;
+CREATE POLICY "Global admins can insert base products" ON base_products
+  FOR INSERT WITH CHECK (auth.role() IN ('admin_global', 'superadmin'));
 
--- Corrigir políticas RLS da tabela company_products
-DROP POLICY IF EXISTS "Users can view store products" ON company_products;
-DROP POLICY IF EXISTS "Managers can manage store products" ON company_products;
-DROP POLICY IF EXISTS "Admins can manage all products" ON company_products;
+-- Política para atualização (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can update base products" ON base_products;
+CREATE POLICY "Global admins can update base products" ON base_products
+  FOR UPDATE USING (auth.role() IN ('admin_global', 'superadmin'));
 
-CREATE POLICY "Enable read access for authenticated users" ON company_products
-    FOR SELECT USING (auth.role() = 'authenticated');
+-- Política para exclusão (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can delete base products" ON base_products;
+CREATE POLICY "Global admins can delete base products" ON base_products
+  FOR DELETE USING (auth.role() IN ('admin_global', 'superadmin'));
 
-CREATE POLICY "Enable insert for authenticated users" ON company_products
-    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+-- 5. Políticas RLS para product_categories
+ALTER TABLE product_categories ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Enable update for product managers" ON company_products
-    FOR UPDATE USING (
-        EXISTS (
-            SELECT 1 FROM users 
-            WHERE id = auth.uid() AND (role = 'admin' OR (role = 'manager' AND store_id = company_products.store_id))
-        )
-    );
+-- Política para todos os usuários autenticados verem categorias
+DROP POLICY IF EXISTS "Authenticated users can view categories" ON product_categories;
+CREATE POLICY "Authenticated users can view categories" ON product_categories
+  FOR SELECT USING (auth.uid() IS NOT NULL);
 
--- Corrigir políticas RLS da tabela orders
-DROP POLICY IF EXISTS "Users can view own orders" ON orders;
-DROP POLICY IF EXISTS "Managers can view store orders" ON orders;
-DROP POLICY IF EXISTS "Admins can view all orders" ON orders;
+-- Política para inserção (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can insert categories" ON product_categories;
+CREATE POLICY "Global admins can insert categories" ON product_categories
+  FOR INSERT WITH CHECK (auth.role() IN ('admin_global', 'superadmin'));
 
-CREATE POLICY "Enable read access for authenticated users" ON orders
-    FOR SELECT USING (auth.role() = 'authenticated');
+-- Política para atualização (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can update categories" ON product_categories;
+CREATE POLICY "Global admins can update categories" ON product_categories
+  FOR UPDATE USING (auth.role() IN ('admin_global', 'superadmin'));
 
-CREATE POLICY "Enable insert for authenticated users" ON orders
-    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+-- Política para exclusão (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can delete categories" ON product_categories;
+CREATE POLICY "Global admins can delete categories" ON product_categories
+  FOR DELETE USING (auth.role() IN ('admin_global', 'superadmin'));
 
-CREATE POLICY "Enable update for order managers" ON orders
-    FOR UPDATE USING (
-        EXISTS (
-            SELECT 1 FROM users 
-            WHERE id = auth.uid() AND (role = 'admin' OR (role = 'manager' AND store_id = orders.store_id))
-        )
-    );
+-- 6. Políticas RLS para companies
+ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
+
+-- Política para admin_global e superadmin verem todas as empresas
+DROP POLICY IF EXISTS "Global admins can view all companies" ON companies;
+CREATE POLICY "Global admins can view all companies" ON companies
+  FOR SELECT USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para gestores verem sua própria empresa
+DROP POLICY IF EXISTS "Managers can view own company" ON companies;
+CREATE POLICY "Managers can view own company" ON companies
+  FOR SELECT USING (
+    id = auth.tenant_id() OR 
+    auth.role() IN ('admin_global', 'superadmin')
+  );
+
+-- Política para inserção (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can insert companies" ON companies;
+CREATE POLICY "Global admins can insert companies" ON companies
+  FOR INSERT WITH CHECK (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para atualização (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can update companies" ON companies;
+CREATE POLICY "Global admins can update companies" ON companies
+  FOR UPDATE USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para exclusão (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can delete companies" ON companies;
+CREATE POLICY "Global admins can delete companies" ON companies
+  FOR DELETE USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- 7. Políticas RLS para budgets (sistema de orçamentos)
+ALTER TABLE budgets ENABLE ROW LEVEL SECURITY;
+
+-- Política para gestores verem orçamentos de sua empresa
+DROP POLICY IF EXISTS "Managers can view own company budgets" ON budgets;
+CREATE POLICY "Managers can view own company budgets" ON budgets
+  FOR SELECT USING (
+    company_id = auth.tenant_id() OR 
+    auth.role() IN ('admin_global', 'superadmin')
+  );
+
+-- Política para admin_global e superadmin verem todos os orçamentos
+DROP POLICY IF EXISTS "Global admins can view all budgets" ON budgets;
+CREATE POLICY "Global admins can view all budgets" ON budgets
+  FOR SELECT USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para inserção (apenas gestores, admin_global e superadmin)
+DROP POLICY IF EXISTS "Authorized users can insert budgets" ON budgets;
+CREATE POLICY "Authorized users can insert budgets" ON budgets
+  FOR INSERT WITH CHECK (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
+
+-- Política para atualização (apenas gestores, admin_global e superadmin)
+DROP POLICY IF EXISTS "Authorized users can update budgets" ON budgets;
+CREATE POLICY "Authorized users can update budgets" ON budgets
+  FOR UPDATE USING (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
+
+-- 8. Políticas RLS para budget_items
+ALTER TABLE budget_items ENABLE ROW LEVEL SECURITY;
+
+-- Política para gestores verem itens de orçamentos de sua empresa
+DROP POLICY IF EXISTS "Managers can view own company budget items" ON budget_items;
+CREATE POLICY "Managers can view own company budget items" ON budget_items
+  FOR SELECT USING (
+    budget_id IN (
+      SELECT id FROM budgets 
+      WHERE company_id = auth.tenant_id()
+    ) OR 
+    auth.role() IN ('admin_global', 'superadmin')
+  );
+
+-- Política para admin_global e superadmin verem todos os itens
+DROP POLICY IF EXISTS "Global admins can view all budget items" ON budget_items;
+CREATE POLICY "Global admins can view all budget items" ON budget_items
+  FOR SELECT USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para inserção (apenas gestores, admin_global e superadmin)
+DROP POLICY IF EXISTS "Authorized users can insert budget items" ON budget_items;
+CREATE POLICY "Authorized users can insert budget items" ON budget_items
+  FOR INSERT WITH CHECK (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
+
+-- Política para atualização (apenas gestores, admin_global e superadmin)
+DROP POLICY IF EXISTS "Authorized users can update budget items" ON budget_items;
+CREATE POLICY "Authorized users can update budget items" ON budget_items
+  FOR UPDATE USING (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
+
+-- 9. Políticas RLS para company_products
+ALTER TABLE company_products ENABLE ROW LEVEL SECURITY;
+
+-- Política para gestores verem produtos de sua empresa
+DROP POLICY IF EXISTS "Managers can view own company products" ON company_products;
+CREATE POLICY "Managers can view own company products" ON company_products
+  FOR SELECT USING (
+    company_id = auth.tenant_id() OR 
+    auth.role() IN ('admin_global', 'superadmin')
+  );
+
+-- Política para admin_global e superadmin verem todos os produtos
+DROP POLICY IF EXISTS "Global admins can view all company products" ON company_products;
+CREATE POLICY "Global admins can view all company products" ON company_products
+  FOR SELECT USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para inserção (apenas gestores, admin_global e superadmin)
+DROP POLICY IF EXISTS "Authorized users can insert company products" ON company_products;
+CREATE POLICY "Authorized users can insert company products" ON company_products
+  FOR INSERT WITH CHECK (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
+
+-- Política para atualização (apenas gestores, admin_global e superadmin)
+DROP POLICY IF EXISTS "Authorized users can update company products" ON company_products;
+CREATE POLICY "Authorized users can update company products" ON company_products
+  FOR UPDATE USING (
+    auth.role() IN ('admin_global', 'superadmin', 'manager', 'admin_gestor')
+  );
+
+-- Política para exclusão (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can delete company products" ON company_products;
+CREATE POLICY "Global admins can delete company products" ON company_products
+  FOR DELETE USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- 10. Políticas RLS para users
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+
+-- Política para usuários verem seus próprios dados
+DROP POLICY IF EXISTS "Users can view own data" ON users;
+CREATE POLICY "Users can view own data" ON users
+  FOR SELECT USING (id = auth.uid());
+
+-- Política para gestores verem usuários de sua empresa
+DROP POLICY IF EXISTS "Managers can view company users" ON users;
+CREATE POLICY "Managers can view company users" ON users
+  FOR SELECT USING (
+    company_id = auth.tenant_id() OR 
+    auth.role() IN ('admin_global', 'superadmin')
+  );
+
+-- Política para admin_global e superadmin verem todos os usuários
+DROP POLICY IF EXISTS "Global admins can view all users" ON users;
+CREATE POLICY "Global admins can view all users" ON users
+  FOR SELECT USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para inserção (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can insert users" ON users;
+CREATE POLICY "Global admins can insert users" ON users
+  FOR INSERT WITH CHECK (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para atualização (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can update users" ON users;
+CREATE POLICY "Global admins can update users" ON users
+  FOR UPDATE USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- Política para exclusão (apenas admin_global e superadmin)
+DROP POLICY IF EXISTS "Global admins can delete users" ON users;
+CREATE POLICY "Global admins can delete users" ON users
+  FOR DELETE USING (auth.role() IN ('admin_global', 'superadmin'));
+
+-- =====================================================
+-- RESUMO DAS POLÍTICAS CRIADAS
+-- =====================================================
+-- ✅ auth.role() - Função para obter role do usuário
+-- ✅ auth.tenant_id() - Função para obter company_id do usuário
+-- ✅ client_products - Políticas para produtos de clientes
+-- ✅ base_products - Políticas para produtos base
+-- ✅ product_categories - Políticas para categorias
+-- ✅ companies - Políticas para empresas
+-- ✅ budgets - Políticas para orçamentos
+-- ✅ budget_items - Políticas para itens de orçamentos
+-- ✅ company_products - Políticas para produtos das empresas
+-- ✅ users - Políticas para usuários
+-- =====================================================

@@ -30,7 +30,8 @@ export async function POST(request: NextRequest) {
 
     // Verificar permissões de admin através dos metadados do usuário
     const userRole = user.user_metadata?.role
-    if (userRole !== 'admin') {
+    const allowed = ['admin', 'admin_global', 'superadmin']
+    if (!allowed.includes(userRole)) {
       return NextResponse.json({ error: 'Acesso negado - Apenas administradores podem importar catálogos' }, { status: 403 })
     }
 

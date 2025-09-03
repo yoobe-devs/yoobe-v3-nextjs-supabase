@@ -26,6 +26,12 @@ export default function ImportarCatalogoPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [result, setResult] = useState<any>(null)
   const [importHistory, setImportHistory] = useState<any[]>([])
+  const [category, setCategory] = useState<string>('')
+  const [sheetUploading, setSheetUploading] = useState(false)
+  const [preview, setPreview] = useState<any[]>([])
+  const [selected, setSelected] = useState<Set<number>>(new Set())
+  const [duplicates, setDuplicates] = useState<Set<string>>(new Set())
+  const [selectAll, setSelectAll] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
 
@@ -68,7 +74,8 @@ export default function ImportarCatalogoPage() {
         },
         body: JSON.stringify({
           page,
-          limit: 50
+          limit: 50,
+          category: category || undefined
         })
       })
 
@@ -110,6 +117,64 @@ export default function ImportarCatalogoPage() {
   const handleImportNextPage = () => {
     if (result?.nextPage) {
       handleImport(result.nextPage)
+    }
+  }
+
+  const handlePreview = async () => {
+    try {
+      setImporting(true)
+      setProgress(0)
+      const url = `/api/scraping/preview?page=${currentPage}${category ? `&category=${encodeURIComponent(category)}` : ''}`
+      const res = await fetch(url)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Falha no preview')
+      setPreview(data.products || [])
+      setSelected(new Set())
+      setSelectAll(false)
+      // detectar duplicados por SKU
+      try {
+        const existingRes = await fetch('/api/base-products')
+        const existing = await existingRes.json().catch(() => [])
+        const set = new Set<string>()
+        ;(Array.isArray(existing) ? existing : []).forEach((bp: any) => {
+          const sku = (bp?.specifications?.sku || '').toString()
+          if (sku) set.add(sku)
+        })
+        const dup = new Set<string>()
+        ;(data.products || []).forEach((p: any) => {
+          if (p?.sku && set.has(p.sku)) dup.add(p.sku)
+        })
+        setDuplicates(dup)
+      } catch {}
+      toast.success(`Pré-visualização: ${data.products?.length || 0} produtos`)
+    } catch (e) {
+      console.error(e)
+      toast.error(e instanceof Error ? e.message : 'Erro no preview')
+    } finally {
+      setImporting(false)
+      setProgress(100)
+    }
+  }
+
+  const handleImportSelected = async () => {
+    try {
+      if (selected.size === 0) {
+        toast.error('Selecione ao menos um produto')
+        return
+      }
+      setImporting(true)
+      const products = Array.from(selected).map(idx => preview[idx]).filter(Boolean)
+      const res = await fetch('/api/scraping/import-selected', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ products })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Falha na importação selecionada')
+      toast.success(`Importados: ${data.imported || 0}`)
+    } catch (e) {
+      console.error(e)
+      toast.error(e instanceof Error ? e.message : 'Erro ao importar selecionados')
+    } finally {
+      setImporting(false)
     }
   }
 
@@ -247,6 +312,26 @@ export default function ImportarCatalogoPage() {
                 disabled={importing}
               />
             </div>
+            <div>
+              <Button
+                onClick={handlePreview}
+                disabled={importing}
+                variant="outline"
+                className="w-full"
+              >
+                Pré-visualizar Página {currentPage}
+              </Button>
+            </div>
+            <div>
+              <Label htmlFor="category">Categoria (opcional)</Label>
+              <Input
+                id="category"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="ex: 24 (ID da categoria)"
+                disabled={importing}
+              />
+            </div>
             
             <div className="flex gap-2">
               <Button
@@ -277,6 +362,16 @@ export default function ImportarCatalogoPage() {
                 Importar Todas
               </Button>
             </div>
+            <div>
+              <Button
+                onClick={handlePreview}
+                disabled={importing}
+                variant="outline"
+                className="w-full"
+              >
+                Pré-visualizar Página {currentPage}
+              </Button>
+            </div>
             
             {result?.nextPage && (
               <Button
@@ -292,6 +387,138 @@ export default function ImportarCatalogoPage() {
           </CardContent>
         </Card>
       </div>
+
+      {preview.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pré-visualização ({preview.length})</CardTitle>
+            <CardDescription>Selecione os produtos a importar desta página/categoria</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={selectAll} onChange={(e) => {
+                  const checked = e.target.checked
+                  setSelectAll(checked)
+                  if (checked) {
+                    setSelected(new Set(preview.map((_, idx) => idx)))
+                  } else {
+                    setSelected(new Set())
+                  }
+                }} />
+                Selecionar todos desta página
+              </label>
+              <div className="text-sm text-gray-600">Duplicados detectados: {Array.from(duplicates).length}</div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {preview.map((p, idx) => (
+                <div key={idx} className="border rounded p-3 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <input type="checkbox" checked={selected.has(idx)} onChange={(e) => {
+                      const next = new Set(selected); if (e.target.checked) next.add(idx); else next.delete(idx); setSelected(next)
+                    }} />
+                    <div className="flex-1">
+                      <div className="font-medium line-clamp-1">{p.name}</div>
+                      <div className="text-xs text-gray-500 flex items-center gap-2">
+                        <span>SKU: {p.sku}</span>
+                        {p.sku && duplicates.has(p.sku) && (
+                          <span className="inline-flex items-center rounded bg-yellow-100 text-yellow-800 px-2 py-0.5 text-[10px]">Duplicado</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  {p.image_url && (
+                    <img src={p.image_url} alt={p.name} className="w-full h-32 object-cover rounded" />
+                  )}
+                  <div className="text-xs text-gray-600 line-clamp-2">{p.description}</div>
+                  <div className="text-sm">R$ {Number(p.price_unit || 0).toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">Selecionados: {selected.size}</div>
+              <Button onClick={handleImportSelected} disabled={importing || selected.size === 0}>Importar Selecionados</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      {preview.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Pré-visualização ({preview.length})</CardTitle>
+            <CardDescription>Selecione os produtos a importar desta página/categoria</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {preview.map((p, idx) => (
+                <div key={idx} className="border rounded p-3 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <input type="checkbox" checked={selected.has(idx)} onChange={(e) => {
+                      const next = new Set(selected); if (e.target.checked) next.add(idx); else next.delete(idx); setSelected(next)
+                    }} />
+                    <div className="flex-1">
+                      <div className="font-medium line-clamp-1">{p.name}</div>
+                      <div className="text-xs text-gray-500">SKU: {p.sku}</div>
+                    </div>
+                  </div>
+                  {p.image_url && (
+                    <img src={p.image_url} alt={p.name} className="w-full h-32 object-cover rounded" />
+                  )}
+                  <div className="text-xs text-gray-600 line-clamp-2">{p.description}</div>
+                  <div className="text-sm">R$ {Number(p.price_unit || 0).toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="text-sm text-gray-600">Selecionados: {selected.size}</div>
+              <Button onClick={handleImportSelected} disabled={importing || selected.size === 0}>Importar Selecionados</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Importação por Planilha */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Importar por Planilha (CSV)</CardTitle>
+          <CardDescription>Colunas: name,description,category_id,base_price,image_url,sku,ncm</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Button asChild variant="outline">
+              <a href="/api/admin/produtos/import-sheet/template">Baixar Template</a>
+            </Button>
+            <input type="file" accept=".csv,text/csv" onChange={async (e) => {
+              const file = e.target.files?.[0]
+              if (!file) return
+              setSheetUploading(true)
+              try {
+                const text = await file.text()
+                const lines = text.split(/\r?\n/).filter(l => l.trim())
+                const headers = lines[0].split(',').map(h => h.trim())
+                const rows = lines.slice(1).map(line => {
+                  const cols = line.split(',')
+                  const row: any = {}
+                  headers.forEach((h, i) => { row[h] = (cols[i] || '').trim() })
+                  return row
+                }).filter(r => r.name)
+                const res = await fetch('/api/admin/produtos/import-sheet', {
+                  method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ rows })
+                })
+                const data = await res.json().catch(() => ({}))
+                if (!res.ok) throw new Error(data?.error || 'Falha no import CSV')
+                toast.success(`Importados: ${data.inserted}`)
+              } catch (err) {
+                console.error(err)
+                toast.error(err instanceof Error ? err.message : 'Erro no CSV')
+              } finally {
+                setSheetUploading(false)
+              }
+            }} />
+            {sheetUploading && <Loader2 className="h-4 w-4 animate-spin" />}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Progresso */}
       {importing && (

@@ -23,10 +23,14 @@ async function createTestData() {
       const { data: company, error: companyError } = await supabase
         .from('companies')
         .insert({
+          id: '550e8400-e29b-41d4-a716-446655440002',
           name: 'Join Tecnologia',
-          description: 'Empresa de tecnologia especializada em desenvolvimento de software',
-          primary_color: '#3B82F6',
-          logo_url: null,
+          email: 'contato@jointecnologia.com.br',
+          phone: '(11) 3000-0000',
+          address: 'Av. Paulista, 1000',
+          city: 'São Paulo',
+          state: 'SP',
+          zip_code: '01310-100',
           status: 'active'
         })
         .select()

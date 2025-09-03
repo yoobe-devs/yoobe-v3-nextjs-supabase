@@ -33,6 +33,18 @@ export default function LoginPage() {
     }
   }
 
+  const seedSuperadmin = async () => {
+    try {
+      const res = await fetch('/api/admin/superadmin/seed', { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data?.error || 'Falha ao gerar superadmin')
+      toast.success(`Superadmin pronto: ${data.email}`)
+    } catch (e) {
+      console.error(e)
+      toast.error(e instanceof Error ? e.message : 'Erro ao criar superadmin')
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -122,15 +134,24 @@ export default function LoginPage() {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Credenciais de teste</span>
+                  <span className="px-2 bg-white text-gray-500">Acessos de teste (dev)</span>
                 </div>
               </div>
               
               <div className="mt-4 space-y-2 text-xs text-gray-600">
+                <p><strong>Superadmin:</strong> superadmin@test.com / superadmin123</p>
                 <p><strong>Admin:</strong> admin@yoobe.com / admin123</p>
                 <p><strong>Gestor:</strong> gestor.join.tech@jointecnologia.com.br / gestor123</p>
-                <p><strong>Funcionário 1:</strong> funcionario1@jointecnologia.com.br / user123</p>
-                <p><strong>Funcionário 2:</strong> funcionario2@jointecnologia.com.br / user123</p>
+                <p><strong>Funcionário 1:</strong> maria.santos@jointecnologia.com.br / maria123</p>
+                <p><strong>Funcionário 2:</strong> pedro.oliveira@jointecnologia.com.br / pedro123</p>
+                <div className="pt-2 text-[11px] text-gray-500">
+                  Servidor: http://localhost:{typeof window !== 'undefined' ? window.location.port || '3001' : '3001'}
+                </div>
+                <div className="pt-2 flex gap-2">
+                  <button type="button" onClick={seedSuperadmin} className="text-blue-600 hover:underline">
+                    Gerar Superadmin (dev)
+                  </button>
+                </div>
               </div>
             </div>
           </CardContent>

@@ -1,0 +1,96 @@
+#!/bin/sh
+
+# Git pre-commit hook para validação da documentação
+# Este hook verifica se a documentação está atualizada quando arquivos de código são modificados
+
+echo "🔍 Verificando documentação técnica..."
+
+# Verificar se há mudanças em arquivos de código
+CODE_CHANGES=$(git diff --cached --name-only | grep -E '\.(tsx?|jsx?)$' | wc -l)
+
+if [ "$CODE_CHANGES" -gt 0 ]; then
+    echo "📝 Mudanças detectadas em arquivos de código ($CODE_CHANGES arquivos)"
+    
+    # Verificar se a documentação está atualizada
+    DOCS_UP_TO_DATE=true
+    
+    # Verificar se todos os arquivos de tela existem
+    for file in app/admin/*/page.tsx app/store/*/page.tsx app/gestor/*/page.tsx app/auth/*/page.tsx; do
+        if [ -f "$file" ]; then
+            # Extrair nome da tela
+            screen_name=$(echo "$file" | sed 's|app/||' | sed 's|/page.tsx||' | sed 's|/|-|g')
+            doc_file="docs/screens/${screen_name}.md"
+            
+            if [ ! -f "$doc_file" ]; then
+                echo "⚠️  Documentação faltando para: $screen_name"
+                DOCS_UP_TO_DATE=false
+            fi
+        fi
+    done
+    
+    if [ "$DOCS_UP_TO_DATE" = false ]; then
+        echo ""
+        echo "❌ Documentação desatualizada detectada!"
+        echo "📚 Execute o seguinte comando para atualizar:"
+        echo "   node scripts/generate-screen-docs.js"
+        echo ""
+        echo "💡 Ou adicione --no-verify para pular esta verificação:"
+        echo "   git commit --no-verify"
+        echo ""
+        exit 1
+    else
+        echo "✅ Documentação está atualizada"
+    fi
+else
+    echo "✅ Nenhuma mudança em arquivos de código"
+fi
+
+# Verificar qualidade da documentação existente
+echo "🔍 Verificando qualidade da documentação..."
+
+# Verificar se há placeholders não preenchidos
+PLACEHOLDERS=$(grep -r "{/\*.*\*/}" docs/screens/ | wc -l)
+
+if [ "$PLACEHOLDERS" -gt 0 ]; then
+    echo "⚠️  $PLACEHOLDERS placeholders não preenchidos na documentação"
+    echo "💡 Considere executar: node scripts/generate-screen-docs.js"
+else
+    echo "✅ Documentação sem placeholders pendentes"
+fi
+
+# Verificar estrutura básica
+REQUIRED_FILES=(
+    "docs/screens/README.md"
+    "docs/DEVELOPER_GUIDE.md"
+    "docs/SCREENSHOT_GUIDE.md"
+    "docs/EXECUTIVE_SUMMARY.md"
+    "docs/TEAM_TRAINING_GUIDE.md"
+)
+
+for file in "${REQUIRED_FILES[@]}"; do
+    if [ ! -f "$file" ]; then
+        echo "❌ Arquivo obrigatório faltando: $file"
+        exit 1
+    fi
+done
+
+echo "✅ Estrutura da documentação válida"
+
+# Verificar se há screenshots para as telas principais
+SCREENSHOTS_DIR="docs/screens/screenshots"
+if [ -d "$SCREENSHOTS_DIR" ]; then
+    SCREENSHOT_COUNT=$(find "$SCREENSHOTS_DIR" -name "*.png" | wc -l)
+    echo "📸 Screenshots encontrados: $SCREENSHOT_COUNT"
+    
+    if [ "$SCREENSHOT_COUNT" -lt 5 ]; then
+        echo "⚠️  Poucos screenshots. Considere executar:"
+        echo "   node scripts/capture-screenshots.js"
+    fi
+else
+    echo "📸 Diretório de screenshots não encontrado"
+    echo "💡 Execute: node scripts/capture-screenshots.js"
+fi
+
+echo ""
+echo "🎉 Verificação de documentação concluída com sucesso!"
+echo "📚 A documentação está pronta para o commit."

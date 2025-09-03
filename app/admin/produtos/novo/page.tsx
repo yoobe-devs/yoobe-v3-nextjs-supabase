@@ -34,6 +34,7 @@ export default function NovoProdutoPage() {
   const [saving, setSaving] = useState(false)
   const [uploadingImage, setUploadingImage] = useState(false)
   const [categories, setCategories] = useState<any[]>([])
+  const [gallery, setGallery] = useState<{ url: string; uploading?: boolean }[]>([])
   
   const [formData, setFormData] = useState({
     name: '',
@@ -55,9 +56,11 @@ export default function NovoProdutoPage() {
     }
   })
 
-  // Verificar se é admin
+  // Verificar se é admin (aceita admin, admin_global, superadmin)
   useEffect(() => {
-    if (user && user.user_metadata?.role !== 'admin') {
+    const role = user?.user_metadata?.role
+    const allowed = ['admin', 'admin_global', 'superadmin']
+    if (user && (!role || !allowed.includes(role))) {
       router.push('/admin/dashboard')
       toast.error('Acesso negado - Apenas administradores podem acessar esta página')
     }
@@ -148,6 +151,45 @@ export default function NovoProdutoPage() {
     }
   }
 
+  const handleGalleryUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || [])
+    if (!files.length) return
+    const remaining = Math.max(0, 6 - gallery.length)
+    const toUpload = files.slice(0, remaining)
+    const placeholders: { url: string; uploading: boolean }[] = toUpload.map(() => ({ url: '', uploading: true }))
+    setGallery(prev => [...prev, ...placeholders])
+    try {
+      const uploads: string[] = []
+      for (let idx = 0; idx < toUpload.length; idx++) {
+        const file = toUpload[idx]
+        if (!file.type.startsWith('image/')) throw new Error('Arquivo deve ser imagem')
+        if (file.size > 5 * 1024 * 1024) throw new Error('Imagem até 5MB')
+        const ext = file.name.split('.').pop()
+        const key = `products/gallery/${Date.now()}_${idx}.${ext}`
+        const { error } = await supabase.storage.from('product-images').upload(key, file)
+        if (error) throw error
+        const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(key)
+        uploads.push(publicUrl)
+      }
+      // Replace placeholders
+      setGallery(prev => {
+        const next = [...prev]
+        let p = next.findIndex(i => i.uploading)
+        uploads.forEach(url => {
+          if (p !== -1) { next[p] = { url }; p = next.findIndex(i => i.uploading) }
+          else next.push({ url })
+        })
+        return next.filter(Boolean).slice(0, 6)
+      })
+      toast.success('Imagens enviadas!')
+    } catch (e) {
+      console.error(e)
+      toast.error(e instanceof Error ? e.message : 'Erro ao enviar imagens')
+      // remove placeholders
+      setGallery(prev => prev.filter(i => !i.uploading))
+    }
+  }
+
   const generateSKU = () => {
     const prefix = formData.name.substring(0, 3).toUpperCase()
     const timestamp = Date.now().toString().slice(-6)
@@ -191,7 +233,8 @@ export default function NovoProdutoPage() {
           production_time: formData.specifications.production_time || '',
           material: formData.specifications.material || '',
           manufacturer: formData.specifications.manufacturer || ''
-        }
+        },
+        gallery: gallery.map(i => i.url)
       }
 
       const response = await fetch('/api/base-products', {
@@ -484,6 +527,35 @@ export default function NovoProdutoPage() {
               </div>
             </div>
 
+            {/* Galeria de Imagens (até 6) */}
+            <div>
+              <Label>Galeria (até 6)</Label>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {gallery.map((img, idx) => (
+                  <div key={idx} className="relative w-24 h-24 border rounded overflow-hidden">
+                    {img.uploading ? (
+                      <div className="flex items-center justify-center h-full text-xs text-gray-500">Enviando...</div>
+                    ) : (
+                      <img src={img.url} alt="Galeria" className="w-full h-full object-cover" />
+                    )}
+                    {!img.uploading && (
+                      <button
+                        type="button"
+                        className="absolute top-1 right-1 bg-white/80 text-xs px-1 rounded"
+                        onClick={() => setGallery(prev => prev.filter((_, i) => i !== idx))}
+                      >
+                        Remover
+                      </button>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <Input type="file" accept="image/*" multiple onChange={handleGalleryUpload} disabled={gallery.length >= 6} />
+                <span className="text-xs text-gray-500">{gallery.length}/6</span>
+              </div>
+            </div>
+
             <div>
               <Label htmlFor="sku">SKU</Label>
               <div className="flex gap-2">
@@ -519,5 +591,3 @@ export default function NovoProdutoPage() {
     </div>
   )
 }
-
-

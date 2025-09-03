@@ -1,75 +1,81 @@
 const { createClient } = require('@supabase/supabase-js')
 
-// Configuração do Supabase
 const supabaseUrl = 'http://127.0.0.1:54321'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0'
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function testAdminAuth() {
-  console.log('🔐 Testando autenticação do admin...')
+  console.log('🧪 Testando autenticação do Admin...')
   
   try {
-    // 1. Fazer login como admin
-    console.log('📋 Fazendo login como admin...')
-    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email: 'admin@yoobe.com',
-      password: 'admin123'
-    })
+    // 1. Verificar se o Supabase está rodando
+    console.log('1. Verificando conexão com Supabase...')
+    const { data: tables, error: tablesError } = await supabase
+      .from('users')
+      .select('count', { count: 'exact', head: true })
     
-    if (authError) {
-      console.error('❌ Erro no login:', authError.message)
+    if (tablesError) {
+      console.error('❌ Erro ao conectar com Supabase:', tablesError)
       return
     }
     
-    console.log('✅ Login bem-sucedido!')
-    console.log('👤 Usuário:', authData.user.email)
-    console.log('🔑 Role:', authData.user.user_metadata?.role)
-    console.log('🆔 ID:', authData.user.id)
+    console.log('✅ Supabase conectado com sucesso')
     
-    // 2. Verificar sessão
-    console.log('\n📋 Verificando sessão...')
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+    // 2. Verificar estrutura da tabela users
+    console.log('2. Verificando estrutura da tabela users...')
+    const { data: userSample, error: userError } = await supabase
+      .from('users')
+      .select('*')
+      .limit(1)
     
-    if (sessionError) {
-      console.error('❌ Erro ao verificar sessão:', sessionError.message)
+    if (userError) {
+      console.error('❌ Erro ao consultar tabela users:', userError)
       return
     }
     
-    if (session) {
-      console.log('✅ Sessão ativa encontrada!')
-      console.log('🔑 Token:', session.access_token.substring(0, 20) + '...')
+    console.log('✅ Tabela users acessível')
+    console.log('📋 Estrutura da tabela:', Object.keys(userSample[0] || {}))
+    
+    // 3. Verificar se existe usuário com role superadmin
+    console.log('3. Verificando usuários com role superadmin...')
+    const { data: superadmins, error: superadminError } = await supabase
+      .from('users')
+      .select('*')
+      .eq('role', 'superadmin')
+    
+    if (superadminError) {
+      console.error('❌ Erro ao consultar superadmins:', superadminError)
+      return
+    }
+    
+    console.log(`✅ Encontrados ${superadmins.length} usuários com role superadmin`)
+    
+    if (superadmins.length > 0) {
+      console.log('👤 Usuários superadmin:', superadmins.map(u => ({ id: u.id, email: u.email, role: u.role })))
     } else {
-      console.log('❌ Nenhuma sessão ativa')
+      console.log('⚠️  Nenhum usuário superadmin encontrado')
+      console.log('💡 Você precisa criar um usuário com role "superadmin"')
+    }
+    
+    // 4. Verificar roles disponíveis
+    console.log('4. Verificando roles disponíveis...')
+    const { data: roles, error: rolesError } = await supabase
+      .from('users')
+      .select('role')
+      .limit(100)
+    
+    if (rolesError) {
+      console.error('❌ Erro ao consultar roles:', rolesError)
       return
     }
     
-    // 3. Testar API de importação
-    console.log('\n📋 Testando API de importação...')
-    
-    const response = await fetch('http://localhost:3000/api/scraping/import-catalog', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`
-      }
-    })
-    
-    console.log('📊 Status da resposta:', response.status)
-    console.log('📊 Headers:', Object.fromEntries(response.headers.entries()))
-    
-    const responseData = await response.text()
-    console.log('📊 Resposta:', responseData)
-    
-    if (response.ok) {
-      console.log('✅ API funcionando!')
-    } else {
-      console.log('❌ API retornou erro:', response.status)
-    }
+    const uniqueRoles = [...new Set(roles.map(r => r.role))]
+    console.log('🎭 Roles disponíveis:', uniqueRoles)
     
   } catch (error) {
-    console.error('❌ Erro geral:', error.message)
+    console.error('❌ Erro geral:', error)
   }
 }
 
-testAdminAuth().catch(console.error)
+testAdminAuth()
