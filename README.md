@@ -32,6 +32,7 @@
 ## 🏗️ **Arquitetura**
 
 ### **Frontend**
+
 - **Next.js 14** (App Router)
 - **TypeScript** com tipagem completa
 - **Tailwind CSS** para estilização
@@ -40,6 +41,7 @@
 - **i18n** preparado (pt-BR padrão)
 
 ### **Backend**
+
 - **Route Handlers** em `/app/api/*`
 - **Server Actions** para operações complexas
 - **Zod** para validação de dados
@@ -47,6 +49,7 @@
 - **RLS** (Row Level Security) ativo
 
 ### **Banco de Dados**
+
 - **PostgreSQL** via Supabase
 - **Migrations** estruturadas
 - **Triggers** para regras de negócio
@@ -56,6 +59,7 @@
 ## 🚀 **Quick Start**
 
 ### **1. Clone e Instale**
+
 ```bash
 git clone https://github.com/seu-usuario/yoobe-v3.git
 cd yoobe-v3
@@ -63,6 +67,7 @@ npm install
 ```
 
 ### **2. Configure Variáveis de Ambiente**
+
 ```bash
 cp .env.example .env.local
 ```
@@ -78,6 +83,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 ### **3. Execute as Migrações**
+
 ```bash
 # Aplicar estrutura do banco
 npm run db:migrate
@@ -87,6 +93,7 @@ npm run db:seed
 ```
 
 ### **4. Inicie o Desenvolvimento**
+
 ```bash
 npm run dev
 ```
@@ -143,14 +150,15 @@ yoobe-v3/
 
 ### **Roles e Permissões**
 
-| Role | Descrição | Permissões |
-|------|-----------|------------|
-| **Super Admin** | Administrador da plataforma | Acesso total a todas as empresas |
-| **Admin Gestor** | Administrador de empresa | Gerencia gestores e configurações |
-| **Gestor** | Gerente de equipe | Cria orçamentos, gerencia funcionários |
-| **Funcionário** | Usuário final | Resgata produtos, gerencia perfil |
+| Role             | Descrição                   | Permissões                             |
+| ---------------- | --------------------------- | -------------------------------------- |
+| **Super Admin**  | Administrador da plataforma | Acesso total a todas as empresas       |
+| **Admin Gestor** | Administrador de empresa    | Gerencia gestores e configurações      |
+| **Gestor**       | Gerente de equipe           | Cria orçamentos, gerencia funcionários |
+| **Funcionário**  | Usuário final               | Resgata produtos, gerencia perfil      |
 
 ### **Fluxo de Acesso**
+
 ```
 Super Admin → Admin Gestor → Gestor → Funcionário
      ↓              ↓           ↓         ↓
@@ -160,26 +168,31 @@ Super Admin → Admin Gestor → Gestor → Funcionário
 ## 📋 **Fluxo de Orçamentos**
 
 ### **1. Criação**
+
 - **Gestor** cria orçamento com produtos e quantidades
 - Sistema calcula subtotal, desconto e total
 - Status inicial: `draft`
 
 ### **2. Envio**
+
 - **Gestor** envia para **Admin Global**
 - Status muda para `sent`
 - Notificação enviada para aprovação
 
 ### **3. Aprovação/Rejeição**
+
 - **Admin Global** analisa e aprova/rejeita
 - Status: `approved` ou `rejected`
 - Se aprovado, aguarda pagamento
 
 ### **4. Pagamento**
+
 - Sistema processa pagamento
 - Status muda para `paid`
 - **Replicação automática** é enfileirada
 
 ### **5. Replicação**
+
 - Produtos são replicados para catálogo da empresa
 - **Gestor** pode editar preços, pontos e imagens
 - Funcionários podem resgatar produtos
@@ -187,6 +200,7 @@ Super Admin → Admin Gestor → Gestor → Funcionário
 ## 🛒 **Sistema de Checkout**
 
 ### **Métodos de Pagamento**
+
 - 💰 **Pontos** (debitando carteira)
 - 💳 **Cartão de Crédito**
 - 📱 **PIX**
@@ -195,6 +209,7 @@ Super Admin → Admin Gestor → Gestor → Funcionário
 - ❤️ **Doação**
 
 ### **Fluxo de Checkout**
+
 ```
 Carrinho → Endereço → Pagamento → Confirmação
     ↓         ↓          ↓           ↓
@@ -204,12 +219,14 @@ Carrinho → Endereço → Pagamento → Confirmação
 ## 🏢 **Multi-tenancy**
 
 ### **Estrutura**
+
 - Cada empresa tem seu próprio **tenant**
 - Usuários podem pertencer a múltiplas empresas
 - Dados isolados por empresa via RLS
 - Produtos replicados são específicos da empresa
 
 ### **Segurança**
+
 - **RLS** ativo em todas as tabelas
 - Políticas baseadas em `company_id`
 - Acesso controlado por `user_company_roles`
@@ -217,18 +234,21 @@ Carrinho → Endereço → Pagamento → Confirmação
 ## 📊 **Dashboards e Métricas**
 
 ### **Admin Global**
+
 - Total de usuários e empresas
 - Orçamentos pendentes e aprovados
 - Replicações em andamento
 - Receita da plataforma
 
 ### **Gestor**
+
 - Funcionários da empresa
 - Produtos disponíveis
 - Orçamentos criados
 - Pedidos dos funcionários
 
 ### **Funcionário**
+
 - Saldo da carteira
 - Histórico de resgates
 - Endereços cadastrados
@@ -237,6 +257,7 @@ Carrinho → Endereço → Pagamento → Confirmação
 ## 🔧 **Desenvolvimento**
 
 ### **Scripts Disponíveis**
+
 ```bash
 # Desenvolvimento
 npm run dev              # Inicia servidor de desenvolvimento
@@ -257,6 +278,7 @@ npm run test:coverage    # Gera relatório de cobertura
 ```
 
 ### **Estrutura de Commits**
+
 ```bash
 # Exemplos de commits convencionais
 feat: implementa sistema de orçamentos
@@ -269,6 +291,7 @@ test: adiciona testes para RBAC
 ## 🚀 **Deploy**
 
 ### **Vercel (Recomendado)**
+
 ```bash
 # Instalar Vercel CLI
 npm i -g vercel
@@ -278,6 +301,7 @@ vercel --prod
 ```
 
 ### **Docker**
+
 ```dockerfile
 FROM node:18-alpine
 WORKDIR /app
@@ -290,6 +314,7 @@ CMD ["npm", "start"]
 ```
 
 ### **Variáveis de Produção**
+
 ```env
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://seu-dominio.com
@@ -299,11 +324,13 @@ SUPABASE_SERVICE_ROLE_KEY=sua_chave_producao
 ## 📈 **Monitoramento e Analytics**
 
 ### **Logs Estruturados**
+
 - Todas as ações são logadas em `audit_logs`
 - Rastreamento de eventos de negócio
 - Métricas de performance e uso
 
 ### **Webhooks**
+
 - Notificações para sistemas externos
 - Integração com ERPs e CRMs
 - Webhooks de pagamento e entrega
@@ -311,6 +338,7 @@ SUPABASE_SERVICE_ROLE_KEY=sua_chave_producao
 ## 🔒 **Segurança**
 
 ### **Implementado**
+
 - ✅ **RLS** em todas as tabelas
 - ✅ **Validação Zod** em todas as APIs
 - ✅ **RBAC** com verificação de permissões
@@ -319,6 +347,7 @@ SUPABASE_SERVICE_ROLE_KEY=sua_chave_producao
 - ✅ **Rate limiting** nas APIs
 
 ### **Recomendações**
+
 - 🔐 Use HTTPS em produção
 - 🔑 Rotacione chaves de API regularmente
 - 📊 Monitore logs de auditoria
@@ -327,6 +356,7 @@ SUPABASE_SERVICE_ROLE_KEY=sua_chave_producao
 ## 🤝 **Contribuição**
 
 ### **Como Contribuir**
+
 1. Fork o projeto
 2. Crie uma branch para sua feature
 3. Implemente seguindo os padrões
@@ -334,6 +364,7 @@ SUPABASE_SERVICE_ROLE_KEY=sua_chave_producao
 5. Abra um Pull Request
 
 ### **Padrões de Código**
+
 - **TypeScript** com tipagem estrita
 - **ESLint** + **Prettier** para formatação
 - **Conventional Commits** para mensagens
@@ -346,11 +377,13 @@ Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) par
 ## 🆘 **Suporte**
 
 ### **Documentação**
+
 - [Guia de Usuário](docs/USER_GUIDE.md)
 - [API Reference](docs/API_REFERENCE.md)
 - [Deploy Guide](docs/DEPLOY_GUIDE.md)
 
 ### **Contato**
+
 - **Issues:** [GitHub Issues](https://github.com/seu-usuario/yoobe-v3/issues)
 - **Discord:** [Servidor da Comunidade](https://discord.gg/yoobe)
 - **Email:** suporte@yoobe.com
@@ -370,4 +403,3 @@ Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) par
 **Versão atual:** `3.0.0`  
 **Última atualização:** Janeiro 2025  
 **Próxima versão:** `3.1.0` (Integrações avançadas)
-
