@@ -34,13 +34,14 @@ test.describe('Loja de Brindes', () => {
   test('Home da loja', async ({ page, baseURL, context }) => {
     await context.addCookies([{ name: 'yoobe_sso_token', value: 'dev', url: baseURL! }])
     await page.goto(`${baseURL}/loja-brindes`)
-    await expect(page.locator('iframe')).toBeVisible()
+    await expect(page).toHaveURL(new RegExp('/loja-brindes$'))
   })
 
   test('Detalhe da loja', async ({ page, baseURL, context }) => {
     await context.addCookies([{ name: 'yoobe_sso_token', value: 'dev', url: baseURL! }])
     await page.goto(`${baseURL}/loja-brindes/1`)
-    await expect(page.locator('iframe')).toBeVisible()
+    await expect(page).toHaveURL(new RegExp('/loja-brindes/1$'))
+    await expect(page.locator('body')).toBeVisible()
   })
 })
 

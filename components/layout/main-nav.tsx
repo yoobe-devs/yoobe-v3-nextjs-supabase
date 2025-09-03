@@ -1,6 +1,8 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle } from 'lucide-react'
+import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle, GitBranch, Bell } from 'lucide-react'
+import { ChangelogButton } from "@/components/ui/changelog-button"
+import { ChangelogNotification } from "@/components/ui/changelog-notification"
 
 const mainNav = [
   {
@@ -73,6 +75,36 @@ const mainNav = [
     title: "Configurações",
     href: "/configuracoes",
     icon: Settings
+  },
+  {
+    title: "Admin Produtos",
+    href: "/admin/produtos",
+    icon: Package
+  },
+  {
+    title: "Categorias",
+    href: "/admin/categorias",
+    icon: BookOpen
+  },
+  {
+    title: "Produtos-Base",
+    href: "/admin/produtos-base",
+    icon: Boxes
+  },
+  {
+    title: "Changelog",
+    href: "/admin/changelog",
+    icon: GitBranch
+  },
+  {
+    title: "Integrações",
+    href: "/admin/integracoes",
+    icon: Settings
+  },
+  {
+    title: "Documentação",
+    href: "/admin/documentacao",
+    icon: BookOpen
   }
 ]
 
@@ -88,6 +120,18 @@ const footerNav = [
   {
     title: "Contato",
     href: "/contato"
+  },
+  {
+    title: "Documentação",
+    href: "/admin/documentacao"
+  },
+  {
+    title: "API Reference",
+    href: "/admin/documentacao/viva/API_REFERENCE"
+  },
+  {
+    title: "Database Schema",
+    href: "/admin/documentacao/viva/DATABASE_SCHEMA"
   }
 ]
 
@@ -124,6 +168,11 @@ export function MainNav() {
         </nav>
       </div>
       <div className="mt-auto p-4">
+        {/* Notificação de Changelog */}
+        <div className="mb-4 flex justify-center">
+          <ChangelogNotification />
+        </div>
+        
         <nav className="grid gap-1">
           {footerNav.map((item) => (
             <Link
@@ -135,7 +184,8 @@ export function MainNav() {
             </Link>
           ))}
         </nav>
-        <Button variant="outline" className="mt-6 w-full justify-start gap-2">
+        <ChangelogButton />
+        <Button variant="outline" className="mt-2 w-full justify-start gap-2">
           <HelpCircle className="h-4 w-4" />
           Tour na plataforma
         </Button>
@@ -147,4 +197,3 @@ export function MainNav() {
     </div>
   )
 }
-

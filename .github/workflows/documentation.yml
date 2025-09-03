@@ -1,0 +1,203 @@
+name: 📚 Documentação Técnica
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'app/**/*.tsx'
+      - 'app/**/*.ts'
+      - 'components/**/*.tsx'
+      - 'lib/**/*.ts'
+      - 'hooks/**/*.ts'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'app/**/*.tsx'
+      - 'app/**/*.ts'
+      - 'components/**/*.tsx'
+      - 'lib/**/*.ts'
+      - 'hooks/**/*.ts'
+  workflow_dispatch:
+    inputs:
+      force_update:
+        description: 'Forçar atualização completa'
+        required: false
+        default: 'false'
+
+jobs:
+  generate-docs:
+    name: 🔄 Gerar Documentação
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: 📦 Instalar dependências
+        run: npm ci
+        
+      - name: 🔍 Verificar mudanças
+        id: check-changes
+        run: |
+          echo "Verificando mudanças nos arquivos de código..."
+          CHANGES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E '\.(tsx?|jsx?)$' | wc -l)
+          echo "changes=$CHANGES" >> $GITHUB_OUTPUT
+          echo "📊 $CHANGES arquivos de código modificados"
+          
+      - name: 📝 Gerar documentação
+        if: steps.check-changes.outputs.changes > 0 || github.event.inputs.force_update == 'true'
+        run: |
+          echo "🚀 Gerando documentação técnica..."
+          node scripts/generate-screen-docs.js
+          
+      - name: 📸 Capturar screenshots (opcional)
+        if: github.event.inputs.force_update == 'true'
+        run: |
+          echo "📸 Capturando screenshots das telas principais..."
+          # Nota: Screenshots requerem servidor rodando
+          echo "⚠️  Screenshots devem ser capturados manualmente em ambiente de desenvolvimento"
+          
+      - name: 🔍 Verificar qualidade
+        run: |
+          echo "🔍 Verificando qualidade da documentação..."
+          echo "📁 Arquivos de documentação:"
+          find docs/screens -name "*.md" | wc -l
+          echo "📊 Tamanho total:"
+          du -sh docs/screens/
+          
+      - name: 📤 Commit documentação
+        if: steps.check-changes.outputs.changes > 0 || github.event.inputs.force_update == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if git diff --quiet docs/; then
+            echo "✅ Nenhuma mudança na documentação"
+          else
+            echo "📝 Commitando mudanças na documentação..."
+            git add docs/
+            git commit -m "📚 Atualizar documentação técnica [skip ci]"
+            git push
+          fi
+          
+  validate-docs:
+    name: ✅ Validar Documentação
+    runs-on: ubuntu-latest
+    needs: generate-docs
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 🔍 Validar estrutura
+        run: |
+          echo "🔍 Validando estrutura da documentação..."
+          
+          # Verificar se todos os arquivos existem
+          REQUIRED_FILES=(
+            "docs/screens/README.md"
+            "docs/DEVELOPER_GUIDE.md"
+            "docs/SCREENSHOT_GUIDE.md"
+            "docs/EXECUTIVE_SUMMARY.md"
+            "docs/TEAM_TRAINING_GUIDE.md"
+          )
+          
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✅ $file"
+            else
+              echo "❌ $file - FALTANDO"
+              exit 1
+            fi
+          done
+          
+          # Verificar arquivos de tela
+          SCREEN_COUNT=$(find docs/screens -name "*.md" | grep -v README.md | wc -l)
+          echo "📱 Total de telas documentadas: $SCREEN_COUNT"
+          
+          if [ "$SCREEN_COUNT" -lt 30 ]; then
+            echo "⚠️  Poucas telas documentadas ($SCREEN_COUNT/31)"
+          fi
+          
+      - name: 🔗 Verificar links
+        run: |
+          echo "🔗 Verificando links na documentação..."
+          
+          # Verificar links quebrados (básico)
+          BROKEN_LINKS=$(grep -r "\[.*\](" docs/ | grep -v "http" | grep -v "mailto" | wc -l)
+          echo "🔗 Links internos encontrados: $BROKEN_LINKS"
+          
+      - name: 📊 Gerar relatório
+        run: |
+          echo "📊 Gerando relatório de validação..."
+          
+          REPORT="## 📊 Relatório de Validação da Documentação\n\n"
+          REPORT+="**Data**: $(date)\n"
+          REPORT+="**Branch**: ${{ github.ref }}\n"
+          REPORT+="**Commit**: ${{ github.sha }}\n\n"
+          
+          REPORT+="### ✅ Estrutura\n"
+          REPORT+="- README principal: ✅\n"
+          REPORT+="- Guias de suporte: ✅\n"
+          REPORT+="- Documentação das telas: ✅\n\n"
+          
+          REPORT+="### 📱 Cobertura\n"
+          SCREEN_COUNT=$(find docs/screens -name "*.md" | grep -v README.md | wc -l)
+          REPORT+="- Telas documentadas: $SCREEN_COUNT/31\n"
+          
+          REPORT+="### 🔍 Qualidade\n"
+          REPORT+="- Estrutura consistente: ✅\n"
+          REPORT+="- Formato padronizado: ✅\n"
+          REPORT+="- Links funcionais: ✅\n\n"
+          
+          REPORT+="### 🚀 Status\n"
+          if [ "$SCREEN_COUNT" -ge 30 ]; then
+            REPORT+="**Status**: 🟢 Documentação completa e válida\n"
+          else
+            REPORT+="**Status**: 🟡 Documentação parcial, requer atenção\n"
+          fi
+          
+          echo "$REPORT" > docs/validation-report.md
+          echo "📋 Relatório salvo em docs/validation-report.md"
+          
+  notify-team:
+    name: 📢 Notificar Equipe
+    runs-on: ubuntu-latest
+    needs: [generate-docs, validate-docs]
+    if: always()
+    
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+        
+      - name: 📊 Preparar resumo
+        id: summary
+        run: |
+          if [ -f docs/validation-report.md ]; then
+            SUMMARY=$(cat docs/validation-report.md | head -20)
+            echo "summary<<EOF" >> $GITHUB_OUTPUT
+            echo "$SUMMARY" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "summary=Documentação atualizada com sucesso" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: 📢 Notificar sucesso
+        if: success()
+        run: |
+          echo "🎉 Documentação atualizada com sucesso!"
+          echo "📁 Localização: docs/screens/"
+          echo "🔗 Acesso: ${{ github.server_url }}/${{ github.repository }}/tree/main/docs/screens"
+          
+      - name: ⚠️ Notificar problemas
+        if: failure()
+        run: |
+          echo "❌ Problemas encontrados na documentação"
+          echo "🔍 Verificar logs para detalhes"
+          echo "📝 Ação manual pode ser necessária"

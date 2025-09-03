@@ -1,0 +1,352 @@
+
+> yoobe-v3@2.1.0 dev
+> next dev
+
+   ▲ Next.js 14.0.4
+   - Local:        http://localhost:3000
+   - Environments: .env.local
+
+ ✓ Ready in 1182ms
+ ○ Compiling /api-docs ...
+ ✓ Compiled /api-docs in 1686ms (855 modules)
+ ✓ Compiled /middleware in 355ms (624 modules)
+ ○ Compiling /demo ...
+ ✓ Compiled /demo in 561ms (881 modules)
+ ✓ Compiled / in 127ms (893 modules)
+ ○ Compiling /auth/register ...
+ ✓ Compiled /auth/register in 596ms (923 modules)
+ ✓ Compiled /onboarding in 114ms (935 modules)
+ ○ Compiling /admin/dashboard ...
+ ✓ Compiled /admin/dashboard in 687ms (1094 modules)
+ ✓ Compiled /gestor/dashboard in 177ms (1131 modules)
+ ✓ Compiled in 720ms (561 modules)
+ ✓ Compiled in 312ms (561 modules)
+ ✓ Compiled in 711ms (561 modules)
+ ○ Compiling /api/gestor/orcamentos ...
+ ✓ Compiled /api/gestor/orcamentos in 563ms (211 modules)
+ ✓ Compiled in 312ms (772 modules)
+ ✓ Compiled /auth/login in 408ms (1113 modules)
+ ✓ Compiled /choose-environment in 178ms (1121 modules)
+ ✓ Compiled /admin/dashboard in 162ms (688 modules)
+ ✓ Compiled /admin/produtos in 179ms (1098 modules)
+ ✓ Compiled /api/base-products in 93ms (707 modules)
+ ✓ Compiled /admin/produtos/catalogo-base in 285ms (1317 modules)
+ ✓ Compiled /api/categories in 68ms (734 modules)
+ ✓ Compiled /admin/produtos/catalogo-base/importar in 137ms (1333 modules)
+ ✓ Compiled /api/scraping/import-catalog in 106ms (747 modules)
+🚀 Iniciando importação...
+🔍 Iniciando scraping da página 1...
+📡 Fazendo requisição para: https://catalogo.yoobe.co/product?page=1&limit=50
+🔍 Nenhum produto encontrado, tentando estratégia alternativa...
+✅ 50 produtos encontrados na página 1
+✅ Produto importado: Camiseta Corporativa Premium
+✅ Produto importado: Caneca Personalizada Executiva
+📂 Categoria criada: Acessórios
+✅ Produto importado: Mochila Executiva Profissional
+✅ Produto importado: Power Bank 20000mAh
+✅ Produto importado: Garrafa Térmica 750ml
+✅ Produto importado: Mouse Sem Fio Ergonômico
+✅ Produto importado: Teclado Mecânico RGB
+✅ Produto importado: Fone de Ouvido Bluetooth
+✅ Produto importado: Agenda Executiva 2024
+✅ Produto importado: Relógio Smartwatch
+✅ Produto importado: Caneca Personalizada Executiva 11
+✅ Produto importado: Mochila Executiva Profissional 12
+✅ Produto importado: Power Bank 20000mAh 13
+✅ Produto importado: Garrafa Térmica 750ml 14
+✅ Produto importado: Mouse Sem Fio Ergonômico 15
+✅ Produto importado: Teclado Mecânico RGB 16
+✅ Produto importado: Fone de Ouvido Bluetooth 17
+✅ Produto importado: Agenda Executiva 2024 18
+✅ Produto importado: Relógio Smartwatch 19
+✅ Produto importado: Camiseta Corporativa Premium 20
+✅ Produto importado: Caneca Personalizada Executiva 21
+✅ Produto importado: Mochila Executiva Profissional 22
+✅ Produto importado: Power Bank 20000mAh 23
+✅ Produto importado: Garrafa Térmica 750ml 24
+✅ Produto importado: Mouse Sem Fio Ergonômico 25
+✅ Produto importado: Teclado Mecânico RGB 26
+✅ Produto importado: Fone de Ouvido Bluetooth 27
+✅ Produto importado: Agenda Executiva 2024 28
+✅ Produto importado: Relógio Smartwatch 29
+✅ Produto importado: Camiseta Corporativa Premium 30
+✅ Produto importado: Caneca Personalizada Executiva 31
+✅ Produto importado: Mochila Executiva Profissional 32
+✅ Produto importado: Power Bank 20000mAh 33
+✅ Produto importado: Garrafa Térmica 750ml 34
+✅ Produto importado: Mouse Sem Fio Ergonômico 35
+✅ Produto importado: Teclado Mecânico RGB 36
+✅ Produto importado: Fone de Ouvido Bluetooth 37
+✅ Produto importado: Agenda Executiva 2024 38
+✅ Produto importado: Relógio Smartwatch 39
+✅ Produto importado: Camiseta Corporativa Premium 40
+✅ Produto importado: Caneca Personalizada Executiva 41
+✅ Produto importado: Mochila Executiva Profissional 42
+✅ Produto importado: Power Bank 20000mAh 43
+✅ Produto importado: Garrafa Térmica 750ml 44
+✅ Produto importado: Mouse Sem Fio Ergonômico 45
+✅ Produto importado: Teclado Mecânico RGB 46
+✅ Produto importado: Fone de Ouvido Bluetooth 47
+✅ Produto importado: Agenda Executiva 2024 48
+✅ Produto importado: Relógio Smartwatch 49
+✅ Produto importado: Camiseta Corporativa Premium 50
+✅ Importação concluída: 50 produtos importados, 0 erros
+ ✓ Compiled /admin/produtos/[id] in 308ms (1355 modules)
+ ✓ Compiled /api/base-products/[id] in 99ms (760 modules)
+ ✓ Compiled /api/base-products/[id]/tiers in 76ms (762 modules)
+ ✓ Compiled /not-found in 186ms (1364 modules)
+ ✓ Compiled /admin/orcamentos in 254ms (1361 modules)
+ ✓ Compiled /api/admin/orcamentos in 126ms (756 modules)
+ ✓ Compiled /admin/lojas in 152ms (1359 modules)
+ ✓ Compiled /api/stores in 100ms (753 modules)
+ ✓ Compiled /admin/pedidos in 140ms (1370 modules)
+ ✓ Compiled /admin/templates in 159ms (1379 modules)
+ ✓ Compiled /api/templates in 75ms (767 modules)
+ ✓ Compiled /admin/configuracoes in 146ms (1395 modules)
+ ✓ Compiled /admin/changelog in 122ms (1406 modules)
+ ✓ Compiled /auth/login in 179ms (775 modules)
+ ✓ Compiled /choose-environment in 81ms (771 modules)
+ ✓ Compiled /gestor/dashboard in 91ms (790 modules)
+ ✓ Compiled /api/notifications in 94ms (792 modules)
+ ✓ Compiled /gestor/funcionarios in 172ms (1425 modules)
+ ✓ Compiled /api/gestor/employees in 87ms (800 modules)
+ ✓ Compiled /gestor/produtos in 156ms (1435 modules)
+ ✓ Compiled /api/gestor/products in 99ms (807 modules)
+ ✓ Compiled /api/categories in 79ms (809 modules)
+ ✓ Compiled /api/base-products in 66ms (811 modules)
+ ✓ Compiled /store/product/[id] in 252ms (1449 modules)
+ ✓ Compiled /api/store/product/[id] in 115ms (813 modules)
+ ✓ Compiled /not-found in 150ms (1456 modules)
+ ✓ Compiled /gestor/catalogo in 303ms (1469 modules)
+ ✓ Compiled /api/gestor/base-products in 157ms (828 modules)
+ ✓ Compiled /api/gestor/orcamentos in 75ms (830 modules)
+ ✓ Compiled /gestor/orcamentos in 342ms (1481 modules)
+ ✓ Compiled /gestor/estoque in 191ms (1492 modules)
+ ✓ Compiled /gestor/usuarios in 261ms (1446 modules)
+ ○ Compiling /gestor/minha-loja ...
+ ✓ Compiled /gestor/minha-loja in 606ms (1454 modules)
+ ✓ Compiled /gestor/configurar-loja in 407ms (1470 modules)
+ ✓ Compiled /api/gestor/store-config in 248ms (803 modules)
+ ✓ Compiled in 2.4s (1616 modules)
+ ✓ Compiled /auth/login in 410ms (749 modules)
+ ✓ Compiled /choose-environment in 256ms (739 modules)
+ ✓ Compiled /gestor/dashboard in 120ms (747 modules)
+ ✓ Compiled /gestor/usuarios in 253ms (744 modules)
+ ✓ Compiled /gestor/funcionarios in 242ms (752 modules)
+ ✓ Compiled /api/gestor/employees in 102ms (754 modules)
+ ✓ Compiled /gestor/produtos in 345ms (740 modules)
+ ✓ Compiled /api/gestor/products in 135ms (742 modules)
+ ✓ Compiled /api/categories in 58ms (744 modules)
+ ✓ Compiled /api/base-products in 68ms (746 modules)
+ ✓ Compiled /api/gestor/employees in 64ms (748 modules)
+   Reload env: .env.local
+ ✓ Compiled in 478ms (1593 modules)
+ ✓ Compiled /choose-environment in 421ms (738 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 593ms (1387 modules)
+ ✓ Compiled / in 495ms (741 modules)
+ ✓ Compiled in 585ms (674 modules)
+ ✓ Compiled in 238ms (674 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 1253ms (1547 modules)
+ ✓ Compiled /api/gestor/orcamentos in 211ms (762 modules)
+ ✓ Compiled /api/gestor/base-products in 72ms (764 modules)
+ ✓ Compiled /api/admin/orcamentos/[id]/approve in 58ms (766 modules)
+ ✓ Compiled /api/gestor/produtos/[id]/status in 279ms (768 modules)
+ ✓ Compiled /api/admin/orcamentos in 59ms (770 modules)
+ ✓ Compiled /api/gestor/produtos in 68ms (772 modules)
+ ✓ Compiled /api/gestor/produtos/[id] in 65ms (774 modules)
+ ✓ Compiled in 704ms (1375 modules)
+ ✓ Compiled /not-found in 251ms (1366 modules)
+ ✓ Compiled in 166ms (794 modules)
+ ✓ Compiled in 284ms (794 modules)
+ ✓ Compiled /api/gestor/orcamentos in 192ms (765 modules)
+ ✓ Compiled /api/gestor/base-products in 62ms (767 modules)
+ ✓ Compiled /api/admin/orcamentos/[id]/approve in 187ms (769 modules)
+ ✓ Compiled /api/gestor/produtos/[id]/status in 69ms (771 modules)
+ ✓ Compiled /api/admin/orcamentos in 65ms (773 modules)
+ ✓ Compiled /api/gestor/produtos in 54ms (775 modules)
+ ✓ Compiled /api/gestor/produtos/[id] in 62ms (777 modules)
+ ✓ Compiled in 438ms (1566 modules)
+ ✓ Compiled in 292ms (1566 modules)
+ ✓ Compiled in 388ms (1566 modules)
+ ✓ Compiled / in 420ms (597 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 511ms (1394 modules)
+ ✓ Compiled in 1301ms (1576 modules)
+ ✓ Compiled /api/gestor/orcamentos in 323ms (762 modules)
+ ✓ Compiled /api/gestor/base-products in 61ms (764 modules)
+ ✓ Compiled /api/admin/orcamentos/[id]/approve in 41ms (766 modules)
+ ✓ Compiled /api/gestor/produtos/[id]/status in 105ms (768 modules)
+ ✓ Compiled /api/admin/orcamentos in 224ms (770 modules)
+ ✓ Compiled /api/gestor/produtos in 54ms (772 modules)
+ ✓ Compiled /api/gestor/produtos/[id] in 62ms (774 modules)
+ ✓ Compiled in 226ms (792 modules)
+ ✓ Compiled in 1290ms (1576 modules)
+ ✓ Compiled in 373ms (792 modules)
+ ✓ Compiled in 328ms (1576 modules)
+ ✓ Compiled in 365ms (792 modules)
+ ✓ Compiled in 378ms (1576 modules)
+ ✓ Compiled in 243ms (792 modules)
+ ✓ Compiled in 854ms (792 modules)
+ ✓ Compiled in 306ms (792 modules)
+ ✓ Compiled in 344ms (792 modules)
+   Reload env: .env.local
+ ✓ Compiled in 426ms (1562 modules)
+ ✓ Compiled in 781ms (792 modules)
+ ✓ Compiled /not-found in 998ms (1366 modules)
+ ✓ Compiled in 727ms (1380 modules)
+ ✓ Compiled in 1136ms (792 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 601ms (1366 modules)
+ ✓ Compiled in 746ms (794 modules)
+ ✓ Compiled in 570ms (794 modules)
+ ✓ Compiled in 371ms (794 modules)
+ ✓ Compiled /_error in 289ms (1368 modules)
+ ✓ Compiled in 742ms (792 modules)
+ ✓ Compiled /not-found in 486ms (1366 modules)
+ ✓ Compiled in 658ms (794 modules)
+ ✓ Compiled in 405ms (794 modules)
+ ✓ Compiled in 661ms (792 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 527ms (1366 modules)
+ ✓ Compiled in 308ms (794 modules)
+ ✓ Compiled in 884ms (794 modules)
+ ✓ Compiled in 262ms (792 modules)
+ ✓ Compiled in 373ms (792 modules)
+ ✓ Compiled /admin/dashboard in 208ms (602 modules)
+ ✓ Compiled /admin/usuarios in 335ms (1402 modules)
+ ✓ Compiled /not-found in 110ms (1407 modules)
+ ✓ Compiled /api/users in 473ms (788 modules)
+ ○ Compiling /not-found ...
+ ✓ Compiled /not-found in 1414ms (1394 modules)
+ ✓ Compiled /api/users in 153ms (788 modules)
+ ✓ Compiled in 558ms (1588 modules)
+ ✓ Compiled in 666ms (1403 modules)
+ ✓ Compiled /_error in 110ms (1391 modules)
+ ✓ Compiled in 447ms (799 modules)
+ ✓ Compiled /api/users in 311ms (785 modules)
+ ✓ Compiled /not-found in 328ms (1574 modules)
+ ✓ Compiled in 910ms (1403 modules)
+ ✓ Compiled in 297ms (798 modules)
+ ✓ Compiled in 450ms (1403 modules)
+ ✓ Compiled in 393ms (1403 modules)
+ ✓ Compiled /not-found in 497ms (1394 modules)
+ ✓ Compiled /api/admin/users in 422ms (787 modules)
+ ✓ Compiled in 2.7s (1403 modules)
+ ✓ Compiled in 411ms (798 modules)
+ ✓ Compiled in 394ms (798 modules)
+ ✓ Compiled in 691ms (1604 modules)
+ ✓ Compiled in 865ms (1604 modules)
+ ✓ Compiled in 898ms (1604 modules)
+ ✓ Compiled in 710ms (1604 modules)
+ ✓ Compiled in 376ms (798 modules)
+ ✓ Compiled in 260ms (1604 modules)
+ ✓ Compiled in 346ms (798 modules)
+ ✓ Compiled in 214ms (1604 modules)
+ ✓ Compiled in 342ms (798 modules)
+ ✓ Compiled in 256ms (1604 modules)
+ ✓ Compiled in 288ms (798 modules)
+ ✓ Compiled in 690ms (1590 modules)
+ ✓ Compiled in 171ms (798 modules)
+ ✓ Compiled in 304ms (798 modules)
+ ✓ Compiled in 311ms (798 modules)
+ ✓ Compiled in 292ms (798 modules)
+ ✓ Compiled in 1168ms (798 modules)
+ ✓ Compiled in 313ms (798 modules)
+ ✓ Compiled in 108ms (798 modules)
+ ✓ Compiled in 533ms (1590 modules)
+ ✓ Compiled in 108ms (798 modules)
+ ✓ Compiled in 847ms (1590 modules)
+ ✓ Compiled in 111ms (798 modules)
+ ✓ Compiled in 517ms (1590 modules)
+ ✓ Compiled in 101ms (798 modules)
+ ✓ Compiled in 558ms (1590 modules)
+ ✓ Compiled in 86ms (798 modules)
+ ✓ Compiled in 582ms (1590 modules)
+ ✓ Compiled in 85ms (798 modules)
+ ✓ Compiled in 562ms (1590 modules)
+ ✓ Compiled in 129ms (798 modules)
+ ✓ Compiled in 289ms (798 modules)
+ ✓ Compiled in 345ms (798 modules)
+ ✓ Compiled in 714ms (1590 modules)
+ ✓ Compiled in 115ms (798 modules)
+ ✓ Compiled in 603ms (1590 modules)
+ ✓ Compiled in 220ms (798 modules)
+ ✓ Compiled in 359.4s (1590 modules)
+ ✓ Compiled in 952ms (798 modules)
+ ✓ Compiled in 1094ms (1590 modules)
+ ✓ Compiled in 552ms (798 modules)
+ ✓ Compiled in 937ms (1590 modules)
+ ✓ Compiled in 174ms (798 modules)
+ ✓ Compiled in 434ms (798 modules)
+ ✓ Compiled in 789ms (1590 modules)
+ ✓ Compiled in 112ms (798 modules)
+ ✓ Compiled in 425ms (798 modules)
+ ✓ Compiled in 528ms (798 modules)
+ ✓ Compiled in 352ms (798 modules)
+ ✓ Compiled in 712ms (1590 modules)
+ ✓ Compiled in 132ms (798 modules)
+ ✓ Compiled in 691ms (1590 modules)
+ ✓ Compiled in 174ms (798 modules)
+ ✓ Compiled in 641ms (1590 modules)
+ ✓ Compiled in 96ms (798 modules)
+ ✓ Compiled in 430ms (798 modules)
+ ✓ Compiled in 532ms (798 modules)
+ ✓ Compiled in 374ms (798 modules)
+ ✓ Compiled in 767ms (798 modules)
+ ✓ Compiled in 498ms (798 modules)
+ ✓ Compiled in 942ms (1590 modules)
+ ✓ Compiled in 384ms (798 modules)
+ ✓ Compiled in 427ms (798 modules)
+ ✓ Compiled in 641ms (798 modules)
+ ✓ Compiled in 443ms (798 modules)
+ ✓ Compiled in 435ms (798 modules)
+ ✓ Compiled in 181ms (798 modules)
+ ✓ Compiled in 447ms (798 modules)
+ ✓ Compiled in 163ms (798 modules)
+ ✓ Compiled in 348ms (798 modules)
+ ✓ Compiled in 111ms (798 modules)
+ ✓ Compiled in 381ms (798 modules)
+ ✓ Compiled in 400ms (798 modules)
+ ✓ Compiled in 446ms (798 modules)
+ ✓ Compiled in 156ms (798 modules)
+ ✓ Compiled in 404ms (798 modules)
+ ○ Compiling /admin/documentacao ...
+ ✓ Compiled /admin/documentacao in 2.1s (1404 modules)
+ ✓ Compiled /admin/changelog in 293ms (623 modules)
+ ✓ Compiled /admin/orcamentos in 297ms (625 modules)
+ ○ Compiling /api/admin/orcamentos ...
+ ✓ Compiled /api/admin/orcamentos in 576ms (804 modules)
+ ✓ Compiled /api/admin/users in 334ms (806 modules)
+ ✓ Compiled /admin/produtos in 115ms (816 modules)
+ ✓ Compiled /api/base-products in 90ms (818 modules)
+ ✓ Compiled /admin/templates in 275ms (801 modules)
+ ✓ Compiled /api/templates in 117ms (803 modules)
+ ✓ Compiled /admin/configuracoes in 297ms (796 modules)
+ ✓ Compiled /admin/changelog in 75ms (803 modules)
+ ✓ Compiled /admin/empresas in 494ms (1578 modules)
+ ✓ Compiled /api/companies in 104ms (789 modules)
+ ✓ Compiled /admin/empresas/novo in 462ms (1595 modules)
+ ✓ Compiled /admin/usuarios in 319ms (798 modules)
+ ✓ Compiled /api/admin/users in 102ms (800 modules)
+ ✓ Compiled /api/base-products in 236ms (802 modules)
+ ✓ Compiled /admin/produtos/catalogo-base in 394ms (808 modules)
+ ✓ Compiled /api/categories in 109ms (810 modules)
+ ○ Compiling /api/scraping/import-catalog ...
+ ✓ Compiled /api/scraping/import-catalog in 630ms (812 modules)
+🚀 Iniciando importação...
+🔍 Iniciando scraping da página 55...
+📡 Fazendo requisição para: https://catalogo.yoobe.co/product?page=55&limit=50
+🔍 Nenhum produto encontrado, tentando estratégia alternativa...
+✅ 50 produtos encontrados na página 55
+✅ Importação concluída: 0 produtos importados, 0 erros
+🚀 Iniciando importação...
+🔍 Iniciando scraping da página 2...
+📡 Fazendo requisição para: https://catalogo.yoobe.co/product?page=2&limit=50
+🔍 Nenhum produto encontrado, tentando estratégia alternativa...
+✅ 50 produtos encontrados na página 2
+✅ Importação concluída: 0 produtos importados, 0 erros
+ ✓ Compiled /admin/produtos/novo in 457ms (1605 modules)
+ ✓ Compiled /auth/login in 318ms (790 modules)
+ ✓ Compiled in 2.2s (813 modules)
