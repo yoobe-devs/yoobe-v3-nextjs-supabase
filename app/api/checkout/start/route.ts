@@ -1,6 +1,6 @@
 // =====================================================
 // API: INICIAR CHECKOUT
-// YOOBE v3.0.0 - Checkout API
+// YOOBE v3.1.0 - Checkout API
 // =====================================================
 
 import { NextRequest, NextResponse } from 'next/server'

@@ -292,7 +292,7 @@ async function captureResponsive() {
 ```bash
 # Estrutura de versionamento
 docs/screenshots/
-├── v3.0.0/                  # Versão atual
+├── v3.1.0/                  # Versão atual
 ├── v2.9.0/                  # Versão anterior
 └── archive/                 # Versões antigas
 ```

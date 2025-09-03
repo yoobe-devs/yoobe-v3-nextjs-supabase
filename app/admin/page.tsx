@@ -236,7 +236,7 @@ export default function AdminDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Dashboard Admin</h1>
-          <p className="text-gray-600">Visão geral do sistema Yoobe v3.0.0</p>
+          <p className="text-gray-600">Visão geral do sistema Yoobe v3.1.0</p>
         </div>
         <div className="flex space-x-2">
           <Button variant="outline" onClick={loadDashboardData} disabled={isLoading}>

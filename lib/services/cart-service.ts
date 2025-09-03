@@ -1,6 +1,6 @@
 // =====================================================
 // SERVIÇO DE CARRINHO DE COMPRAS
-// YOOBE v3.0.0 - Cart Service
+// YOOBE v3.1.0 - Cart Service
 // =====================================================
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'

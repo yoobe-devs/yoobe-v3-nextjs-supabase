@@ -599,7 +599,7 @@ Verifica status da API.
   "data": {
     "status": "healthy",
     "timestamp": "2025-01-15T10:00:00Z",
-    "version": "3.0.0"
+    "version": "3.1.0"
   }
 }
 ```
@@ -798,5 +798,5 @@ const redemption = await fetch('/api/redemptions', {
 ---
 
 **Última atualização:** Janeiro 2025  
-**Versão da API:** 3.0.0  
+**Versão da API:** 3.1.0  
 **Status:** Estável em Produção

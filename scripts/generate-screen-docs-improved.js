@@ -109,7 +109,7 @@ const SCREEN_INFO = {
     audience: 'Administradores do sistema, desenvolvedores, equipe de produto',
     businessRule: 'Manter transparência sobre todas as mudanças do sistema, facilitar o acompanhamento de versões e funcionalidades implementadas',
     fields: [
-      'Versão (ex: v3.0.0) com badge colorido por tipo',
+      'Versão (ex: v3.1.0) com badge colorido por tipo',
       'Data de lançamento da versão',
       'Título descritivo da funcionalidade',
       'Descrição detalhada das mudanças',
@@ -146,7 +146,7 @@ const SCREEN_INFO = {
     ],
     mockData: [
       '8 versões diferentes com histórico completo',
-      'Versão mais recente: v3.0.0 (2 de Setembro, 2025)',
+      'Versão mais recente: v3.1.0 (2 de Setembro, 2025)',
       'Tipos distribuídos: 4 features, 2 improvements, 1 fix, 1 breaking'
     ],
     suggestions: [
@@ -499,7 +499,7 @@ ${screenInfo.hooks ? screenInfo.hooks.map(hook => `- **${hook}** - Hook React`).
 
 | Data | Versão | Tipo | Descrição |
 |------|--------|------|-----------|
-| ${new Date().toISOString().split('T')[0]} | v3.0.0 | 🚀 Feature | Documentação melhorada e completa |
+| ${new Date().toISOString().split('T')[0]} | v3.1.0 | 🚀 Feature | Documentação melhorada e completa |
 
 ## 🚀 Melhorias Futuras Sugeridas
 

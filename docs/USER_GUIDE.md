@@ -471,4 +471,4 @@ Super Admin > Admin Gestor > Gestor > Funcionário
 ---
 
 **Última atualização:** Janeiro 2025  
-**Versão do documento:** 3.0.0
+**Versão do documento:** 3.1.0

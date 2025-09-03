@@ -1,6 +1,6 @@
 // =====================================================
 // SERVIÇO DE CUPONS DE DESCONTO
-// YOOBE v3.0.0 - Coupon Service
+// YOOBE v3.1.0 - Coupon Service
 // =====================================================
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'

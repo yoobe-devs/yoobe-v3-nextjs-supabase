@@ -1,6 +1,6 @@
 // =====================================================
 // HOOK: USO DE CUPONS DE DESCONTO
-// YOOBE v3.0.0 - Coupon Hook
+// YOOBE v3.1.0 - Coupon Hook
 // =====================================================
 
 import { useState, useCallback } from 'react'

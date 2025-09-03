@@ -2,7 +2,7 @@
 
 ## 🎯 **Resumo Executivo**
 
-A implementação da documentação técnica da plataforma Yoobe v3.0.0 foi **concluída com sucesso**, com todos os sistemas principais implementados e funcionais. Este documento apresenta o status atual e os próximos passos recomendados.
+A implementação da documentação técnica da plataforma Yoobe v3.1.0 foi **concluída com sucesso**, com todos os sistemas principais implementados e funcionais. Este documento apresenta o status atual e os próximos passos recomendados.
 
 ## ✅ **O que foi Implementado com Sucesso**
 

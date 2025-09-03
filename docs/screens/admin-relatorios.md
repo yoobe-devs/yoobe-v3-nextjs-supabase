@@ -76,7 +76,7 @@
 
 | Data | Versão | Tipo | Descrição |
 |------|--------|------|-----------|
-| 2025-09-03 | v3.0.0 | 🚀 Feature | Documentação gerada automaticamente |
+| 2025-09-03 | v3.1.0 | 🚀 Feature | Documentação gerada automaticamente |
 
 ## 🚀 Melhorias Futuras Sugeridas
 

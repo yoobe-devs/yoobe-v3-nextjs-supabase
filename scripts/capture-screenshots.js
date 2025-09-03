@@ -237,7 +237,7 @@ function generateScreenshotReport() {
 
 ## 📊 Resumo
 
-Este diretório contém screenshots das principais telas da plataforma Yoobe v3.0.0, organizados por módulo para facilitar a documentação e onboarding.
+Este diretório contém screenshots das principais telas da plataforma Yoobe v3.1.0, organizados por módulo para facilitar a documentação e onboarding.
 
 ## 📁 Estrutura
 

@@ -20,4 +20,4 @@ Isolamento por empresa (tenant), com lojas e catálogos próprios, políticas RL
 
 ---
 
-Última atualização: v3.0.0
+Última atualização: v3.1.0

@@ -44,7 +44,7 @@ export default function AddressManagementPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <MapPin className="h-8 w-8 text-blue-600" />
-            Gestão de Endereços v3.0.0
+            Gestão de Endereços v3.1.0
           </h1>
           <p className="text-gray-600 mt-2">
             Sistema completo de gestão de endereços múltiplos com validação e padrão único
@@ -57,7 +57,7 @@ export default function AddressManagementPage() {
           </Badge>
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             <Code className="h-3 w-3 mr-1" />
-            v3.0.0
+            v3.1.0
           </Badge>
         </div>
       </div>

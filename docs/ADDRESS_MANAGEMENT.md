@@ -10,4 +10,4 @@ Múltiplos endereços por usuário/empresa, validação e endereço padrão.
 - Validação de CEP/UF quando aplicável
 
 ---
-Última atualização: v3.0.0
+Última atualização: v3.1.0

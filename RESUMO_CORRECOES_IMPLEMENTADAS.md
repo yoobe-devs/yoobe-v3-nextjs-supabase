@@ -212,5 +212,5 @@ Se encontrar problemas após aplicar as correções:
 ---
 
 **Última atualização:** $(date)
-**Versão:** v3.0.0
+**Versão:** v3.1.0
 **Status:** Correções implementadas, aguardando aplicação das políticas RLS

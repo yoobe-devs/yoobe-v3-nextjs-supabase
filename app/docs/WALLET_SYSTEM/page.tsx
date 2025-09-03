@@ -44,7 +44,7 @@ export default function WalletSystemPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <CreditCard className="h-8 w-8 text-blue-600" />
-            Sistema de Carteira v3.0.0
+            Sistema de Carteira v3.1.0
           </h1>
           <p className="text-gray-600 mt-2">
             Gestão completa de pontos, transações e sistema de crédito/debito da plataforma Yoobe
@@ -57,7 +57,7 @@ export default function WalletSystemPage() {
           </Badge>
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             <Code className="h-3 w-3 mr-1" />
-            v3.0.0
+            v3.1.0
           </Badge>
         </div>
       </div>

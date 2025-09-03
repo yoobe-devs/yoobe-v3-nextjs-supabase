@@ -2,7 +2,7 @@
 
 > **Sistema completo de orçamentos, replicação de produtos, RBAC e checkout com multi-tenancy**
 
-**Versão:** 3.0.0  
+**Versão:** 3.1.0  
 **Status:** 🚀 **PRODUÇÃO**  
 **Data:** 2 de Setembro, 2025
 
@@ -400,6 +400,6 @@ Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) par
 - ✅ **Documentação:** 100% Atualizada
 - 🚀 **Pronto para Deploy!**
 
-**Versão atual:** `3.0.0`  
+**Versão atual:** `3.1.0`  
 **Última atualização:** Janeiro 2025  
 **Próxima versão:** `3.1.0` (Integrações avançadas)

@@ -2,7 +2,7 @@
 
 /**
  * Script de Teste Rápido - Sistema de Documentação Inteligente
- * Yoobe Platform v3.0.0
+ * Yoobe Platform v3.1.0
  */
 
 const path = require('path')

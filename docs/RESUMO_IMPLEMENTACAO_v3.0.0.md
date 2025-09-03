@@ -1,6 +1,6 @@
-# 🧭 Resumo da Implementação v3.0.0
+# 🧭 Resumo da Implementação v3.1.0
 
-Resumo executivo da implementação da versão 3.0.0.
+Resumo executivo da implementação da versão 3.1.0.
 
 Para detalhes completos, consulte também CHANGELOG e documentos específicos de módulos.
 
@@ -10,4 +10,4 @@ Para detalhes completos, consulte também CHANGELOG e documentos específicos de
 - Notificações e integrações de checkout/estoque
 
 ---
-Última atualização: v3.0.0
+Última atualização: v3.1.0

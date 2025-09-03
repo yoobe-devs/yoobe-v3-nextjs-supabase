@@ -1,7 +1,7 @@
-# 📚 Documentação Completa - Yoobe Platform v3.0.0
+# 📚 Documentação Completa - Yoobe Platform v3.1.0
 
 **Última atualização:** 02/09/2025  
-**Versão:** 3.0.0  
+**Versão:** 3.1.0  
 **Status:** ✅ Ativo e Auto-atualizado
 
 ---

@@ -1,6 +1,6 @@
 // =====================================================
 // HOOK: USO DO CARRINHO
-// YOOBE v3.0.0 - Cart Hook
+// YOOBE v3.1.0 - Cart Hook
 // =====================================================
 
 import { useState, useEffect, useCallback } from 'react'

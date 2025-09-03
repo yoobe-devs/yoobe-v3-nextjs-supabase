@@ -141,7 +141,7 @@ const SCREEN_TEMPLATE = `# 📱 Tela: {TITLE}
 
 | Data | Versão | Tipo | Descrição |
 |------|--------|------|-----------|
-| {CURRENT_DATE} | v3.0.0 | 🚀 Feature | Documentação gerada automaticamente |
+| {CURRENT_DATE} | v3.1.0 | 🚀 Feature | Documentação gerada automaticamente |
 
 ## 🚀 Melhorias Futuras Sugeridas
 

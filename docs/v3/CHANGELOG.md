@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 **2025-01-02 - v3.0.0 - PRODUÇÃO READY**
+## 🚀 **2025-01-02 - v3.1.0 - PRODUÇÃO READY**
 
 ### ✨ **Novas Funcionalidades**
 
@@ -205,7 +205,7 @@
 
 *Changelog mantido automaticamente pelo sistema Yoobe v3*
 *Última atualização: 2025-01-02*
-*Versão atual: 3.0.0*
+*Versão atual: 3.1.0*
 ## v3.1.0
 
 - Add Gestor gallery endpoints: upload/reorder/delete images

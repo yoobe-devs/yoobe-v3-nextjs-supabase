@@ -1,6 +1,6 @@
-# 🚀 **Funcionalidades Avançadas - YOOBE v3.0.0**
+# 🚀 **Funcionalidades Avançadas - YOOBE v3.1.0**
 
-Este documento descreve as funcionalidades avançadas implementadas no sistema YOOBE v3.0.0, incluindo cupons de desconto, múltiplas moedas e gateways de pagamento.
+Este documento descreve as funcionalidades avançadas implementadas no sistema YOOBE v3.1.0, incluindo cupons de desconto, múltiplas moedas e gateways de pagamento.
 
 ## 📋 **Índice**
 
@@ -517,7 +517,7 @@ Para dúvidas ou suporte técnico:
 
 ## 📝 **Changelog**
 
-### **v3.0.0** - 2024-01-XX
+### **v3.1.0** - 2024-01-XX
 
 - ✅ Sistema de cupons de desconto
 - ✅ Múltiplas moedas e conversão
@@ -529,4 +529,4 @@ Para dúvidas ou suporte técnico:
 
 ---
 
-**YOOBE v3.0.0** - Sistema completo de e-commerce com funcionalidades avançadas de pagamento e promoções.
+**YOOBE v3.1.0** - Sistema completo de e-commerce com funcionalidades avançadas de pagamento e promoções.

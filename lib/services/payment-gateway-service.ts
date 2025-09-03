@@ -1,6 +1,6 @@
 // =====================================================
 // SERVIÇO DE GATEWAYS DE PAGAMENTO
-// YOOBE v3.0.0 - Payment Gateway Service
+// YOOBE v3.1.0 - Payment Gateway Service
 // =====================================================
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'

@@ -504,5 +504,5 @@ O **Yoobe v3** está **100% implementado** com todas as funcionalidades especifi
 ---
 
 *Última atualização: 2025-01-02*
-*Versão: 3.0.0*
+*Versão: 3.1.0*
 *Status: ✅ PRODUÇÃO READY*

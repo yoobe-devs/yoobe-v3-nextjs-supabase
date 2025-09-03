@@ -314,6 +314,6 @@ POST /api/webhooks/workvivo
 ---
 
 **Status**: ✅ Implementado e Testado  
-**Versão**: v3.0.0  
+**Versão**: v3.1.0  
 **Data**: Janeiro 2024  
 **Equipe**: Yoobe Platform

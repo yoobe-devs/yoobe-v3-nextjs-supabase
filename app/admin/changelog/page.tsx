@@ -21,7 +21,7 @@ interface ChangelogEntry {
 
 const changelogData: ChangelogEntry[] = [
   {
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     date: 'Janeiro 2025',
     title: 'Sistema Completo de Orçamentos e Replicação',
     description: 'Lançamento principal com sistema de orçamentos, RBAC robusto e multi-tenancy avançado',
@@ -73,7 +73,7 @@ const changelogData: ChangelogEntry[] = [
     ]
   },
   {
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     date: 'Janeiro 2025',
     title: 'Sistema Completo de Orçamentos e Replicação',
     description: 'Lançamento principal com sistema de orçamentos, RBAC robusto e multi-tenancy avançado',
@@ -236,7 +236,7 @@ export default function ChangelogPage() {
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             <Tag className="h-3 w-3 mr-1" />
-            v3.0.0
+            v3.1.0
           </Badge>
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             Ativo
@@ -318,7 +318,7 @@ export default function ChangelogPage() {
             <div className="text-center p-4 border rounded-lg bg-white">
               <GitBranch className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <h4 className="font-semibold">Documentação</h4>
-              <p className="text-sm text-gray-600 mb-3">Acesse a documentação completa da v3.0.0</p>
+              <p className="text-sm text-gray-600 mb-3">Acesse a documentação completa da v3.1.0</p>
               <Link href="/docs" className="text-blue-600 text-sm hover:underline">
                 Acessar Documentação →
               </Link>

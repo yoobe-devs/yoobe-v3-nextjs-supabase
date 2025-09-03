@@ -867,5 +867,5 @@ O **Sistema de Documentação Inteligente** é uma solução completa que:
 
 ---
 
-*Sistema desenvolvido para a plataforma Yoobe v3.0.0*  
+*Sistema desenvolvido para a plataforma Yoobe v3.1.0*  
 *Última atualização: Janeiro 2024*

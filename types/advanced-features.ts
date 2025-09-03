@@ -1,6 +1,6 @@
 // =====================================================
 // TIPOS PARA FUNCIONALIDADES AVANÇADAS
-// YOOBE v3.0.0 - Advanced Features Types
+// YOOBE v3.1.0 - Advanced Features Types
 // =====================================================
 
 // =====================================================

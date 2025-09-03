@@ -1,6 +1,6 @@
 // =====================================================
 // API: APLICAR CUPOM DE DESCONTO
-// YOOBE v3.0.0 - Coupon API
+// YOOBE v3.1.0 - Coupon API
 // =====================================================
 
 import { NextRequest, NextResponse } from 'next/server'

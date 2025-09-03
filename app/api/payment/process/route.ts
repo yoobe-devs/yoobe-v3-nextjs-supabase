@@ -1,6 +1,6 @@
 // =====================================================
 // API: PROCESSAR PAGAMENTO
-// YOOBE v3.0.0 - Payment API
+// YOOBE v3.1.0 - Payment API
 // =====================================================
 
 import { NextRequest, NextResponse } from 'next/server'

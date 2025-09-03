@@ -752,4 +752,4 @@ A **integração do Sistema de Documentação Inteligente** com seu fluxo de des
 
 ---
 
-*Guia de Integração com Desenvolvimento - Sistema de Documentação Inteligente v3.0.0*
+*Guia de Integração com Desenvolvimento - Sistema de Documentação Inteligente v3.1.0*

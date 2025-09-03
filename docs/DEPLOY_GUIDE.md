@@ -496,7 +496,7 @@ export const logger = pino({
   timestamp: pino.stdTimeFunctions.isoTime,
   base: {
     service: 'yoobe-v3',
-    version: '3.0.0'
+    version: '3.1.0'
   }
 })
 ```
@@ -549,7 +549,7 @@ export async function GET() {
       data: {
         status: 'healthy',
         timestamp: new Date().toISOString(),
-        version: '3.0.0',
+        version: '3.1.0',
         services: {
           database: 'healthy',
           storage: 'healthy'
@@ -747,5 +747,5 @@ jobs:
 ---
 
 **Última atualização:** Janeiro 2025  
-**Versão do documento:** 3.0.0  
-**Status:** Atualizado para v3.0.0
+**Versão do documento:** 3.1.0  
+**Status:** Atualizado para v3.1.0

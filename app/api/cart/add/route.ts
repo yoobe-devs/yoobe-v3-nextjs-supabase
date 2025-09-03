@@ -1,6 +1,6 @@
 // =====================================================
 // API: ADICIONAR AO CARRINHO
-// YOOBE v3.0.0 - Cart API
+// YOOBE v3.1.0 - Cart API
 // =====================================================
 
 import { NextRequest, NextResponse } from 'next/server'

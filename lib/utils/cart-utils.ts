@@ -1,6 +1,6 @@
 // =====================================================
 // FUNÇÕES UTILITÁRIAS DE CARRINHO E CHECKOUT
-// YOOBE v3.0.0 - Cart Utilities
+// YOOBE v3.1.0 - Cart Utilities
 // =====================================================
 
 import { cartService } from '@/lib/services/cart-service'

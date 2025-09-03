@@ -21,4 +21,4 @@ const { stats } = await res.json()
 - `app/api/gestor/stats/route.ts`
 
 ---
-Última atualização: v3.0.0
+Última atualização: v3.1.0

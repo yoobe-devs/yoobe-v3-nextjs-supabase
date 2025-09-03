@@ -189,7 +189,7 @@ interface RecentActivity {
 
 | Data | Versão | Tipo | Descrição |
 |------|--------|------|-----------|
-| 2025-09-02 | v3.0.0 | 🚀 Feature | Dashboard completo para gestores com multi-tenancy |
+| 2025-09-02 | v3.1.0 | 🚀 Feature | Dashboard completo para gestores com multi-tenancy |
 | 2025-08-25 | v2.9.8 | ✨ Melhorias | Adição de métricas de receita e conversão |
 | 2025-08-15 | v2.9.5 | 🛠️ Refactor | Otimização de performance e responsividade |
 | 2025-08-01 | v2.9.0 | 🚀 Feature | Sistema de atividades recentes em tempo real |

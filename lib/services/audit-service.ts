@@ -1,6 +1,6 @@
 // =====================================================
 // SERVIÇO DE AUDITORIA
-// YOOBE v3.0.0 - Audit Service
+// YOOBE v3.1.0 - Audit Service
 // =====================================================
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'

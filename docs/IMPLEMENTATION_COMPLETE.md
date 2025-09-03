@@ -2,7 +2,7 @@
 
 ## 📊 Resumo Executivo
 
-A implementação da documentação técnica da plataforma Yoobe v3.0.0 foi **concluída com sucesso**, atendendo a todos os requisitos solicitados e implementando as melhorias recomendadas. Este documento apresenta um resumo completo de tudo que foi entregue.
+A implementação da documentação técnica da plataforma Yoobe v3.1.0 foi **concluída com sucesso**, atendendo a todos os requisitos solicitados e implementando as melhorias recomendadas. Este documento apresenta um resumo completo de tudo que foi entregue.
 
 ## ✅ **O que foi Implementado**
 
@@ -202,4 +202,4 @@ A implementação da documentação técnica da plataforma Yoobe representa um *
 
 ---
 
-*Implementação concluída em 2 de Setembro, 2025 - Versão 3.0.0 da Plataforma Yoobe*
+*Implementação concluída em 2 de Setembro, 2025 - Versão 3.1.0 da Plataforma Yoobe*

@@ -1,6 +1,6 @@
 // =====================================================
 // SERVIÇO DE CHECKOUT
-// YOOBE v3.0.0 - Checkout Service
+// YOOBE v3.1.0 - Checkout Service
 // =====================================================
 
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'

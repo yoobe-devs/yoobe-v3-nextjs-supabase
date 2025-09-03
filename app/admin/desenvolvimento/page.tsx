@@ -194,7 +194,7 @@ const developmentTasks: DevelopmentTask[] = [
   {
     id: 'DOCUMENTATION_UPDATE',
     title: 'Atualização da Documentação',
-    description: 'Atualizar toda a documentação para refletir a versão 3.0.0',
+    description: 'Atualizar toda a documentação para refletir a versão 3.1.0',
     status: 'in_progress',
     priority: 'medium',
     assignee: 'Equipe Yoobe',
@@ -209,7 +209,7 @@ const developmentTasks: DevelopmentTask[] = [
   {
     id: 'TESTING_COMPLETION',
     title: 'Finalização dos Testes',
-    description: 'Completar testes unitários, integração e E2E para v3.0.0',
+    description: 'Completar testes unitários, integração e E2E para v3.1.0',
     status: 'in_progress',
     priority: 'high',
     assignee: 'Equipe Yoobe',
@@ -341,7 +341,7 @@ export default function DesenvolvimentoPage() {
             Monitoramento de Desenvolvimento
           </h1>
           <p className="text-gray-600 mt-2">
-            Acompanhe o progresso do desenvolvimento da plataforma YOOBE v3.0.0
+            Acompanhe o progresso do desenvolvimento da plataforma YOOBE v3.1.0
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -539,7 +539,7 @@ export default function DesenvolvimentoPage() {
             Tarefas de Desenvolvimento ({filteredTasks.length} de {developmentTasks.length})
           </h2>
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            v3.0.0
+            v3.1.0
           </Badge>
         </div>
 

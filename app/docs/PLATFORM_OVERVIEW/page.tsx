@@ -22,16 +22,16 @@ export default function PlatformOverviewPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
               <BookOpen className="h-8 w-8 text-blue-600" />
-              Visão Geral da Plataforma v3.0.0
+              Visão Geral da Plataforma v3.1.0
             </h1>
             <p className="text-gray-600 mt-2">
-              Introdução completa à Yoobe Platform v3.0.0, arquitetura e conceitos fundamentais
+              Introdução completa à Yoobe Platform v3.1.0, arquitetura e conceitos fundamentais
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            v3.0.0
+            v3.1.0
           </Badge>
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             Ativa
@@ -44,11 +44,11 @@ export default function PlatformOverviewPage() {
       {/* Conteúdo Principal */}
       <Card>
         <CardHeader>
-          <CardTitle>🎯 Visão Geral da Yoobe Platform v3.0.0</CardTitle>
+          <CardTitle>🎯 Visão Geral da Yoobe Platform v3.1.0</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-gray-700">
-            A <strong>Yoobe Platform v3.0.0</strong> é uma solução completa e escalável para gestão corporativa de brindes, 
+            A <strong>Yoobe Platform v3.1.0</strong> é uma solução completa e escalável para gestão corporativa de brindes, 
             recompensas e fulfillment, implementando um sistema de orçamentos/aprovação com liberação e replicação 
             automática de produtos após pagamento.
           </p>
@@ -66,7 +66,7 @@ export default function PlatformOverviewPage() {
           </div>
 
           <div className="bg-green-50 p-4 rounded-lg">
-            <h3 className="font-semibold text-green-900 mb-2">✨ Principais Funcionalidades v3.0.0</h3>
+            <h3 className="font-semibold text-green-900 mb-2">✨ Principais Funcionalidades v3.1.0</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
               <div>✅ <strong>Sistema RBAC:</strong> 4 níveis de acesso com permissões granulares</div>
               <div>✅ <strong>Multi-tenancy:</strong> Empresas independentes com isolamento total</div>

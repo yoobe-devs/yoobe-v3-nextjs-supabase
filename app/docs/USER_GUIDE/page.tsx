@@ -39,16 +39,16 @@ export default function UserGuidePage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
               <BookOpen className="h-8 w-8 text-blue-600" />
-              Manual do Usuário v3.0.0
+              Manual do Usuário v3.1.0
             </h1>
             <p className="text-gray-600 mt-2">
-              Guia completo para usuários da plataforma com todas as funcionalidades v3.0.0
+              Guia completo para usuários da plataforma com todas as funcionalidades v3.1.0
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-            v3.0.0
+            v3.1.0
           </Badge>
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             Ativo
@@ -92,14 +92,14 @@ export default function UserGuidePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Bem-vindo ao <strong>Manual do Usuário da Yoobe Platform v3.0.0</strong>! Este guia foi criado para ajudá-lo a aproveitar ao máximo todas as funcionalidades da plataforma.
+              Bem-vindo ao <strong>Manual do Usuário da Yoobe Platform v3.1.0</strong>! Este guia foi criado para ajudá-lo a aproveitar ao máximo todas as funcionalidades da plataforma.
             </p>
             
             <div className="bg-blue-50 p-4 rounded-lg">
-              <h3 className="font-semibold text-blue-900 mb-2">🚀 O que é a Yoobe Platform v3.0.0?</h3>
+              <h3 className="font-semibold text-blue-900 mb-2">🚀 O que é a Yoobe Platform v3.1.0?</h3>
               <p className="text-sm text-blue-800">
                 A Yoobe Platform é uma solução completa para gestão corporativa de brindes, recompensas e fulfillment. 
-                A versão 3.0.0 introduz um sistema revolucionário de orçamentos com aprovação e replicação automática de produtos.
+                A versão 3.1.0 introduz um sistema revolucionário de orçamentos com aprovação e replicação automática de produtos.
               </p>
             </div>
 
@@ -129,7 +129,7 @@ export default function UserGuidePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              A Yoobe Platform v3.0.0 possui um sistema robusto de controle de acesso baseado em roles (RBAC) com 4 níveis de permissão.
+              A Yoobe Platform v3.1.0 possui um sistema robusto de controle de acesso baseado em roles (RBAC) com 4 níveis de permissão.
             </p>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -194,7 +194,7 @@ export default function UserGuidePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              Siga este guia passo a passo para começar a usar a Yoobe Platform v3.0.0.
+              Siga este guia passo a passo para começar a usar a Yoobe Platform v3.1.0.
             </p>
             
             <div className="space-y-4">
@@ -253,7 +253,7 @@ export default function UserGuidePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              O sistema de orçamentos da Yoobe v3.0.0 permite que gestores criem orçamentos que são enviados para aprovação e, após pagamento, geram replicação automática de produtos.
+              O sistema de orçamentos da Yoobe v3.1.0 permite que gestores criem orçamentos que são enviados para aprovação e, após pagamento, geram replicação automática de produtos.
             </p>
             
             <div className="bg-yellow-50 p-4 rounded-lg">
@@ -305,7 +305,7 @@ export default function UserGuidePage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-700">
-              O sistema de checkout da Yoobe v3.0.0 oferece uma experiência completa e segura para resgate de produtos.
+              O sistema de checkout da Yoobe v3.1.0 oferece uma experiência completa e segura para resgate de produtos.
             </p>
             
             <div className="bg-purple-50 p-4 rounded-lg">

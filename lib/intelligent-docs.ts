@@ -118,10 +118,10 @@ export class IntelligentDocumentationSystem {
       day: 'numeric'
     })
 
-    let content = `# 📚 Documentação Completa - Yoobe Platform v3.0.0
+    let content = `# 📚 Documentação Completa - Yoobe Platform v3.1.0
 
 **Última atualização:** ${date}  
-**Versão:** 3.0.0  
+**Versão:** 3.1.0  
 **Status:** ✅ Ativo e Auto-atualizado
 
 ---

@@ -19,4 +19,4 @@ Gerencia saldos de pontos/créditos por usuário/empresa, com lançamentos de d�
 
 ---
 
-Última atualização: v3.0.0
+Última atualização: v3.1.0

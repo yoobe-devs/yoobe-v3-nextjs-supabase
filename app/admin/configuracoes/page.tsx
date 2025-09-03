@@ -411,7 +411,7 @@ export default function AdminConfiguracoesPage() {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-600">Versão do Sistema:</span>
-                <span className="font-medium">v3.0.0</span>
+                <span className="font-medium">v3.1.0</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Última Atualização:</span>

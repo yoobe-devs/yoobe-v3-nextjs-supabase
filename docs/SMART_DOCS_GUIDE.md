@@ -505,4 +505,4 @@ O **Sistema de Documentação Inteligente** transforma a forma como você gerenc
 
 ---
 
-*Este sistema é parte da plataforma Yoobe v3.0.0 e representa o futuro da documentação inteligente e prevenção de erros.*
+*Este sistema é parte da plataforma Yoobe v3.1.0 e representa o futuro da documentação inteligente e prevenção de erros.*

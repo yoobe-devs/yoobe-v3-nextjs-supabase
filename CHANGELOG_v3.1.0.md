@@ -215,7 +215,7 @@ Implementação completa do sistema de replicação de produtos com funcionalida
 
 ### **Versões Anteriores:**
 
-- ✅ Compatível com v3.0.0
+- ✅ Compatível com v3.1.0
 - ✅ Não quebra funcionalidades existentes
 - ✅ Migration reversível
 
@@ -228,7 +228,7 @@ Implementação completa do sistema de replicação de produtos com funcionalida
 
 ## 🐛 **Correções de Bugs**
 
-### **v3.0.0 → v3.1.0:**
+### **v3.1.0 → v3.1.0:**
 
 - **Corrigido:** Página do gestor não exibia produtos replicados
 - **Corrigido:** JOIN problemático com tabela inexistente

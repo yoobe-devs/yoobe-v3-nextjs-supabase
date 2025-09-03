@@ -107,5 +107,5 @@ Se encontrar problemas:
 ---
 
 **Status**: ✅ Pronto para Teste  
-**Versão**: v3.0.0  
+**Versão**: v3.1.0  
 **Data**: Janeiro 2024

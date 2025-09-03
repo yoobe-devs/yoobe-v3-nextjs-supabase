@@ -1,6 +1,6 @@
 // =====================================================
 // API: CONVERSÃO DE MOEDAS
-// YOOBE v3.0.0 - Currency API
+// YOOBE v3.1.0 - Currency API
 // =====================================================
 
 import { NextRequest, NextResponse } from 'next/server'

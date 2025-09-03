@@ -2,7 +2,7 @@
 
 ## 🎯 **Bem-vindo ao Sistema de Documentação Inteligente**
 
-Este diretório contém toda a documentação necessária para entender, configurar e usar o **Sistema de Documentação Inteligente** da plataforma Yoobe v3.0.0.
+Este diretório contém toda a documentação necessária para entender, configurar e usar o **Sistema de Documentação Inteligente** da plataforma Yoobe v3.1.0.
 
 ---
 
@@ -247,5 +247,5 @@ Esta documentação é mantida atualizada automaticamente pelo próprio Sistema 
 
 ---
 
-*Índice da Documentação - Sistema de Documentação Inteligente v3.0.0*  
+*Índice da Documentação - Sistema de Documentação Inteligente v3.1.0*  
 *Última atualização: Janeiro 2024*

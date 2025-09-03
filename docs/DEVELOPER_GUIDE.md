@@ -124,7 +124,7 @@ docs/screens/admin-configuracoes.md # Onde será configurado
 
 | Data | Versão | Tipo | Descrição |
 |------|--------|------|-----------|
-| 2025-09-02 | v3.0.0 | 🚀 Feature | Sistema completo de orçamentos |
+| 2025-09-02 | v3.1.0 | 🚀 Feature | Sistema completo de orçamentos |
 | 2025-09-15 | v3.0.1 | ✨ Melhorias | Adição de sistema de cupons |
 | 2025-09-20 | v3.0.2 | 🐛 Fix | Correção de cálculo de desconto |
 ```

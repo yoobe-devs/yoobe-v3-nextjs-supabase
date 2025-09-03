@@ -2,7 +2,7 @@
 
 /**
  * Script de Inicialização do Sistema de Documentação Inteligente
- * Yoobe Platform v3.0.0
+ * Yoobe Platform v3.1.0
  */
 
 const fs = require('fs')
@@ -170,10 +170,10 @@ class SimpleSmartDocsSystem {
   async generateCompleteDocumentation() {
     const date = new Date().toLocaleDateString('pt-BR')
     
-    let content = `# 📚 Documentação Completa - Yoobe Platform v3.0.0
+    let content = `# 📚 Documentação Completa - Yoobe Platform v3.1.0
 
 **Última atualização:** ${date}  
-**Versão:** 3.0.0  
+**Versão:** 3.1.0  
 **Status:** ✅ Ativo e Auto-atualizado
 
 ---

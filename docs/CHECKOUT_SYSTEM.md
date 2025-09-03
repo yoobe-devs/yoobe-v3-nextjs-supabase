@@ -34,4 +34,4 @@ Resposta (sucesso):
 
 ---
 
-Última atualização: v3.0.0
+Última atualização: v3.1.0

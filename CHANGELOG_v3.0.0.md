@@ -1,16 +1,16 @@
-# 🎉 **CHANGELOG v3.0.0 - YOOBE v3**
+# 🎉 **CHANGELOG v3.1.0 - YOOBE v3**
 
 > **Lançamento Principal - Sistema Completo de Orçamentos e Replicação**
 
 **Data de Lançamento:** Janeiro 2025  
-**Versão:** 3.0.0  
+**Versão:** 3.1.0  
 **Status:** 🚀 **PRODUÇÃO**
 
 ---
 
 ## 🎯 **Visão Geral da Versão**
 
-**YOOBE v3.0.0** representa um marco significativo na evolução da plataforma, introduzindo um **sistema completo de orçamentos/aprovação com liberação e replicação automática de produtos após pagamento**, sistema RBAC robusto, multi-tenancy avançado e funcionalidades de checkout/redemption completamente renovadas.
+**YOOBE v3.1.0** representa um marco significativo na evolução da plataforma, introduzindo um **sistema completo de orçamentos/aprovação com liberação e replicação automática de produtos após pagamento**, sistema RBAC robusto, multi-tenancy avançado e funcionalidades de checkout/redemption completamente renovadas.
 
 ### ✨ **Principais Inovações**
 
@@ -319,7 +319,7 @@ app/
 - ✅ **USER_GUIDE.md** - Manual do usuário detalhado
 - ✅ **API_REFERENCE.md** - Documentação completa da API
 - ✅ **DEPLOY_GUIDE.md** - Guia de deploy para diferentes ambientes
-- ✅ **CHANGELOG_v3.0.0.md** - Este documento de mudanças
+- ✅ **CHANGELOG_v3.1.0.md** - Este documento de mudanças
 
 ### 🎯 **Cobertura da Documentação**
 - **100% das funcionalidades** documentadas
@@ -446,7 +446,7 @@ app/
 ## 🎯 **Próximos Passos**
 
 ### 🚀 **Imediato (Esta Semana)**
-1. **Deploy em produção** da v3.0.0
+1. **Deploy em produção** da v3.1.0
 2. **Migração** de dados existentes
 3. **Treinamento** da equipe de suporte
 4. **Monitoramento** de performance
@@ -467,7 +467,7 @@ app/
 
 ## 🎊 **Celebração**
 
-**YOOBE v3.0.0** representa um marco histórico na evolução da plataforma. Esta versão não apenas atende às necessidades atuais dos usuários, mas estabelece uma base sólida para o crescimento futuro.
+**YOOBE v3.1.0** representa um marco histórico na evolução da plataforma. Esta versão não apenas atende às necessidades atuais dos usuários, mas estabelece uma base sólida para o crescimento futuro.
 
 ### 🎯 **Missão Cumprida**
 - ✅ **Sistema de orçamentos** completo e funcional
@@ -492,7 +492,7 @@ Esta versão é o resultado de meses de trabalho árduo, colaboração e dedica�
 ---
 
 **📅 Data de Lançamento:** Janeiro 2025  
-**🚀 Versão:** 3.0.0  
+**🚀 Versão:** 3.1.0  
 **🏆 Status:** **PRODUÇÃO**  
 **👥 Equipe:** YOOBE Development Team  
 **📧 Contato:** suporte@yoobe.com

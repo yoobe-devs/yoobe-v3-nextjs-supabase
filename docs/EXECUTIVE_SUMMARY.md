@@ -257,4 +257,4 @@ Esta documentação não apenas facilita o desenvolvimento atual, mas estabelece
 
 ---
 
-*Documentação criada em 2 de Setembro de 2025 - Versão 3.0.0 da Plataforma Yoobe*
+*Documentação criada em 2 de Setembro de 2025 - Versão 3.1.0 da Plataforma Yoobe*

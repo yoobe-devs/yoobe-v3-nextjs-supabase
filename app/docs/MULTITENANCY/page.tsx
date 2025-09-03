@@ -41,7 +41,7 @@ export default function MultitenancyPage() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
             <Building className="h-8 w-8 text-blue-600" />
-            Sistema Multi-tenancy v3.0.0
+            Sistema Multi-tenancy v3.1.0
           </h1>
           <p className="text-gray-600 mt-2">
             Sistema robusto de multi-tenancy com isolamento total de dados e empresas independentes
@@ -54,7 +54,7 @@ export default function MultitenancyPage() {
           </Badge>
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
             <Code className="h-3 w-3 mr-1" />
-            v3.0.0
+            v3.1.0
           </Badge>
         </div>
       </div>

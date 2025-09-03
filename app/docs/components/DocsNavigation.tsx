@@ -53,13 +53,13 @@ const documentationItems: DocumentationItem[] = [
   {
     id: 'PLATFORM_OVERVIEW',
     title: 'Visão Geral da Plataforma',
-    description: 'Introdução completa à Yoobe Platform v3.0.0, arquitetura e conceitos fundamentais',
+    description: 'Introdução completa à Yoobe Platform v3.1.0, arquitetura e conceitos fundamentais',
     category: 'Fundamentos',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['introdução', 'arquitetura', 'conceitos', 'v3.0.0'],
+    tags: ['introdução', 'arquitetura', 'conceitos', 'v3.1.0'],
     url: '/docs/PLATFORM_OVERVIEW',
     icon: BookOpen,
     featured: true
@@ -67,13 +67,13 @@ const documentationItems: DocumentationItem[] = [
   {
     id: 'USER_GUIDE',
     title: 'Manual do Usuário',
-    description: 'Guia completo para usuários da plataforma com todas as funcionalidades v3.0.0',
+    description: 'Guia completo para usuários da plataforma com todas as funcionalidades v3.1.0',
     category: 'Fundamentos',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['usuário', 'manual', 'funcionalidades', 'v3.0.0'],
+    tags: ['usuário', 'manual', 'funcionalidades', 'v3.1.0'],
     url: '/docs/USER_GUIDE',
     icon: BookOpen,
     featured: true
@@ -83,11 +83,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Sistema de Orçamentos',
     description: 'Fluxo completo de orçamentos, aprovação e replicação automática',
     category: 'Funcionalidades',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['orçamentos', 'quotes', 'aprovação', 'replicação', 'v3.0.0'],
+    tags: ['orçamentos', 'quotes', 'aprovação', 'replicação', 'v3.1.0'],
     url: '/docs/QUOTES_SYSTEM',
     icon: FileText,
     featured: true
@@ -97,11 +97,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Sistema de Checkout',
     description: 'Checkout avançado com múltiplos métodos de pagamento e validações',
     category: 'Funcionalidades',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['checkout', 'pagamento', 'carrinho', 'validação', 'v3.0.0'],
+    tags: ['checkout', 'pagamento', 'carrinho', 'validação', 'v3.1.0'],
     url: '/docs/CHECKOUT_SYSTEM',
     icon: ShoppingCart,
     featured: true
@@ -111,11 +111,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Sistema RBAC',
     description: 'Documentação completa do sistema de controle de acesso baseado em roles',
     category: 'Segurança',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['rbac', 'segurança', 'permissões', 'roles', 'v3.0.0'],
+    tags: ['rbac', 'segurança', 'permissões', 'roles', 'v3.1.0'],
     url: '/docs/RBAC_SYSTEM',
     icon: Shield,
     featured: true
@@ -125,11 +125,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Sistema Inteligente',
     description: 'Documentação completa do Sistema de Documentação Inteligente (Smart Docs).',
     category: 'Desenvolvimento',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['docs', 'automação', 'monitoramento', 'smart-docs', 'v3.0.0'],
+    tags: ['docs', 'automação', 'monitoramento', 'smart-docs', 'v3.1.0'],
     url: '/admin/documentacao/viva/SMART_DOCS_SYSTEM_COMPLETE',
     icon: BookOpen,
     featured: true
@@ -139,11 +139,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Guia de Uso (Smart Docs)',
     description: 'Guia detalhado de uso e configuração do Sistema Inteligente de Documentação.',
     category: 'Desenvolvimento',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['docs', 'guia', 'smart-docs', 'configuração', 'v3.0.0'],
+    tags: ['docs', 'guia', 'smart-docs', 'configuração', 'v3.1.0'],
     url: '/admin/documentacao/viva/SMART_DOCS_GUIDE',
     icon: BookOpen
   },
@@ -152,11 +152,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Consulta Rápida (Smart Docs)',
     description: 'Referência rápida de comandos, endpoints e operações do Smart Docs.',
     category: 'Desenvolvimento',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['docs', 'consulta', 'referência', 'smart-docs', 'v3.0.0'],
+    tags: ['docs', 'consulta', 'referência', 'smart-docs', 'v3.1.0'],
     url: '/admin/documentacao/viva/SMART_DOCS_QUICK_REFERENCE',
     icon: FileText
   },
@@ -165,11 +165,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Multi-tenancy',
     description: 'Sistema robusto de multi-tenancy com isolamento de dados',
     category: 'Arquitetura',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['multi-tenancy', 'empresas', 'isolamento', 'tenants', 'v3.0.0'],
+    tags: ['multi-tenancy', 'empresas', 'isolamento', 'tenants', 'v3.1.0'],
     url: '/docs/MULTITENANCY',
     icon: Building,
     featured: true
@@ -179,11 +179,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Sistema de Carteira',
     description: 'Gestão de pontos, transações e sistema de crédito/debito',
     category: 'Funcionalidades',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['carteira', 'pontos', 'transações', 'crédito', 'v3.0.0'],
+    tags: ['carteira', 'pontos', 'transações', 'crédito', 'v3.1.0'],
     url: '/docs/WALLET_SYSTEM',
     icon: CreditCard
   },
@@ -192,11 +192,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Sistema de Replicação',
     description: 'Replicação automática de produtos após pagamento confirmado',
     category: 'Funcionalidades',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['replicação', 'produtos', 'automação', 'pagamento', 'v3.0.0'],
+    tags: ['replicação', 'produtos', 'automação', 'pagamento', 'v3.1.0'],
     url: '/docs/REPLICATION_SYSTEM',
     icon: Package
   },
@@ -205,11 +205,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Sistema de Carteira',
     description: 'Gestão completa de pontos, transações e sistema de crédito/debito',
     category: 'Funcionalidades',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['carteira', 'pontos', 'transações', 'crédito', 'v3.0.0'],
+    tags: ['carteira', 'pontos', 'transações', 'crédito', 'v3.1.0'],
     url: '/docs/WALLET_SYSTEM',
     icon: CreditCard
   },
@@ -218,11 +218,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Gestão de Usuários',
     description: 'Sistema de convites, roles e gestão de equipes',
     category: 'Administração',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['usuários', 'convites', 'equipes', 'gestão', 'v3.0.0'],
+    tags: ['usuários', 'convites', 'equipes', 'gestão', 'v3.1.0'],
     url: '/docs/USER_MANAGEMENT',
     icon: Users
   },
@@ -231,11 +231,11 @@ const documentationItems: DocumentationItem[] = [
     title: 'Gestão de Endereços',
     description: 'Sistema de endereços múltiplos com validação e padrão único',
     category: 'Funcionalidades',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['endereços', 'validação', 'cep', 'padrão', 'v3.0.0'],
+    tags: ['endereços', 'validação', 'cep', 'padrão', 'v3.1.0'],
     url: '/docs/ADDRESS_MANAGEMENT',
     icon: Globe
   },
@@ -244,50 +244,50 @@ const documentationItems: DocumentationItem[] = [
     title: 'Dashboards e Métricas',
     description: 'Dashboards em tempo real com métricas e analytics avançados',
     category: 'Funcionalidades',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['dashboards', 'métricas', 'analytics', 'tempo real', 'v3.0.0'],
+    tags: ['dashboards', 'métricas', 'analytics', 'tempo real', 'v3.1.0'],
     url: '/docs/DASHBOARDS',
     icon: BarChart3
   },
   {
     id: 'API_REFERENCE',
     title: 'Referência da API',
-    description: 'Documentação completa de todos os endpoints da API REST v3.0.0',
+    description: 'Documentação completa de todos os endpoints da API REST v3.1.0',
     category: 'Desenvolvimento',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['api', 'endpoints', 'rest', 'desenvolvimento', 'v3.0.0'],
+    tags: ['api', 'endpoints', 'rest', 'desenvolvimento', 'v3.1.0'],
     url: '/admin/documentacao/viva/API_REFERENCE',
     icon: Code
   },
   {
     id: 'DATABASE_SCHEMA',
     title: 'Schema do Banco de Dados',
-    description: 'Estrutura completa do banco de dados v3.0.0 e relacionamentos',
+    description: 'Estrutura completa do banco de dados v3.1.0 e relacionamentos',
     category: 'Desenvolvimento',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['database', 'schema', 'tabelas', 'relacionamentos', 'v3.0.0'],
+    tags: ['database', 'schema', 'tabelas', 'relacionamentos', 'v3.1.0'],
     url: '/admin/documentacao/viva/DATABASE_SCHEMA',
     icon: Database
   },
   {
     id: 'DEPLOYMENT_GUIDE',
     title: 'Guia de Deploy',
-    description: 'Guia completo para deploy em desenvolvimento e produção v3.0.0',
+    description: 'Guia completo para deploy em desenvolvimento e produção v3.1.0',
     category: 'Operações',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
-    tags: ['deploy', 'produção', 'vercel', 'docker', 'v3.0.0'],
+    tags: ['deploy', 'produção', 'vercel', 'docker', 'v3.1.0'],
     url: '/admin/documentacao/viva/DEPLOYMENT_GUIDE',
     icon: Settings
   }
@@ -353,10 +353,10 @@ export default function DocsNavigation() {
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center gap-3">
           <Home className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold text-gray-900">Documentação Yoobe v3.0.0</h1>
+          <h1 className="text-4xl font-bold text-gray-900">Documentação Yoobe v3.1.0</h1>
         </div>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Documentação completa da plataforma Yoobe v3.0.0 - Sistema de Orçamentos e Replicação
+          Documentação completa da plataforma Yoobe v3.1.0 - Sistema de Orçamentos e Replicação
         </p>
         <div className="flex items-center justify-center gap-2">
           <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
@@ -365,7 +365,7 @@ export default function DocsNavigation() {
           </Badge>
           <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
             <Star className="h-3 w-3 mr-1" />
-            v3.0.0
+            v3.1.0
           </Badge>
         </div>
       </div>

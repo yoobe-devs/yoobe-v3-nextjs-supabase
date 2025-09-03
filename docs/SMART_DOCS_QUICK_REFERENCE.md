@@ -299,4 +299,4 @@ curl -X GET "http://localhost:3000/api/admin/smart-docs/backup"
 
 ---
 
-*Guia de consulta rápida - Sistema de Documentação Inteligente v3.0.0*
+*Guia de consulta rápida - Sistema de Documentação Inteligente v3.1.0*

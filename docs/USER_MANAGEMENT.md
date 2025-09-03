@@ -15,4 +15,4 @@ Visão geral das funcionalidades de convites, papéis e perfis de usuário por e
 - users, invitations, user_roles
 
 ---
-Última atualização: v3.0.0
+Última atualização: v3.1.0

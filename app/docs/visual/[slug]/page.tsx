@@ -18,7 +18,7 @@ interface Document {
 const documents: Record<string, Document> = {
   'PLATFORM_OVERVIEW': {
     title: 'Visão Geral da Plataforma',
-    version: 'v3.0.0',
+    version: 'v3.1.0',
     lastUpdated: 'Janeiro 2025',
     content: `# 🚀 Yoobe Platform - Visão Geral Completa
 
