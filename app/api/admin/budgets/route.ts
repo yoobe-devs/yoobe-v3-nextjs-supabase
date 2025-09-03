@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
     validateCreateBudgetPayload(payload)
 
     // Verificar se todos os produtos existem e estão ativos
-    const productIds = payload.items.map(item => item.product_id)
+    const productIds = payload.items.map((item: any) => item.product_id)
     const { data: products, error: productsError } = await supabase
       .from('products_base')
       .select('id, title, active, price_cash, price_points')
@@ -165,8 +165,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Calcular totais
-    const totalCash = payload.items.reduce((sum, item) => sum + (item.qty * item.unit_price), 0)
-    const totalPoints = payload.items.reduce((sum, item) => sum + (item.qty * item.unit_points), 0)
+    const totalCash = payload.items.reduce((sum: number, item: any) => sum + (item.qty * item.unit_price), 0)
+    const totalPoints = payload.items.reduce((sum: number, item: any) => sum + (item.qty * item.unit_points), 0)
 
     // Definir data de expiração (padrão: 30 dias)
     const expiresAt = payload.expires_at || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Inserir itens do orçamento
-    const budgetItems = payload.items.map(item => ({
+    const budgetItems = payload.items.map((item: any) => ({
       budget_id: budget.id,
       product_id: item.product_id,
       qty: item.qty,

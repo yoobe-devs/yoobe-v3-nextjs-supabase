@@ -55,13 +55,16 @@
     "date-fns": "^2.30.0",
     "lucide-react": "^0.294.0",
     "next": "14.0.3",
+    "nodemailer": "^7.0.6",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.62.0",
     "recharts": "^2.15.4",
     "sonner": "^2.0.7",
+    "stripe": "^18.5.0",
     "tailwind-merge": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^11.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
