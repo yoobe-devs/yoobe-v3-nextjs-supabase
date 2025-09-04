@@ -7,20 +7,21 @@ export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
     const { searchParams } = new URL(request.url)
-    
+
     const orderNumber = searchParams.get('order_number')
     const email = searchParams.get('email')
 
     if (!orderNumber && !email) {
-      return NextResponse.json({ 
-        error: 'Número do pedido ou email é obrigatório' 
-      }, { status: 400 })
+      return NextResponse.json(
+        {
+          error: 'Número do pedido ou email é obrigatório',
+        },
+        { status: 400 }
+      )
     }
 
     // Construir query base
-    let query = supabase
-      .from('orders')
-      .select(`
+    let query = supabase.from('orders').select(`
         id,
         order_number,
         status,
@@ -48,21 +49,26 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Erro ao buscar pedidos:', error)
-      return NextResponse.json({ 
-        error: 'Erro ao buscar pedidos' 
-      }, { status: 500 })
+      return NextResponse.json(
+        {
+          error: 'Erro ao buscar pedidos',
+        },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       data: orders || [],
-      count: orders?.length || 0
+      count: orders?.length || 0,
     })
-
   } catch (error) {
     console.error('Erro na API de busca de pedidos:', error)
-    return NextResponse.json({ 
-      error: 'Erro interno do servidor' 
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: 'Erro interno do servidor',
+      },
+      { status: 500 }
+    )
   }
 }

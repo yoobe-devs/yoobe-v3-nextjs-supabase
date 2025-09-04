@@ -2,22 +2,28 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { 
-  Search, 
-  Package, 
-  Truck, 
-  MapPin, 
+import {
+  Search,
+  Package,
+  Truck,
+  MapPin,
   Clock,
   AlertCircle,
   CheckCircle,
   ArrowRight,
   Home,
-  HelpCircle
+  HelpCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -29,7 +35,7 @@ export default function TrackingSearchPage() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!orderNumber.trim()) {
       setError('Por favor, digite o número do pedido')
       return
@@ -40,7 +46,9 @@ export default function TrackingSearchPage() {
 
     try {
       // Buscar pedido pelo número
-      const response = await fetch(`/api/orders/search?order_number=${encodeURIComponent(orderNumber.trim())}`)
+      const response = await fetch(
+        `/api/orders/search?order_number=${encodeURIComponent(orderNumber.trim())}`
+      )
       const result = await response.json()
 
       if (!response.ok) {
@@ -105,11 +113,11 @@ export default function TrackingSearchPage() {
                   type="text"
                   placeholder="Ex: ORD-123456789-ABC123"
                   value={orderNumber}
-                  onChange={(e) => setOrderNumber(e.target.value)}
+                  onChange={e => setOrderNumber(e.target.value)}
                   className="text-lg"
                 />
               </div>
-              
+
               {error && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
@@ -117,9 +125,9 @@ export default function TrackingSearchPage() {
                 </Alert>
               )}
 
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={loading}
                 size="lg"
               >
@@ -149,7 +157,9 @@ export default function TrackingSearchPage() {
                   <Package className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900">Pedido Confirmado</h3>
+                  <h3 className="font-semibold text-gray-900">
+                    Pedido Confirmado
+                  </h3>
                   <p className="text-sm text-gray-600">
                     Seu pedido foi recebido e está sendo processado
                   </p>
@@ -206,18 +216,19 @@ export default function TrackingSearchPage() {
                   Onde encontrar o número do pedido?
                 </h4>
                 <p className="text-sm text-gray-600">
-                  O número do pedido foi enviado por email após a confirmação da compra. 
-                  Ele geralmente tem o formato "ORD-" seguido de números e letras.
+                  O número do pedido foi enviado por email após a confirmação da
+                  compra. Ele geralmente tem o formato "ORD-" seguido de números
+                  e letras.
                 </p>
               </div>
-              
+
               <div>
                 <h4 className="font-medium text-gray-900 mb-2">
                   Não consegue encontrar seu pedido?
                 </h4>
                 <p className="text-sm text-gray-600">
-                  Entre em contato conosco através do email de suporte ou pelo chat online. 
-                  Nossa equipe está pronta para ajudar!
+                  Entre em contato conosco através do email de suporte ou pelo
+                  chat online. Nossa equipe está pronta para ajudar!
                 </p>
               </div>
 

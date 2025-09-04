@@ -15,6 +15,7 @@
     "db:add-client-products-fk": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f scripts/sql/add-client-products-category-fk.sql",
     "db:reset-api-cache": "bash scripts/reset-api-cache.sh",
     "db:post-migrate": "npm run db:add-client-products-fk && npm run db:reset-api-cache",
+    "db:add-store-sku-structure": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f scripts/sql/add-store-sku-structure.sql",
     "ngrok:check": "bash scripts/check-ngrok-status.sh",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",

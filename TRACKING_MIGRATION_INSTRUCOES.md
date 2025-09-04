@@ -1,12 +1,14 @@
 # 🚀 **INSTRUÇÕES PARA APLICAÇÃO DA MIGRATION DE TRACKING**
 
 ## 📋 **Pré-requisitos**
+
 - Supabase local rodando
 - Acesso ao Supabase Studio (http://localhost:54323)
 
 ## 🔧 **Aplicação Manual da Migration**
 
 ### **1. Acessar Supabase Studio**
+
 ```bash
 # Abrir no navegador
 open http://localhost:54323
@@ -42,13 +44,13 @@ ALTER TABLE order_tracking_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view tracking events for their orders" ON order_tracking_events
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM orders 
-      WHERE orders.id = order_tracking_events.order_id 
+      SELECT 1 FROM orders
+      WHERE orders.id = order_tracking_events.order_id
       AND (
         orders.user_id = auth.uid() OR
         EXISTS (
-          SELECT 1 FROM users 
-          WHERE users.id = auth.uid() 
+          SELECT 1 FROM users
+          WHERE users.id = auth.uid()
           AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
         )
       )
@@ -59,8 +61,8 @@ CREATE POLICY "Users can view tracking events for their orders" ON order_trackin
 CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
   FOR INSERT WITH CHECK (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -69,8 +71,8 @@ CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
 CREATE POLICY "Admins can update tracking events" ON order_tracking_events
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -101,18 +103,21 @@ Após executar o SQL, verifique se a tabela foi criada:
 ### **4. Testar a Funcionalidade**
 
 #### **Teste 1: Página de Busca**
+
 ```bash
 # Acessar no navegador
 http://localhost:3001/tracking
 ```
 
 #### **Teste 2: API de Tracking**
+
 ```bash
 # Testar API diretamente
 curl http://localhost:3001/api/tracking/test-order-id
 ```
 
 #### **Teste 3: Busca de Pedidos**
+
 ```bash
 # Testar busca por número
 curl "http://localhost:3001/api/orders/search?order_number=ORD-123"
@@ -121,20 +126,24 @@ curl "http://localhost:3001/api/orders/search?order_number=ORD-123"
 ## 🎯 **Funcionalidades Implementadas**
 
 ### **✅ Páginas Criadas**
+
 - `/tracking` - Página de busca de pedidos
 - `/tracking/[orderId]` - Página de detalhes do tracking
 
 ### **✅ APIs Criadas**
+
 - `GET /api/tracking/[orderId]` - Buscar detalhes do pedido
 - `POST /api/tracking/[orderId]` - Atualizar status (webhook)
 - `GET /api/orders/search` - Buscar pedidos por número/email
 
 ### **✅ Integração Cubbo**
+
 - Busca automática de tracking na Cubbo
 - Sincronização de eventos de rastreamento
 - Link direto para tracking no site da Cubbo
 
 ### **✅ Recursos da Página de Tracking**
+
 - Timeline visual dos eventos
 - Status atual do pedido
 - Informações do cliente e endereço
@@ -163,6 +172,7 @@ curl "http://localhost:3001/api/orders/search?order_number=ORD-123"
 ## 📞 **Suporte**
 
 Se encontrar problemas:
+
 1. Verificar logs do Supabase
 2. Verificar logs do Next.js
 3. Testar APIs individualmente

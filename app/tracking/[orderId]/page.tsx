@@ -2,16 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { 
-  Package, 
-  Truck, 
-  MapPin, 
-  Clock, 
-  CheckCircle, 
+import {
+  Package,
+  Truck,
+  MapPin,
+  Clock,
+  CheckCircle,
   AlertCircle,
   Calendar,
   User,
@@ -26,9 +32,14 @@ import {
   ShoppingBag,
   Timer,
   Navigation,
-  Globe
+  Globe,
+  Eye,
+  Edit,
 } from 'lucide-react'
 import Link from 'next/link'
+import UpdateStatusModal from '@/components/update-status-modal'
+import NewDeliveryModal from '@/components/new-delivery-modal'
+import EditOrderModal from '@/components/edit-order-modal'
 
 interface TrackingEvent {
   id: string
@@ -84,51 +95,56 @@ interface TrackingData {
 }
 
 const STATUS_CONFIG = {
-  pending: { 
-    label: 'Pendente', 
-    color: 'bg-yellow-100 text-yellow-800', 
+  pending: {
+    label: 'Pendente',
+    color: 'bg-yellow-100 text-yellow-800',
     icon: Clock,
-    description: 'Pedido aguardando processamento'
+    description: 'Pedido aguardando processamento',
   },
-  confirmed: { 
-    label: 'Confirmado', 
-    color: 'bg-blue-100 text-blue-800', 
+  confirmed: {
+    label: 'Confirmado',
+    color: 'bg-blue-100 text-blue-800',
     icon: CheckCircle,
-    description: 'Pedido confirmado e em preparação'
+    description: 'Pedido confirmado e em preparação',
   },
-  processing: { 
-    label: 'Processando', 
-    color: 'bg-purple-100 text-purple-800', 
+  processing: {
+    label: 'Processando',
+    color: 'bg-purple-100 text-purple-800',
     icon: Package,
-    description: 'Produtos sendo preparados'
+    description: 'Produtos sendo preparados',
   },
-  shipped: { 
-    label: 'Enviado', 
-    color: 'bg-indigo-100 text-indigo-800', 
+  shipped: {
+    label: 'Enviado',
+    color: 'bg-indigo-100 text-indigo-800',
     icon: Truck,
-    description: 'Pedido em trânsito'
+    description: 'Pedido em trânsito',
   },
-  delivered: { 
-    label: 'Entregue', 
-    color: 'bg-green-100 text-green-800', 
+  delivered: {
+    label: 'Entregue',
+    color: 'bg-green-100 text-green-800',
     icon: CheckCircle,
-    description: 'Pedido entregue com sucesso'
+    description: 'Pedido entregue com sucesso',
   },
-  cancelled: { 
-    label: 'Cancelado', 
-    color: 'bg-red-100 text-red-800', 
+  cancelled: {
+    label: 'Cancelado',
+    color: 'bg-red-100 text-red-800',
     icon: AlertCircle,
-    description: 'Pedido cancelado'
-  }
+    description: 'Pedido cancelado',
+  },
 }
 
 export default function TrackingPage() {
   const params = useParams()
   const orderId = params.orderId as string
-  
+
   const [trackingData, setTrackingData] = useState<TrackingData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  
+  // Estados dos modais
+  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false)
+  const [showNewDeliveryModal, setShowNewDeliveryModal] = useState(false)
+  const [showEditOrderModal, setShowEditOrderModal] = useState(false)
 
   useEffect(() => {
     fetchTrackingData()
@@ -155,7 +171,7 @@ export default function TrackingPage() {
   const formatCurrency = (amount: number, currency: string = 'BRL') => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',
-      currency: currency
+      currency: currency,
     }).format(amount)
   }
 
@@ -165,12 +181,15 @@ export default function TrackingPage() {
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     }).format(new Date(dateString))
   }
 
   const getStatusConfig = (status: string) => {
-    return STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] || STATUS_CONFIG.pending
+    return (
+      STATUS_CONFIG[status as keyof typeof STATUS_CONFIG] ||
+      STATUS_CONFIG.pending
+    )
   }
 
   if (loading) {
@@ -189,9 +208,12 @@ export default function TrackingPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-6">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Pedido não encontrado</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Pedido não encontrado
+          </h1>
           <p className="text-gray-600 mb-6">
-            {error || 'Não foi possível encontrar informações sobre este pedido.'}
+            {error ||
+              'Não foi possível encontrar informações sobre este pedido.'}
           </p>
           <div className="space-x-4">
             <Link href="/">
@@ -230,10 +252,36 @@ export default function TrackingPage() {
                 <h1 className="text-2xl font-bold text-gray-900">
                   Rastreamento do Pedido
                 </h1>
-                <p className="text-gray-600">
-                  Pedido #{order.order_number}
-                </p>
+                <p className="text-gray-600">Pedido #{order.order_number}</p>
               </div>
+            </div>
+            
+            {/* Botões de ação */}
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowEditOrderModal(true)}
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                Editar
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowUpdateStatusModal(true)}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Atualizar Status
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowNewDeliveryModal(true)}
+              >
+                <Truck className="h-4 w-4 mr-2" />
+                Nova Entrega
+              </Button>
             </div>
             <div className="text-right">
               <Badge className={statusConfig.color}>
@@ -273,7 +321,9 @@ export default function TrackingPage() {
                   </div>
                   {order.tracking_code && (
                     <div className="text-right">
-                      <p className="text-sm font-medium">Código de Rastreamento</p>
+                      <p className="text-sm font-medium">
+                        Código de Rastreamento
+                      </p>
                       <p className="text-lg font-mono">{order.tracking_code}</p>
                     </div>
                   )}
@@ -295,15 +345,22 @@ export default function TrackingPage() {
                     tracking_events.map((event, index) => {
                       const eventStatusConfig = getStatusConfig(event.status)
                       const isLast = index === tracking_events.length - 1
-                      
+
                       return (
-                        <div key={event.id} className="flex items-start space-x-4">
-                          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                            isLast ? 'bg-blue-600' : 'bg-gray-300'
-                          }`}>
-                            <eventStatusConfig.icon className={`h-4 w-4 ${
-                              isLast ? 'text-white' : 'text-gray-600'
-                            }`} />
+                        <div
+                          key={event.id}
+                          className="flex items-start space-x-4"
+                        >
+                          <div
+                            className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                              isLast ? 'bg-blue-600' : 'bg-gray-300'
+                            }`}
+                          >
+                            <eventStatusConfig.icon
+                              className={`h-4 w-4 ${
+                                isLast ? 'text-white' : 'text-gray-600'
+                              }`}
+                            />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between">
@@ -354,13 +411,13 @@ export default function TrackingPage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium">Status:</span>
-                      <Badge variant="outline">
-                        {cubbo_tracking.status}
-                      </Badge>
+                      <Badge variant="outline">{cubbo_tracking.status}</Badge>
                     </div>
                     {cubbo_tracking.estimated_delivery && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Previsão de Entrega:</span>
+                        <span className="text-sm font-medium">
+                          Previsão de Entrega:
+                        </span>
                         <span className="text-sm text-gray-600">
                           {formatDate(cubbo_tracking.estimated_delivery)}
                         </span>
@@ -368,7 +425,7 @@ export default function TrackingPage() {
                     )}
                     {cubbo_tracking.tracking_url && (
                       <div className="pt-4">
-                        <a 
+                        <a
                           href={cubbo_tracking.tracking_url}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -402,7 +459,9 @@ export default function TrackingPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm font-medium">Data:</span>
-                  <span className="text-sm">{formatDate(order.created_at)}</span>
+                  <span className="text-sm">
+                    {formatDate(order.created_at)}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-sm font-medium">Total:</span>
@@ -413,14 +472,16 @@ export default function TrackingPage() {
                 {order.points_used > 0 && (
                   <div className="flex justify-between">
                     <span className="text-sm font-medium">Pontos Usados:</span>
-                    <span className="text-sm">{order.points_used.toLocaleString()}</span>
+                    <span className="text-sm">
+                      {order.points_used.toLocaleString()}
+                    </span>
                   </div>
                 )}
                 <Separator />
                 <div className="text-center">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={fetchTrackingData}
                     className="w-full"
                   >
@@ -464,7 +525,10 @@ export default function TrackingPage() {
                   {order.shipping_address && (
                     <div>
                       <p>{order.shipping_address.street}</p>
-                      <p>{order.shipping_address.city}, {order.shipping_address.state}</p>
+                      <p>
+                        {order.shipping_address.city},{' '}
+                        {order.shipping_address.state}
+                      </p>
                       <p>{order.shipping_address.postal_code}</p>
                       <p>{order.shipping_address.country}</p>
                     </div>
@@ -483,11 +547,11 @@ export default function TrackingPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  {order.items.map((item) => (
+                  {order.items.map(item => (
                     <div key={item.id} className="flex items-center space-x-3">
                       {item.client_products.image_url && (
-                        <img 
-                          src={item.client_products.image_url} 
+                        <img
+                          src={item.client_products.image_url}
                           alt={item.client_products.name}
                           className="w-12 h-12 rounded object-cover"
                         />
@@ -497,7 +561,8 @@ export default function TrackingPage() {
                           {item.client_products.name}
                         </p>
                         <p className="text-xs text-gray-500">
-                          Qtd: {item.quantity} • {formatCurrency(item.unit_price, order.currency)}
+                          Qtd: {item.quantity} •{' '}
+                          {formatCurrency(item.unit_price, order.currency)}
                         </p>
                       </div>
                     </div>
@@ -508,6 +573,30 @@ export default function TrackingPage() {
           </div>
         </div>
       </div>
+
+      {/* Modais */}
+      <UpdateStatusModal
+        isOpen={showUpdateStatusModal}
+        onClose={() => setShowUpdateStatusModal(false)}
+        orderId={orderId}
+        currentStatus={order.status}
+        onStatusUpdated={fetchTrackingData}
+      />
+
+      <NewDeliveryModal
+        isOpen={showNewDeliveryModal}
+        onClose={() => setShowNewDeliveryModal(false)}
+        orderId={orderId}
+        currentOrder={order}
+        onDeliveryCreated={fetchTrackingData}
+      />
+
+      <EditOrderModal
+        isOpen={showEditOrderModal}
+        onClose={() => setShowEditOrderModal(false)}
+        order={order}
+        onOrderUpdated={fetchTrackingData}
+      />
     </div>
   )
 }

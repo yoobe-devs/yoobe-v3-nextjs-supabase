@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Script para aplicar a migration de tracking de pedidos
- * Uso: node apply-tracking-migration.js
+ * Script para aplicar a migration de entregas
+ * Uso: node apply-deliveries-migration.js
  */
 
 const { createClient } = require('@supabase/supabase-js')
@@ -25,16 +25,16 @@ if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-async function applyTrackingMigration() {
+async function applyDeliveriesMigration() {
   try {
-    console.log('🚀 Aplicando migration de tracking de pedidos...')
+    console.log('🚀 Aplicando migration de entregas...')
     console.log('')
 
     // Ler arquivo SQL
     const sqlPath = path.join(
       __dirname,
       'migrations',
-      'create-order-tracking-events.sql'
+      'create-deliveries-table.sql'
     )
     const sqlContent = fs.readFileSync(sqlPath, 'utf8')
 
@@ -96,28 +96,34 @@ async function applyTrackingMigration() {
       .from('information_schema.tables')
       .select('table_name')
       .eq('table_schema', 'public')
-      .eq('table_name', 'order_tracking_events')
+      .eq('table_name', 'deliveries')
 
     if (tablesError) {
       console.log('   ⚠️ Não foi possível verificar a criação da tabela')
     } else if (tables && tables.length > 0) {
-      console.log('   ✅ Tabela order_tracking_events criada com sucesso')
+      console.log('   ✅ Tabela deliveries criada com sucesso')
     } else {
-      console.log('   ⚠️ Tabela order_tracking_events não encontrada')
+      console.log('   ⚠️ Tabela deliveries não encontrada')
     }
 
-    // Testar inserção de evento de exemplo
+    // Testar inserção de entrega de exemplo
     console.log('')
-    console.log('🧪 Testando inserção de evento de exemplo...')
+    console.log('🧪 Testando inserção de entrega de exemplo...')
 
     try {
-      const { data: testEvent, error: testError } = await supabase
-        .from('order_tracking_events')
+      const { data: testDelivery, error: testError } = await supabase
+        .from('deliveries')
         .insert({
           order_id: '00000000-0000-0000-0000-000000000000', // UUID inválido para teste
-          status: 'test',
-          description: 'Evento de teste da migration',
-          metadata: { test: true },
+          delivery_method: 'standard',
+          tracking_code: 'BR123456789BR',
+          recipient_name: 'Teste',
+          recipient_email: 'teste@exemplo.com',
+          street_address: 'Rua Teste, 123',
+          city: 'São Paulo',
+          state: 'SP',
+          postal_code: '01234-567',
+          status: 'pending',
         })
         .select()
 
@@ -127,24 +133,26 @@ async function applyTrackingMigration() {
       } else {
         console.log('   ✅ Teste de inserção bem-sucedido')
 
-        // Limpar evento de teste
+        // Limpar entrega de teste
         await supabase
-          .from('order_tracking_events')
+          .from('deliveries')
           .delete()
-          .eq('id', testEvent[0].id)
+          .eq('id', testDelivery[0].id)
       }
     } catch (testError) {
       console.log('   ⚠️ Erro no teste:', testError.message)
     }
 
     console.log('')
-    console.log('🎉 Migration de tracking aplicada com sucesso!')
+    console.log('🎉 Migration de entregas aplicada com sucesso!')
     console.log('')
     console.log('📋 Próximos passos:')
-    console.log('   1. Testar a página de tracking: /tracking')
-    console.log('   2. Testar busca de pedido: /tracking/[orderId]')
-    console.log('   3. Verificar integração com Cubbo')
+    console.log('   1. Testar o modal de nova entrega')
+    console.log('   2. Testar o modal de atualização de status')
+    console.log('   3. Testar o modal de edição de pedido')
+    console.log('   4. Verificar integração com Cubbo')
     console.log('')
+
   } catch (error) {
     console.error('❌ Erro durante a aplicação da migration:', error)
     process.exit(1)
@@ -153,7 +161,7 @@ async function applyTrackingMigration() {
 
 // Executar se chamado diretamente
 if (require.main === module) {
-  applyTrackingMigration()
+  applyDeliveriesMigration()
 }
 
-module.exports = { applyTrackingMigration }
+module.exports = { applyDeliveriesMigration }
