@@ -83,7 +83,15 @@ export default function NewDeliveryModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!deliveryMethod || !recipientName || !recipientEmail || !street || !city || !state || !postalCode) {
+    if (
+      !deliveryMethod ||
+      !recipientName ||
+      !recipientEmail ||
+      !street ||
+      !city ||
+      !state ||
+      !postalCode
+    ) {
       toast({
         title: 'Erro',
         description: 'Preencha todos os campos obrigatórios',
@@ -137,7 +145,8 @@ export default function NewDeliveryModal({
       console.error('Erro ao criar entrega:', error)
       toast({
         title: 'Erro',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       })
     } finally {
@@ -200,7 +209,7 @@ export default function NewDeliveryModal({
               <User className="h-4 w-4 mr-2" />
               Destinatário
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="recipientName">Nome Completo *</Label>
@@ -211,7 +220,7 @@ export default function NewDeliveryModal({
                   onChange={e => setRecipientName(e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="recipientEmail">Email *</Label>
                 <Input
@@ -241,7 +250,7 @@ export default function NewDeliveryModal({
               <MapPin className="h-4 w-4 mr-2" />
               Endereço de Entrega
             </h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="street">Rua/Avenida *</Label>
               <Input
@@ -262,7 +271,7 @@ export default function NewDeliveryModal({
                   onChange={e => setCity(e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="state">Estado *</Label>
                 <Input
@@ -272,7 +281,7 @@ export default function NewDeliveryModal({
                   onChange={e => setState(e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="postalCode">CEP *</Label>
                 <Input

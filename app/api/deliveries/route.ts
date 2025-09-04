@@ -6,9 +6,12 @@ import { cookies } from 'next/headers'
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
@@ -21,39 +24,54 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (userError || !userData) {
-      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Usuário não encontrado' },
+        { status: 404 }
+      )
     }
 
-    if (!['admin', 'admin_global', 'superadmin', 'manager'].includes(userData.role)) {
+    if (
+      !['admin', 'admin_global', 'superadmin', 'manager'].includes(
+        userData.role
+      )
+    ) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
 
     const body = await request.json()
-    const {
-      order_id,
-      delivery_method,
-      recipient,
-      address,
-      notes
-    } = body
+    const { order_id, delivery_method, recipient, address, notes } = body
 
     // Validações
     if (!order_id || !delivery_method || !recipient || !address) {
-      return NextResponse.json({ 
-        error: 'Dados obrigatórios não fornecidos' 
-      }, { status: 400 })
+      return NextResponse.json(
+        {
+          error: 'Dados obrigatórios não fornecidos',
+        },
+        { status: 400 }
+      )
     }
 
     if (!recipient.name || !recipient.email) {
-      return NextResponse.json({ 
-        error: 'Nome e email do destinatário são obrigatórios' 
-      }, { status: 400 })
+      return NextResponse.json(
+        {
+          error: 'Nome e email do destinatário são obrigatórios',
+        },
+        { status: 400 }
+      )
     }
 
-    if (!address.street || !address.city || !address.state || !address.postal_code) {
-      return NextResponse.json({ 
-        error: 'Endereço completo é obrigatório' 
-      }, { status: 400 })
+    if (
+      !address.street ||
+      !address.city ||
+      !address.state ||
+      !address.postal_code
+    ) {
+      return NextResponse.json(
+        {
+          error: 'Endereço completo é obrigatório',
+        },
+        { status: 400 }
+      )
     }
 
     // Verificar se o pedido existe e pertence à empresa do usuário
@@ -64,12 +82,21 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (orderError || !order) {
-      return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Pedido não encontrado' },
+        { status: 404 }
+      )
     }
 
     // Verificar permissão para acessar o pedido
-    if (userData.role === 'manager' && order.company_id !== userData.company_id) {
-      return NextResponse.json({ error: 'Acesso negado ao pedido' }, { status: 403 })
+    if (
+      userData.role === 'manager' &&
+      order.company_id !== userData.company_id
+    ) {
+      return NextResponse.json(
+        { error: 'Acesso negado ao pedido' },
+        { status: 403 }
+      )
     }
 
     // Gerar código de rastreamento
@@ -92,54 +119,57 @@ export async function POST(request: NextRequest) {
         country: address.country || 'Brasil',
         notes: notes || null,
         status: 'pending',
-        created_by: user.id
+        created_by: user.id,
       })
       .select()
       .single()
 
     if (deliveryError) {
       console.error('Erro ao criar entrega:', deliveryError)
-      return NextResponse.json({ error: 'Erro ao criar entrega' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Erro ao criar entrega' },
+        { status: 500 }
+      )
     }
 
     // Atualizar status do pedido para "shipped" se ainda não estiver
     if (order.status !== 'shipped' && order.status !== 'delivered') {
       await supabase
         .from('orders')
-        .update({ 
+        .update({
           status: 'shipped',
           tracking_code: trackingCode,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', order_id)
     }
 
     // Criar evento de tracking
-    await supabase
-      .from('order_tracking_events')
-      .insert({
-        order_id,
-        status: 'shipped',
-        location: `${address.city}, ${address.state}`,
-        description: `Nova entrega criada - ${delivery_method}`,
-        metadata: {
-          delivery_id: delivery.id,
-          tracking_code: trackingCode,
-          delivery_method
-        }
-      })
-
-    return NextResponse.json({ 
-      success: true,
-      data: delivery,
-      message: 'Nova entrega criada com sucesso'
+    await supabase.from('order_tracking_events').insert({
+      order_id,
+      status: 'shipped',
+      location: `${address.city}, ${address.state}`,
+      description: `Nova entrega criada - ${delivery_method}`,
+      metadata: {
+        delivery_id: delivery.id,
+        tracking_code: trackingCode,
+        delivery_method,
+      },
     })
 
+    return NextResponse.json({
+      success: true,
+      data: delivery,
+      message: 'Nova entrega criada com sucesso',
+    })
   } catch (error) {
     console.error('Erro na API de entregas:', error)
-    return NextResponse.json({ 
-      error: 'Erro interno do servidor' 
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: 'Erro interno do servidor',
+      },
+      { status: 500 }
+    )
   }
 }
 
@@ -147,9 +177,12 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    
+
     // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
     if (authError || !user) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     }
@@ -159,9 +192,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
 
     // Construir query
-    let query = supabase
-      .from('deliveries')
-      .select(`
+    let query = supabase.from('deliveries').select(`
         *,
         orders(
           id,
@@ -181,25 +212,32 @@ export async function GET(request: NextRequest) {
     }
 
     // Executar query
-    const { data: deliveries, error } = await query.order('created_at', { ascending: false })
+    const { data: deliveries, error } = await query.order('created_at', {
+      ascending: false,
+    })
 
     if (error) {
       console.error('Erro ao buscar entregas:', error)
-      return NextResponse.json({ 
-        error: 'Erro ao buscar entregas' 
-      }, { status: 500 })
+      return NextResponse.json(
+        {
+          error: 'Erro ao buscar entregas',
+        },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       success: true,
       data: deliveries || [],
-      count: deliveries?.length || 0
+      count: deliveries?.length || 0,
     })
-
   } catch (error) {
     console.error('Erro na API de listagem de entregas:', error)
-    return NextResponse.json({ 
-      error: 'Erro interno do servidor' 
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: 'Erro interno do servidor',
+      },
+      { status: 500 }
+    )
   }
 }

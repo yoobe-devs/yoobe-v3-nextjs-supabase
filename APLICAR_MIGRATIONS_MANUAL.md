@@ -1,22 +1,26 @@
-# 🚀 **INSTRUÇÕES PARA APLICAÇÃO DAS MIGRATIONS DO SWAGTRACK**
+# 🚀 **GUIA PASSO A PASSO - APLICAR MIGRATIONS DO SWAGTRACK**
 
-## 📋 **Pré-requisitos**
+## 📋 **Status Atual**
+- ✅ Supabase rodando em http://localhost:54323
+- ✅ Arquivos SQL criados em `migrations/`
+- ⚠️ `exec_sql` não disponível (normal em desenvolvimento local)
+- 🔧 **Solução:** Aplicar migrations manualmente no Supabase Studio
 
-- Supabase local rodando
-- Acesso ao Supabase Studio (http://localhost:54323)
+## 🎯 **PASSO A PASSO PARA APLICAR MIGRATIONS**
 
-## 🔧 **Aplicação Manual das Migrations**
-
-### **1. Acessar Supabase Studio**
-
+### **1. Abrir Supabase Studio**
 ```bash
-# Abrir no navegador
-open http://localhost:54323
+# O Supabase Studio já deve estar aberto em:
+http://localhost:54323
 ```
 
-### **2. Executar SQL no Editor SQL - Migration 1: Tracking Events**
+### **2. Navegar para SQL Editor**
+1. No menu lateral esquerdo, clique em **"SQL Editor"**
+2. Clique em **"New query"** para criar uma nova query
 
-Copie e cole o seguinte SQL no editor SQL do Supabase Studio:
+### **3. Aplicar Migration 1: Order Tracking Events**
+
+Copie e cole o seguinte SQL no editor:
 
 ```sql
 -- Criar tabela de eventos de tracking de pedidos
@@ -44,13 +48,13 @@ ALTER TABLE order_tracking_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view tracking events for their orders" ON order_tracking_events
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM orders
-      WHERE orders.id = order_tracking_events.order_id
+      SELECT 1 FROM orders 
+      WHERE orders.id = order_tracking_events.order_id 
       AND (
         orders.user_id = auth.uid() OR
         EXISTS (
-          SELECT 1 FROM users
-          WHERE users.id = auth.uid()
+          SELECT 1 FROM users 
+          WHERE users.id = auth.uid() 
           AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
         )
       )
@@ -61,8 +65,8 @@ CREATE POLICY "Users can view tracking events for their orders" ON order_trackin
 CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
   FOR INSERT WITH CHECK (
     EXISTS (
-      SELECT 1 FROM users
-      WHERE users.id = auth.uid()
+      SELECT 1 FROM users 
+      WHERE users.id = auth.uid() 
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -71,8 +75,8 @@ CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
 CREATE POLICY "Admins can update tracking events" ON order_tracking_events
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM users
-      WHERE users.id = auth.uid()
+      SELECT 1 FROM users 
+      WHERE users.id = auth.uid() 
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -92,9 +96,11 @@ CREATE TRIGGER trigger_update_order_tracking_events_updated_at
   EXECUTE FUNCTION update_order_tracking_events_updated_at();
 ```
 
-### **3. Executar SQL no Editor SQL - Migration 2: Deliveries**
+4. Clique em **"Run"** para executar o SQL
 
-Copie e cole o seguinte SQL no editor SQL do Supabase Studio:
+### **4. Aplicar Migration 2: Deliveries**
+
+Crie uma nova query e cole o seguinte SQL:
 
 ```sql
 -- Criar tabela de entregas
@@ -133,13 +139,13 @@ ALTER TABLE deliveries ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view deliveries for their orders" ON deliveries
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM orders
-      WHERE orders.id = deliveries.order_id
+      SELECT 1 FROM orders 
+      WHERE orders.id = deliveries.order_id 
       AND (
         orders.user_id = auth.uid() OR
         EXISTS (
-          SELECT 1 FROM users
-          WHERE users.id = auth.uid()
+          SELECT 1 FROM users 
+          WHERE users.id = auth.uid() 
           AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
         )
       )
@@ -150,8 +156,8 @@ CREATE POLICY "Users can view deliveries for their orders" ON deliveries
 CREATE POLICY "Admins can insert deliveries" ON deliveries
   FOR INSERT WITH CHECK (
     EXISTS (
-      SELECT 1 FROM users
-      WHERE users.id = auth.uid()
+      SELECT 1 FROM users 
+      WHERE users.id = auth.uid() 
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -160,8 +166,8 @@ CREATE POLICY "Admins can insert deliveries" ON deliveries
 CREATE POLICY "Admins can update deliveries" ON deliveries
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM users
-      WHERE users.id = auth.uid()
+      SELECT 1 FROM users 
+      WHERE users.id = auth.uid() 
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -181,80 +187,77 @@ CREATE TRIGGER trigger_update_deliveries_updated_at
   EXECUTE FUNCTION update_deliveries_updated_at();
 ```
 
-### **4. Verificar Criação das Tabelas**
+5. Clique em **"Run"** para executar o SQL
 
-Após executar os SQLs, verifique se as tabelas foram criadas:
+### **5. Verificar Criação das Tabelas**
 
-1. Vá para **Table Editor**
-2. Procure por `order_tracking_events` e `deliveries`
-3. Verifique se as tabelas existem com as colunas corretas
+1. No menu lateral, clique em **"Table Editor"**
+2. Verifique se as tabelas foram criadas:
+   - ✅ `order_tracking_events`
+   - ✅ `deliveries`
 
-## 🎯 **Funcionalidades Implementadas**
+### **6. Testar Funcionalidades**
 
-### **✅ Modais Criados**
+Após aplicar as migrations, teste:
 
-- **UpdateStatusModal** - Atualizar status do pedido
-- **NewDeliveryModal** - Criar nova entrega
-- **EditOrderModal** - Editar informações do pedido
+1. **Página de Tracking:**
+   ```
+   http://localhost:3001/tracking
+   ```
 
-### **✅ APIs Criadas**
+2. **Buscar um pedido existente:**
+   - Digite um número de pedido válido
+   - Verifique se a página de detalhes carrega
 
-- `POST /api/deliveries` - Criar nova entrega
-- `GET /api/deliveries` - Listar entregas
-- `POST /api/tracking/[orderId]` - Atualizar status (webhook)
+3. **Testar Modais:**
+   - Botão **"Editar"** - Deve abrir modal de edição
+   - Botão **"Atualizar Status"** - Deve abrir modal de status
+   - Botão **"Nova Entrega"** - Deve abrir modal de entrega
 
-### **✅ Botões Funcionais**
+## 🎯 **RESULTADO ESPERADO**
 
-- **Editar** - Abre modal para editar pedido
-- **Atualizar Status** - Abre modal para atualizar status
-- **Nova Entrega** - Abre modal para criar nova entrega
+Após aplicar as migrations, você deve ter:
 
-### **✅ Recursos dos Modais**
+### **✅ Tabelas Criadas**
+- `order_tracking_events` - Para eventos de tracking
+- `deliveries` - Para gestão de entregas
 
-- **Validação de campos** obrigatórios
-- **Feedback visual** com toasts
-- **Loading states** durante operações
-- **Formulários responsivos** e intuitivos
-- **Integração com APIs** existentes
+### **✅ Funcionalidades Ativas**
+- Página de busca de pedidos
+- Página de detalhes com timeline
+- Modais funcionais para edição, status e entrega
+- APIs de tracking e entregas
 
-## 🔄 **Fluxo de Uso dos Modais**
+### **✅ Segurança**
+- RLS habilitado em ambas as tabelas
+- Políticas de acesso configuradas
+- Controle de permissões por role
 
-### **1. Modal de Edição**
+## 🚨 **Troubleshooting**
 
-- Edita informações do cliente
-- Atualiza endereço de entrega
-- Modifica valores e pontos
-- Adiciona observações
+### **Se as tabelas não forem criadas:**
+1. Verifique se há erros no SQL Editor
+2. Execute os comandos um por vez
+3. Verifique se a tabela `orders` existe
 
-### **2. Modal de Atualização de Status**
+### **Se os modais não funcionarem:**
+1. Verifique o console do navegador
+2. Teste as APIs diretamente
+3. Verifique se as migrations foram aplicadas
 
-- Seleciona novo status
-- Adiciona localização
-- Inclui código de rastreamento
-- Adiciona descrição do evento
-
-### **3. Modal de Nova Entrega**
-
-- Configura método de entrega
-- Define destinatário
-- Configura endereço
-- Adiciona observações
-
-## 🚀 **Próximos Passos**
-
-1. ✅ Aplicar migrations manualmente
-2. ✅ Testar modais de edição
-3. ✅ Testar modal de atualização de status
-4. ✅ Testar modal de nova entrega
-5. ✅ Verificar integração com Cubbo
-6. ✅ Testar com pedidos reais
+### **Se houver erros de permissão:**
+1. Verifique as políticas RLS
+2. Teste com usuário admin/manager
+3. Verifique se o usuário está autenticado
 
 ## 📞 **Suporte**
 
 Se encontrar problemas:
+1. Verifique os logs do Supabase Studio
+2. Teste as APIs individualmente
+3. Verifique se todas as migrations foram aplicadas
+4. Consulte a documentação do Supabase
 
-1. Verificar logs do Supabase
-2. Verificar logs do Next.js
-3. Testar APIs individualmente
-4. Verificar permissões RLS
-5. Verificar se as tabelas foram criadas corretamente
+---
+
+**🎉 Após aplicar as migrations, o SwagTrack estará completamente funcional!**

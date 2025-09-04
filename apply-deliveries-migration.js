@@ -134,10 +134,7 @@ async function applyDeliveriesMigration() {
         console.log('   ✅ Teste de inserção bem-sucedido')
 
         // Limpar entrega de teste
-        await supabase
-          .from('deliveries')
-          .delete()
-          .eq('id', testDelivery[0].id)
+        await supabase.from('deliveries').delete().eq('id', testDelivery[0].id)
       }
     } catch (testError) {
       console.log('   ⚠️ Erro no teste:', testError.message)
@@ -152,7 +149,6 @@ async function applyDeliveriesMigration() {
     console.log('   3. Testar o modal de edição de pedido')
     console.log('   4. Verificar integração com Cubbo')
     console.log('')
-
   } catch (error) {
     console.error('❌ Erro durante a aplicação da migration:', error)
     process.exit(1)

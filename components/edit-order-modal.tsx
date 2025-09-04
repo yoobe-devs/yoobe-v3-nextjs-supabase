@@ -44,14 +44,14 @@ export default function EditOrderModal({
     customerName: '',
     customerEmail: '',
     customerPhone: '',
-    
+
     // Endereço de entrega
     street: '',
     city: '',
     state: '',
     postalCode: '',
     country: '',
-    
+
     // Informações do pedido
     notes: '',
     totalAmount: '',
@@ -111,7 +111,7 @@ export default function EditOrderModal({
             email: formData.customerEmail,
             phone: formData.customerPhone,
           },
-          
+
           // Atualizar endereço de entrega
           shipping_address: {
             street: formData.street,
@@ -120,7 +120,7 @@ export default function EditOrderModal({
             postal_code: formData.postalCode,
             country: formData.country,
           },
-          
+
           // Atualizar outras informações
           notes: formData.notes,
           total_amount: parseFloat(formData.totalAmount) || order.total_amount,
@@ -145,7 +145,8 @@ export default function EditOrderModal({
       console.error('Erro ao atualizar pedido:', error)
       toast({
         title: 'Erro',
-        description: error instanceof Error ? error.message : 'Erro desconhecido',
+        description:
+          error instanceof Error ? error.message : 'Erro desconhecido',
         variant: 'destructive',
       })
     } finally {
@@ -179,7 +180,7 @@ export default function EditOrderModal({
               <User className="h-4 w-4 mr-2" />
               Informações do Cliente
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="customerName">Nome Completo *</Label>
@@ -187,10 +188,12 @@ export default function EditOrderModal({
                   id="customerName"
                   placeholder="Nome do cliente"
                   value={formData.customerName}
-                  onChange={e => handleInputChange('customerName', e.target.value)}
+                  onChange={e =>
+                    handleInputChange('customerName', e.target.value)
+                  }
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="customerEmail">Email *</Label>
                 <Input
@@ -198,7 +201,9 @@ export default function EditOrderModal({
                   type="email"
                   placeholder="email@exemplo.com"
                   value={formData.customerEmail}
-                  onChange={e => handleInputChange('customerEmail', e.target.value)}
+                  onChange={e =>
+                    handleInputChange('customerEmail', e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -209,7 +214,9 @@ export default function EditOrderModal({
                 id="customerPhone"
                 placeholder="(11) 99999-9999"
                 value={formData.customerPhone}
-                onChange={e => handleInputChange('customerPhone', e.target.value)}
+                onChange={e =>
+                  handleInputChange('customerPhone', e.target.value)
+                }
               />
             </div>
           </div>
@@ -220,7 +227,7 @@ export default function EditOrderModal({
               <MapPin className="h-4 w-4 mr-2" />
               Endereço de Entrega
             </h3>
-            
+
             <div className="space-y-2">
               <Label htmlFor="street">Rua/Avenida</Label>
               <Input
@@ -241,7 +248,7 @@ export default function EditOrderModal({
                   onChange={e => handleInputChange('city', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="state">Estado</Label>
                 <Input
@@ -251,14 +258,16 @@ export default function EditOrderModal({
                   onChange={e => handleInputChange('state', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="postalCode">CEP</Label>
                 <Input
                   id="postalCode"
                   placeholder="01234-567"
                   value={formData.postalCode}
-                  onChange={e => handleInputChange('postalCode', e.target.value)}
+                  onChange={e =>
+                    handleInputChange('postalCode', e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -280,7 +289,7 @@ export default function EditOrderModal({
               <Package className="h-4 w-4 mr-2" />
               Informações Financeiras
             </h3>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="totalAmount">Valor Total (R$)</Label>
@@ -290,10 +299,12 @@ export default function EditOrderModal({
                   step="0.01"
                   placeholder="0.00"
                   value={formData.totalAmount}
-                  onChange={e => handleInputChange('totalAmount', e.target.value)}
+                  onChange={e =>
+                    handleInputChange('totalAmount', e.target.value)
+                  }
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="pointsUsed">Pontos Utilizados</Label>
                 <Input
@@ -301,7 +312,9 @@ export default function EditOrderModal({
                   type="number"
                   placeholder="0"
                   value={formData.pointsUsed}
-                  onChange={e => handleInputChange('pointsUsed', e.target.value)}
+                  onChange={e =>
+                    handleInputChange('pointsUsed', e.target.value)
+                  }
                 />
               </div>
             </div>
