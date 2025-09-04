@@ -1,10 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { 
   Truck, 
   Package, 
@@ -22,12 +25,20 @@ import {
   CheckCircle,
   AlertCircle,
   XCircle,
-  Loader
+  Loader,
+  ArrowRight,
+  Home,
+  HelpCircle
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function SwagTrackPage() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
+  const [orderNumber, setOrderNumber] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   
   const [orders] = useState([
     {
@@ -172,6 +183,41 @@ export default function SwagTrackPage() {
     return 'Status desconhecido'
   }
 
+  const handleSearchOrder = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!orderNumber.trim()) {
+      setError('Por favor, digite o número do pedido')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      // Buscar pedido pelo número
+      const response = await fetch(
+        `/api/orders/search?order_number=${encodeURIComponent(orderNumber.trim())}`
+      )
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Pedido não encontrado')
+      }
+
+      if (result.data && result.data.length > 0) {
+        const order = result.data[0]
+        router.push(`/gestor/swag-track/orders/${order.id}`)
+      } else {
+        setError('Nenhum pedido encontrado com este número')
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao buscar pedido')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -191,6 +237,61 @@ export default function SwagTrackPage() {
           </Button>
         </div>
       </div>
+
+      {/* Busca Rápida de Pedidos */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Search className="h-5 w-5 mr-2" />
+            Busca Rápida de Pedidos
+          </CardTitle>
+          <CardDescription>
+            Digite o número do pedido para acessar os detalhes e timeline
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSearchOrder} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="orderNumber">Número do Pedido</Label>
+              <Input
+                id="orderNumber"
+                type="text"
+                placeholder="Ex: ORD-123456789-ABC123"
+                value={orderNumber}
+                onChange={e => setOrderNumber(e.target.value)}
+                className="text-lg"
+              />
+            </div>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={loading}
+              size="lg"
+            >
+              {loading ? (
+                <>
+                  <Clock className="h-4 w-4 mr-2 animate-spin" />
+                  Buscando...
+                </>
+              ) : (
+                <>
+                  <Search className="h-4 w-4 mr-2" />
+                  Rastrear Pedido
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -312,10 +413,18 @@ export default function SwagTrackPage() {
                   <span className="text-sm text-gray-500">#{order.id}</span>
                 </div>
                 <div className="flex space-x-2">
-                  <Button size="sm" variant="outline">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => router.push(`/gestor/swag-track/orders/${order.id}`)}
+                  >
                     <Eye className="h-3 w-3" />
                   </Button>
-                  <Button size="sm" variant="outline">
+                  <Button 
+                    size="sm" 
+                    variant="outline"
+                    onClick={() => router.push(`/gestor/swag-track/orders/${order.id}`)}
+                  >
                     <Edit className="h-3 w-3" />
                   </Button>
                 </div>

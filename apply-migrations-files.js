@@ -29,23 +29,29 @@ async function applyMigrationsFiles() {
     // Encontrar o container do PostgreSQL do Supabase
     console.log('🔍 Procurando container do PostgreSQL...')
     let postgresContainer = null
-    
+
     try {
-      const containers = execSync('docker ps --format "{{.Names}}"', { encoding: 'utf8' })
+      const containers = execSync('docker ps --format "{{.Names}}"', {
+        encoding: 'utf8',
+      })
       const containerList = containers.trim().split('\n')
-      
+
       for (const container of containerList) {
         if (container.includes('supabase_db_yoobe-v3')) {
           postgresContainer = container
           break
         }
       }
-      
+
       if (postgresContainer) {
-        console.log(`   ✅ Container do PostgreSQL encontrado: ${postgresContainer}`)
+        console.log(
+          `   ✅ Container do PostgreSQL encontrado: ${postgresContainer}`
+        )
       } else {
         console.log('   ⚠️ Container do PostgreSQL não encontrado')
-        console.log('   💡 Verifique se o Supabase está rodando: supabase start')
+        console.log(
+          '   💡 Verifique se o Supabase está rodando: supabase start'
+        )
         return
       }
     } catch (error) {
@@ -55,7 +61,7 @@ async function applyMigrationsFiles() {
 
     // Migration 1: Order Tracking Events
     console.log('⚡ Aplicando Migration 1: Order Tracking Events...')
-    
+
     const migration1SQL = `-- Migration 1: Order Tracking Events
 CREATE TABLE IF NOT EXISTS order_tracking_events (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -85,16 +91,25 @@ CREATE POLICY "Allow all operations for service role" ON order_tracking_events
       fs.writeFileSync(tempFile1, migration1SQL)
 
       // Executar via container
-      execSync(`docker exec -i ${postgresContainer} psql -U postgres -d postgres -f /tmp/migration1.sql`, { stdio: 'inherit' })
-      
+      execSync(
+        `docker exec -i ${postgresContainer} psql -U postgres -d postgres -f /tmp/migration1.sql`,
+        { stdio: 'inherit' }
+      )
+
       // Copiar arquivo para o container
-      execSync(`docker cp ${tempFile1} ${postgresContainer}:/tmp/migration1.sql`, { stdio: 'pipe' })
-      
+      execSync(
+        `docker cp ${tempFile1} ${postgresContainer}:/tmp/migration1.sql`,
+        { stdio: 'pipe' }
+      )
+
       // Executar SQL
-      execSync(`docker exec -i ${postgresContainer} psql -U postgres -d postgres -f /tmp/migration1.sql`, { stdio: 'inherit' })
-      
+      execSync(
+        `docker exec -i ${postgresContainer} psql -U postgres -d postgres -f /tmp/migration1.sql`,
+        { stdio: 'inherit' }
+      )
+
       console.log('   ✅ Migration 1 aplicada com sucesso!')
-      
+
       // Limpar arquivo temporário
       fs.unlinkSync(tempFile1)
     } catch (error) {
@@ -103,7 +118,7 @@ CREATE POLICY "Allow all operations for service role" ON order_tracking_events
 
     // Migration 2: Deliveries
     console.log('⚡ Aplicando Migration 2: Deliveries...')
-    
+
     const migration2SQL = `-- Migration 2: Deliveries
 CREATE TABLE IF NOT EXISTS deliveries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -144,13 +159,19 @@ CREATE POLICY "Allow all operations for service role" ON deliveries
       fs.writeFileSync(tempFile2, migration2SQL)
 
       // Copiar arquivo para o container
-      execSync(`docker cp ${tempFile2} ${postgresContainer}:/tmp/migration2.sql`, { stdio: 'pipe' })
-      
+      execSync(
+        `docker cp ${tempFile2} ${postgresContainer}:/tmp/migration2.sql`,
+        { stdio: 'pipe' }
+      )
+
       // Executar SQL
-      execSync(`docker exec -i ${postgresContainer} psql -U postgres -d postgres -f /tmp/migration2.sql`, { stdio: 'inherit' })
-      
+      execSync(
+        `docker exec -i ${postgresContainer} psql -U postgres -d postgres -f /tmp/migration2.sql`,
+        { stdio: 'inherit' }
+      )
+
       console.log('   ✅ Migration 2 aplicada com sucesso!')
-      
+
       // Limpar arquivo temporário
       fs.unlinkSync(tempFile2)
     } catch (error) {
@@ -189,10 +210,11 @@ CREATE POLICY "Allow all operations for service role" ON deliveries
 
     console.log('')
     console.log('🚀 Próximos passos:')
-    console.log('   1. Testar a página de tracking: http://localhost:3001/tracking')
+    console.log(
+      '   1. Testar a página de tracking: http://localhost:3001/tracking'
+    )
     console.log('   2. Testar os modais de edição, status e entrega')
     console.log('   3. Verificar integração com Cubbo')
-
   } catch (error) {
     console.error('❌ Erro durante a aplicação das migrations:', error)
     console.log('')

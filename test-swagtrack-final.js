@@ -10,7 +10,8 @@ const http = require('http')
 
 // Configurações do Supabase local
 const SUPABASE_URL = 'http://127.0.0.1:54321'
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+const SUPABASE_SERVICE_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
@@ -45,7 +46,7 @@ async function testSwagTrackFinal() {
   // 2. Verificar tabelas do SwagTrack
   console.log('📊 2. Verificando tabelas do SwagTrack...')
   const swagTrackTables = ['order_tracking_events', 'deliveries']
-  
+
   for (const tableName of swagTrackTables) {
     try {
       const { data, error } = await supabase
@@ -76,7 +77,7 @@ async function testSwagTrackFinal() {
   for (const page of pages) {
     try {
       const response = await makeRequest(`http://localhost:3001${page.path}`)
-      
+
       if (response.statusCode === 200) {
         console.log(`   ✅ ${page.name}: Carregada com sucesso`)
       } else {
@@ -101,9 +102,15 @@ async function testSwagTrackFinal() {
   for (const api of apis) {
     try {
       const response = await makeRequest(`http://localhost:3001${api.path}`)
-      
-      if (response.statusCode === 200 || response.statusCode === 404 || response.statusCode === 401) {
-        console.log(`   ✅ ${api.name}: Acessível (Status: ${response.statusCode})`)
+
+      if (
+        response.statusCode === 200 ||
+        response.statusCode === 404 ||
+        response.statusCode === 401
+      ) {
+        console.log(
+          `   ✅ ${api.name}: Acessível (Status: ${response.statusCode})`
+        )
       } else {
         console.log(`   ❌ ${api.name}: Erro ${response.statusCode}`)
         tudoFuncionando = false
@@ -136,7 +143,7 @@ async function testSwagTrackFinal() {
 
   // 6. Testar inserção de dados
   console.log('💾 6. Testando inserção de dados...')
-  
+
   try {
     // Testar inserção em order_tracking_events
     const { error: trackingError } = await supabase
@@ -144,7 +151,7 @@ async function testSwagTrackFinal() {
       .insert({
         order_id: '00000000-0000-0000-0000-000000000000',
         status: 'test',
-        description: 'Teste de inserção'
+        description: 'Teste de inserção',
       })
 
     if (trackingError) {
@@ -169,7 +176,7 @@ async function testSwagTrackFinal() {
         street_address: 'Rua Teste, 123',
         city: 'São Paulo',
         state: 'SP',
-        postal_code: '01234-567'
+        postal_code: '01234-567',
       })
 
     if (deliveriesError) {
@@ -187,7 +194,7 @@ async function testSwagTrackFinal() {
   console.log('')
   console.log('=' * 50)
   console.log('')
-  
+
   if (tudoFuncionando) {
     console.log('🎉 SWAGTRACK COMPLETAMENTE FUNCIONAL!')
     console.log('')
