@@ -327,6 +327,23 @@ export class CubboService {
     })
   }
 
+  // Buscar tracking de envio
+  async getShipmentTracking(trackingCode: string): Promise<{
+    tracking_code: string
+    status: string
+    estimated_delivery?: string
+    actual_delivery?: string
+    tracking_url?: string
+    events: Array<{
+      status: string
+      location?: string
+      description?: string
+      timestamp: string
+    }>
+  }> {
+    return this.makeRequest(`/shipments/tracking/${trackingCode}/events`)
+  }
+
   // Cancelar envio
   async cancelShipment(shipmentId: string, reason?: string): Promise<{ success: boolean }> {
     return this.makeRequest(`/shipments/${shipmentId}/cancel`, {
