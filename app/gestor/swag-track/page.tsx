@@ -197,7 +197,7 @@ export default function SwagTrackPage() {
     try {
       // Buscar pedido pelo número
       const response = await fetch(
-        `/api/orders/search?order_number=${encodeURIComponent(orderNumber.trim())}`
+        `/api/orders/search-simple?order_number=${encodeURIComponent(orderNumber.trim())}`
       )
       const result = await response.json()
 

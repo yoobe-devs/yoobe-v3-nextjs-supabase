@@ -20,19 +20,14 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Construir query base
+    // Construir query base (simplificada para evitar problemas de RLS)
     let query = supabase.from('orders').select(`
         id,
         order_number,
         status,
         total_amount,
-        points_used,
-        currency,
         created_at,
-        tracking_code,
-        shipping_address,
-        companies(name, domain),
-        users(name, email)
+        shipping_address
       `)
 
     // Aplicar filtros
@@ -40,9 +35,10 @@ export async function GET(request: NextRequest) {
       query = query.eq('order_number', orderNumber)
     }
 
-    if (email) {
-      query = query.eq('users.email', email)
-    }
+    // Filtro por email removido temporariamente para evitar problemas de RLS
+    // if (email) {
+    //   query = query.eq('users.email', email)
+    // }
 
     // Executar query
     const { data: orders, error } = await query

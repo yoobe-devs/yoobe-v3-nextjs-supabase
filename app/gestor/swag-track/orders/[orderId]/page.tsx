@@ -101,7 +101,7 @@ export default function OrderTrackingPage() {
       setError(null)
 
       // Buscar detalhes do pedido
-      const orderResponse = await fetch(`/api/tracking/${orderId}`)
+      const orderResponse = await fetch(`/api/tracking-simple/${orderId}`)
       const orderResult = await orderResponse.json()
 
       if (!orderResponse.ok) {

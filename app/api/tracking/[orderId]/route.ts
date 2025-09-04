@@ -11,24 +11,10 @@ export async function GET(
   try {
     const supabase = createRouteHandlerClient({ cookies })
     
-    // Buscar pedido no banco local
+    // Buscar pedido no banco local (simplificado para evitar problemas de RLS)
     const { data: order, error: orderError } = await supabase
       .from('orders')
-      .select(`
-        *,
-        companies(name, domain),
-        users(name, email),
-        order_items(
-          *,
-          client_products(
-            id,
-            name,
-            price,
-            image_url,
-            final_sku
-          )
-        )
-      `)
+      .select('*')
       .eq('id', params.orderId)
       .single()
 
@@ -41,7 +27,7 @@ export async function GET(
       .from('order_tracking_events')
       .select('*')
       .eq('order_id', params.orderId)
-      .order('created_at', { ascending: true })
+      .order('timestamp', { ascending: true })
 
     if (trackingError) {
       console.warn('Erro ao buscar eventos de tracking:', trackingError)
