@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Script para criar tabelas do SwagTrack diretamente no banco
- * Usa uma abordagem mais simples e direta
- * Uso: node create-tables-direct.js
+ * Script para aplicar migrations do SwagTrack via REST API do Supabase
+ * Uso: node apply-migrations-rest-api.js
  */
 
 const { createClient } = require('@supabase/supabase-js')
@@ -14,8 +13,8 @@ const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzd
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-async function createTablesDirect() {
-  console.log('🚀 Criando tabelas do SwagTrack diretamente...')
+async function applyMigrationsRestAPI() {
+  console.log('🚀 Aplicando migrations do SwagTrack via REST API...')
   console.log('')
 
   try {
@@ -28,16 +27,46 @@ async function createTablesDirect() {
 
     if (testError) {
       console.log('   ❌ Erro de conexão:', testError.message)
-      return
+      console.log('   💡 Tentando criar tabelas básicas primeiro...')
+      
+      // Criar tabelas básicas via insert (vai falhar mas pode criar a tabela)
+      try {
+        console.log('   🔧 Tentando criar tabela users...')
+        await supabase
+          .from('users')
+          .insert({
+            id: '00000000-0000-0000-0000-000000000000',
+            email: 'test@test.com',
+            role: 'admin'
+          })
+      } catch (error) {
+        console.log('   ⚠️ Insert users falhou (esperado):', error.message)
+      }
+
+      try {
+        console.log('   🔧 Tentando criar tabela orders...')
+        await supabase
+          .from('orders')
+          .insert({
+            id: '00000000-0000-0000-0000-000000000000',
+            user_id: '00000000-0000-0000-0000-000000000000',
+            order_number: 'TEST-001',
+            status: 'pending',
+            total_amount: 0.00
+          })
+      } catch (error) {
+        console.log('   ⚠️ Insert orders falhou (esperado):', error.message)
+      }
+    } else {
+      console.log('   ✅ Conexão estabelecida')
     }
-    console.log('   ✅ Conexão estabelecida')
     console.log('')
 
-    // Criar tabela order_tracking_events
-    console.log('⚡ Criando tabela order_tracking_events...')
+    // Migration 1: Order Tracking Events
+    console.log('⚡ Aplicando Migration 1: Order Tracking Events...')
     
     try {
-      // Tentar criar a tabela via insert (vai falhar mas pode criar a estrutura)
+      // Tentar inserir um registro para criar a tabela
       const { error: insertError } = await supabase
         .from('order_tracking_events')
         .insert({
@@ -57,11 +86,11 @@ async function createTablesDirect() {
       console.log('   ⚠️ Tabela order_tracking_events: Erro no teste (esperado)')
     }
 
-    // Criar tabela deliveries
-    console.log('⚡ Criando tabela deliveries...')
+    // Migration 2: Deliveries
+    console.log('⚡ Aplicando Migration 2: Deliveries...')
     
     try {
-      // Tentar criar a tabela via insert (vai falhar mas pode criar a estrutura)
+      // Tentar inserir um registro para criar a tabela
       const { error: insertError } = await supabase
         .from('deliveries')
         .insert({
@@ -92,7 +121,7 @@ async function createTablesDirect() {
     console.log('')
     console.log('⚠️ As tabelas do SwagTrack não existem e precisam ser criadas manualmente')
     console.log('')
-    console.log('📋 SOLUÇÃO DEFINITIVA:')
+    console.log('📋 SOLUÇÃO:')
     console.log('   1. Acesse o Supabase Studio: http://localhost:54323')
     console.log('   2. Vá para "SQL Editor"')
     console.log('   3. Execute os SQLs do arquivo: APLICAR_SWAGTRACK_MANUAL_FINAL.md')
@@ -106,9 +135,9 @@ async function createTablesDirect() {
     console.log('   http://localhost:54323')
 
   } catch (error) {
-    console.error('❌ Erro durante a criação das tabelas:', error)
+    console.error('❌ Erro durante a aplicação das migrations:', error)
   }
 }
 
 // Executar
-createTablesDirect()
+applyMigrationsRestAPI()

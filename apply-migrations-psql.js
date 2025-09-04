@@ -1,61 +1,38 @@
 #!/usr/bin/env node
 
 /**
- * Script para aplicar migrations usando Supabase CLI
- * Uso: node apply-migrations-cli.js
+ * Script para aplicar migrations do SwagTrack usando psql diretamente
+ * Uso: node apply-migrations-psql.js
  */
 
 const { execSync } = require('child_process')
 const fs = require('fs')
 const path = require('path')
 
-async function applyMigrationsCLI() {
-  console.log('🚀 Aplicando migrations do SwagTrack via Supabase CLI...')
+async function applyMigrationsPSQL() {
+  console.log('🚀 Aplicando migrations do SwagTrack via psql...')
   console.log('')
 
   try {
-    // Verificar se o Supabase CLI está disponível
-    console.log('📡 Verificando Supabase CLI...')
+    // Verificar se o psql está disponível
+    console.log('📡 Verificando psql...')
     try {
-      execSync('supabase --version', { stdio: 'pipe' })
-      console.log('   ✅ Supabase CLI disponível')
+      execSync('psql --version', { stdio: 'pipe' })
+      console.log('   ✅ psql disponível')
     } catch (error) {
-      console.log('   ❌ Supabase CLI não encontrado')
-      console.log('   💡 Instale com: npm install -g supabase')
+      console.log('   ❌ psql não encontrado')
+      console.log('   💡 Instale o PostgreSQL ou use Docker')
       return
     }
 
-    // Verificar se o projeto está inicializado
-    console.log('🔍 Verificando projeto Supabase...')
-    try {
-      execSync('supabase status', { stdio: 'pipe' })
-      console.log('   ✅ Projeto Supabase ativo')
-    } catch (error) {
-      console.log('   ❌ Projeto Supabase não está rodando')
-      console.log('   💡 Execute: supabase start')
-      return
-    }
-
-    // Criar arquivos de migration no formato do Supabase CLI
-    console.log('📝 Criando arquivos de migration...')
-
-    const migrationsDir = path.join(__dirname, 'supabase', 'migrations')
-    if (!fs.existsSync(migrationsDir)) {
-      fs.mkdirSync(migrationsDir, { recursive: true })
-    }
-
+    // Configurações do banco
+    const DB_URL = 'postgresql://postgres:postgres@127.0.0.1:54322/postgres'
+    
     // Migration 1: Order Tracking Events
-    const timestamp1 = new Date()
-      .toISOString()
-      .replace(/[-:]/g, '')
-      .replace(/\..+/, '')
-    const migration1File = path.join(
-      migrationsDir,
-      `${timestamp1}_create_order_tracking_events.sql`
-    )
-
+    console.log('⚡ Aplicando Migration 1: Order Tracking Events...')
+    
     const migration1SQL = `
--- Create order_tracking_events table
+-- Criar tabela de eventos de tracking de pedidos
 CREATE TABLE IF NOT EXISTS order_tracking_events (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
@@ -68,15 +45,15 @@ CREATE TABLE IF NOT EXISTS order_tracking_events (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create indexes
+-- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_order_tracking_events_order_id ON order_tracking_events(order_id);
 CREATE INDEX IF NOT EXISTS idx_order_tracking_events_timestamp ON order_tracking_events(timestamp);
 CREATE INDEX IF NOT EXISTS idx_order_tracking_events_status ON order_tracking_events(status);
 
--- Enable RLS
+-- RLS (Row Level Security)
 ALTER TABLE order_tracking_events ENABLE ROW LEVEL SECURITY;
 
--- Create policies
+-- Política para permitir leitura de eventos de tracking para usuários autenticados
 CREATE POLICY "Users can view tracking events for their orders" ON order_tracking_events
   FOR SELECT USING (
     EXISTS (
@@ -93,6 +70,7 @@ CREATE POLICY "Users can view tracking events for their orders" ON order_trackin
     )
   );
 
+-- Política para permitir inserção de eventos de tracking para admins
 CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
   FOR INSERT WITH CHECK (
     EXISTS (
@@ -102,6 +80,7 @@ CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
     )
   );
 
+-- Política para permitir atualização de eventos de tracking para admins
 CREATE POLICY "Admins can update tracking events" ON order_tracking_events
   FOR UPDATE USING (
     EXISTS (
@@ -111,7 +90,7 @@ CREATE POLICY "Admins can update tracking events" ON order_tracking_events
     )
   );
 
--- Create trigger function
+-- Trigger para atualizar updated_at
 CREATE OR REPLACE FUNCTION update_order_tracking_events_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -120,28 +99,31 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger
 CREATE TRIGGER trigger_update_order_tracking_events_updated_at
   BEFORE UPDATE ON order_tracking_events
   FOR EACH ROW
   EXECUTE FUNCTION update_order_tracking_events_updated_at();
 `
 
-    fs.writeFileSync(migration1File, migration1SQL)
-    console.log(`   ✅ Migration 1 criada: ${path.basename(migration1File)}`)
+    // Salvar SQL em arquivo temporário
+    const tempFile1 = path.join(__dirname, 'temp_migration1.sql')
+    fs.writeFileSync(tempFile1, migration1SQL)
+
+    try {
+      execSync(`psql "${DB_URL}" -f "${tempFile1}"`, { stdio: 'inherit' })
+      console.log('   ✅ Migration 1 aplicada com sucesso!')
+    } catch (error) {
+      console.log('   ⚠️ Erro na Migration 1:', error.message)
+    }
+
+    // Limpar arquivo temporário
+    fs.unlinkSync(tempFile1)
 
     // Migration 2: Deliveries
-    const timestamp2 = new Date(Date.now() + 1000)
-      .toISOString()
-      .replace(/[-:]/g, '')
-      .replace(/\..+/, '')
-    const migration2File = path.join(
-      migrationsDir,
-      `${timestamp2}_create_deliveries_table.sql`
-    )
-
+    console.log('⚡ Aplicando Migration 2: Deliveries...')
+    
     const migration2SQL = `
--- Create deliveries table
+-- Criar tabela de entregas
 CREATE TABLE IF NOT EXISTS deliveries (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
@@ -164,16 +146,16 @@ CREATE TABLE IF NOT EXISTS deliveries (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Create indexes
+-- Índices para performance
 CREATE INDEX IF NOT EXISTS idx_deliveries_order_id ON deliveries(order_id);
 CREATE INDEX IF NOT EXISTS idx_deliveries_tracking_code ON deliveries(tracking_code);
 CREATE INDEX IF NOT EXISTS idx_deliveries_status ON deliveries(status);
 CREATE INDEX IF NOT EXISTS idx_deliveries_created_at ON deliveries(created_at);
 
--- Enable RLS
+-- RLS (Row Level Security)
 ALTER TABLE deliveries ENABLE ROW LEVEL SECURITY;
 
--- Create policies
+-- Política para permitir leitura de entregas para usuários autenticados
 CREATE POLICY "Users can view deliveries for their orders" ON deliveries
   FOR SELECT USING (
     EXISTS (
@@ -190,6 +172,7 @@ CREATE POLICY "Users can view deliveries for their orders" ON deliveries
     )
   );
 
+-- Política para permitir inserção de entregas para admins
 CREATE POLICY "Admins can insert deliveries" ON deliveries
   FOR INSERT WITH CHECK (
     EXISTS (
@@ -199,6 +182,7 @@ CREATE POLICY "Admins can insert deliveries" ON deliveries
     )
   );
 
+-- Política para permitir atualização de entregas para admins
 CREATE POLICY "Admins can update deliveries" ON deliveries
   FOR UPDATE USING (
     EXISTS (
@@ -208,7 +192,7 @@ CREATE POLICY "Admins can update deliveries" ON deliveries
     )
   );
 
--- Create trigger function
+-- Trigger para atualizar updated_at
 CREATE OR REPLACE FUNCTION update_deliveries_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -217,78 +201,71 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger
 CREATE TRIGGER trigger_update_deliveries_updated_at
   BEFORE UPDATE ON deliveries
   FOR EACH ROW
   EXECUTE FUNCTION update_deliveries_updated_at();
 `
 
-    fs.writeFileSync(migration2File, migration2SQL)
-    console.log(`   ✅ Migration 2 criada: ${path.basename(migration2File)}`)
-
-    // Aplicar migrations via CLI
-    console.log('')
-    console.log('⚡ Aplicando migrations via Supabase CLI...')
+    // Salvar SQL em arquivo temporário
+    const tempFile2 = path.join(__dirname, 'temp_migration2.sql')
+    fs.writeFileSync(tempFile2, migration2SQL)
 
     try {
-      execSync('supabase db reset', { stdio: 'inherit' })
-      console.log('   ✅ Migrations aplicadas com sucesso!')
+      execSync(`psql "${DB_URL}" -f "${tempFile2}"`, { stdio: 'inherit' })
+      console.log('   ✅ Migration 2 aplicada com sucesso!')
     } catch (error) {
-      console.log('   ⚠️ Erro ao aplicar migrations:', error.message)
-      console.log('   💡 Tente executar manualmente: supabase db reset')
+      console.log('   ⚠️ Erro na Migration 2:', error.message)
     }
+
+    // Limpar arquivo temporário
+    fs.unlinkSync(tempFile2)
+
+    console.log('')
+    console.log('🎉 Migrations aplicadas!')
+    console.log('')
+    console.log('🔍 Verificando resultado...')
 
     // Verificar se as tabelas foram criadas
-    console.log('')
-    console.log('🔍 Verificando tabelas criadas...')
+    const { createClient } = require('@supabase/supabase-js')
+    const supabase = createClient(
+      'http://127.0.0.1:54321',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+    )
 
-    try {
-      const { createClient } = require('@supabase/supabase-js')
-      const supabase = createClient(
-        'http://127.0.0.1:54321',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
-      )
+    const tables = ['order_tracking_events', 'deliveries']
+    for (const tableName of tables) {
+      try {
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .limit(1)
 
-      const tables = ['order_tracking_events', 'deliveries']
-      for (const tableName of tables) {
-        try {
-          const { data, error } = await supabase
-            .from(tableName)
-            .select('*')
-            .limit(1)
-
-          if (error) {
-            console.log(`   ❌ ${tableName}: ${error.message}`)
-          } else {
-            console.log(`   ✅ ${tableName}: Criada e acessível`)
-          }
-        } catch (error) {
+        if (error) {
           console.log(`   ❌ ${tableName}: ${error.message}`)
+        } else {
+          console.log(`   ✅ ${tableName}: Criada e acessível`)
         }
+      } catch (error) {
+        console.log(`   ❌ ${tableName}: ${error.message}`)
       }
-    } catch (error) {
-      console.log('   ⚠️ Erro ao verificar tabelas:', error.message)
     }
 
     console.log('')
-    console.log('🎉 Processo de migration concluído!')
-    console.log('')
-    console.log('📋 Próximos passos:')
-    console.log(
-      '   1. Testar a página de tracking: http://localhost:3001/tracking'
-    )
+    console.log('🚀 Próximos passos:')
+    console.log('   1. Testar a página de tracking: http://localhost:3001/tracking')
     console.log('   2. Testar os modais de edição, status e entrega')
     console.log('   3. Verificar integração com Cubbo')
+
   } catch (error) {
     console.error('❌ Erro durante a aplicação das migrations:', error)
     console.log('')
     console.log('💡 Soluções alternativas:')
     console.log('   1. Aplicar migrations manualmente no Supabase Studio')
-    console.log('   2. Usar o arquivo APLICAR_MIGRATIONS_MANUAL.md')
-    console.log('   3. Verificar se o Supabase está rodando: supabase start')
+    console.log('   2. Usar o arquivo APLICAR_SWAGTRACK_MANUAL_FINAL.md')
+    console.log('   3. Verificar se o PostgreSQL está instalado')
   }
 }
 
 // Executar
-applyMigrationsCLI()
+applyMigrationsPSQL()

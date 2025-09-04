@@ -1,6 +1,7 @@
 # 🚀 **APLICAR MIGRATIONS DO SWAGTRACK - MÉTODO MANUAL FINAL**
 
 ## 📋 **Situação Atual**
+
 - ✅ Supabase rodando em http://localhost:54323
 - ✅ Arquivos de migration criados
 - ❌ Migration antiga com erro (tabela "tenants" não existe)
@@ -9,12 +10,14 @@
 ## 🎯 **PASSO A PASSO DEFINITIVO**
 
 ### **1. Abrir Supabase Studio**
+
 ```bash
 # Acesse no navegador:
 http://localhost:54323
 ```
 
 ### **2. Navegar para SQL Editor**
+
 1. Menu lateral → **"SQL Editor"**
 2. Clique em **"New query"**
 
@@ -48,13 +51,13 @@ ALTER TABLE order_tracking_events ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view tracking events for their orders" ON order_tracking_events
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM orders 
-      WHERE orders.id = order_tracking_events.order_id 
+      SELECT 1 FROM orders
+      WHERE orders.id = order_tracking_events.order_id
       AND (
         orders.user_id = auth.uid() OR
         EXISTS (
-          SELECT 1 FROM users 
-          WHERE users.id = auth.uid() 
+          SELECT 1 FROM users
+          WHERE users.id = auth.uid()
           AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
         )
       )
@@ -65,8 +68,8 @@ CREATE POLICY "Users can view tracking events for their orders" ON order_trackin
 CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
   FOR INSERT WITH CHECK (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -75,8 +78,8 @@ CREATE POLICY "Admins can insert tracking events" ON order_tracking_events
 CREATE POLICY "Admins can update tracking events" ON order_tracking_events
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -139,13 +142,13 @@ ALTER TABLE deliveries ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view deliveries for their orders" ON deliveries
   FOR SELECT USING (
     EXISTS (
-      SELECT 1 FROM orders 
-      WHERE orders.id = deliveries.order_id 
+      SELECT 1 FROM orders
+      WHERE orders.id = deliveries.order_id
       AND (
         orders.user_id = auth.uid() OR
         EXISTS (
-          SELECT 1 FROM users 
-          WHERE users.id = auth.uid() 
+          SELECT 1 FROM users
+          WHERE users.id = auth.uid()
           AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
         )
       )
@@ -156,8 +159,8 @@ CREATE POLICY "Users can view deliveries for their orders" ON deliveries
 CREATE POLICY "Admins can insert deliveries" ON deliveries
   FOR INSERT WITH CHECK (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -166,8 +169,8 @@ CREATE POLICY "Admins can insert deliveries" ON deliveries
 CREATE POLICY "Admins can update deliveries" ON deliveries
   FOR UPDATE USING (
     EXISTS (
-      SELECT 1 FROM users 
-      WHERE users.id = auth.uid() 
+      SELECT 1 FROM users
+      WHERE users.id = auth.uid()
       AND users.role IN ('admin', 'admin_global', 'superadmin', 'manager')
     )
   );
@@ -201,11 +204,13 @@ CREATE TRIGGER trigger_update_deliveries_updated_at
 Após aplicar as migrations, teste:
 
 1. **Página de Tracking:**
+
    ```
    http://localhost:3001/tracking
    ```
 
 2. **Verificar Status:**
+
    ```bash
    node check-migrations-status.js
    ```
@@ -220,16 +225,19 @@ Após aplicar as migrations, teste:
 Após aplicar as migrations manualmente:
 
 ### **✅ Tabelas Criadas**
+
 - `order_tracking_events` - Para eventos de tracking
 - `deliveries` - Para gestão de entregas
 
 ### **✅ Funcionalidades Ativas**
+
 - Página de busca de pedidos
 - Página de detalhes com timeline
 - Modais funcionais para edição, status e entrega
 - APIs de tracking e entregas
 
 ### **✅ Segurança**
+
 - RLS habilitado em ambas as tabelas
 - Políticas de acesso configuradas
 - Controle de permissões por role
@@ -237,16 +245,19 @@ Após aplicar as migrations manualmente:
 ## 🚨 **Troubleshooting**
 
 ### **Se as tabelas não forem criadas:**
+
 1. Verifique se há erros no SQL Editor
 2. Execute os comandos um por vez
 3. Verifique se a tabela `orders` existe
 
 ### **Se os modais não funcionarem:**
+
 1. Verifique o console do navegador
 2. Teste as APIs diretamente
 3. Verifique se as migrations foram aplicadas
 
 ### **Se houver erros de permissão:**
+
 1. Verifique as políticas RLS
 2. Teste com usuário admin/manager
 3. Verifique se o usuário está autenticado
@@ -254,6 +265,7 @@ Após aplicar as migrations manualmente:
 ## 📞 **Suporte**
 
 Se encontrar problemas:
+
 1. Verifique os logs do Supabase Studio
 2. Teste as APIs individualmente
 3. Verifique se todas as migrations foram aplicadas

@@ -13,56 +13,67 @@ async function testSwagTrackPages() {
 
   const pages = [
     { path: '/tracking', name: 'Página de Busca de Tracking' },
-    { path: '/tracking/test-order-id', name: 'Página de Detalhes de Tracking' }
+    { path: '/tracking/test-order-id', name: 'Página de Detalhes de Tracking' },
   ]
 
   for (const page of pages) {
     console.log(`📄 Testando: ${page.name}`)
     console.log(`   URL: http://localhost:3001${page.path}`)
-    
+
     try {
       const response = await makeRequest(`http://localhost:3001${page.path}`)
-      
+
       if (response.statusCode === 200) {
-        console.log(`   ✅ Status: ${response.statusCode} - Página carregada com sucesso`)
-        
+        console.log(
+          `   ✅ Status: ${response.statusCode} - Página carregada com sucesso`
+        )
+
         // Verificar se é uma página React (contém elementos específicos)
-        if (response.body.includes('Rastreamento de Pedidos') || 
-            response.body.includes('Buscar Pedido') ||
-            response.body.includes('tracking')) {
+        if (
+          response.body.includes('Rastreamento de Pedidos') ||
+          response.body.includes('Buscar Pedido') ||
+          response.body.includes('tracking')
+        ) {
           console.log(`   ✅ Conteúdo: Página do SwagTrack detectada`)
         } else {
-          console.log(`   ⚠️ Conteúdo: Página carregada mas conteúdo não reconhecido`)
+          console.log(
+            `   ⚠️ Conteúdo: Página carregada mas conteúdo não reconhecido`
+          )
         }
       } else {
-        console.log(`   ❌ Status: ${response.statusCode} - Erro ao carregar página`)
+        console.log(
+          `   ❌ Status: ${response.statusCode} - Erro ao carregar página`
+        )
       }
     } catch (error) {
       console.log(`   ❌ Erro: ${error.message}`)
     }
-    
+
     console.log('')
   }
 
   // Testar APIs
   console.log('🔌 Testando APIs do SwagTrack...')
-  
+
   const apis = [
-    { path: '/api/orders/search?order_number=test', name: 'API de Busca de Pedidos' },
+    {
+      path: '/api/orders/search?order_number=test',
+      name: 'API de Busca de Pedidos',
+    },
     { path: '/api/tracking/test-order-id', name: 'API de Tracking' },
-    { path: '/api/deliveries', name: 'API de Entregas' }
+    { path: '/api/deliveries', name: 'API de Entregas' },
   ]
 
   for (const api of apis) {
     console.log(`📡 Testando: ${api.name}`)
     console.log(`   URL: http://localhost:3001${api.path}`)
-    
+
     try {
       const response = await makeRequest(`http://localhost:3001${api.path}`)
-      
+
       if (response.statusCode === 200 || response.statusCode === 404) {
         console.log(`   ✅ Status: ${response.statusCode} - API acessível`)
-        
+
         // Verificar se retorna JSON
         try {
           JSON.parse(response.body)
@@ -76,7 +87,7 @@ async function testSwagTrackPages() {
     } catch (error) {
       console.log(`   ❌ Erro: ${error.message}`)
     }
-    
+
     console.log('')
   }
 
@@ -94,26 +105,26 @@ async function testSwagTrackPages() {
 
 function makeRequest(url) {
   return new Promise((resolve, reject) => {
-    const req = http.get(url, (res) => {
+    const req = http.get(url, res => {
       let body = ''
-      
-      res.on('data', (chunk) => {
+
+      res.on('data', chunk => {
         body += chunk
       })
-      
+
       res.on('end', () => {
         resolve({
           statusCode: res.statusCode,
           headers: res.headers,
-          body: body
+          body: body,
         })
       })
     })
-    
-    req.on('error', (error) => {
+
+    req.on('error', error => {
       reject(error)
     })
-    
+
     req.setTimeout(5000, () => {
       req.destroy()
       reject(new Error('Timeout'))
