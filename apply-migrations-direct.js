@@ -9,7 +9,8 @@ const { createClient } = require('@supabase/supabase-js')
 
 // Configurações do Supabase local
 const SUPABASE_URL = 'http://127.0.0.1:54321'
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+const SUPABASE_SERVICE_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
@@ -20,7 +21,7 @@ async function applyMigrations() {
   try {
     // Migration 1: Order Tracking Events
     console.log('⚡ Criando tabela order_tracking_events...')
-    
+
     const createTrackingEventsTable = `
       CREATE TABLE IF NOT EXISTS order_tracking_events (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -35,19 +36,22 @@ async function applyMigrations() {
       );
     `
 
-    const { error: trackingError } = await supabase.rpc('exec_sql', { 
-      sql: createTrackingEventsTable 
+    const { error: trackingError } = await supabase.rpc('exec_sql', {
+      sql: createTrackingEventsTable,
     })
 
     if (trackingError) {
-      console.log('   ⚠️ Erro ao criar tabela order_tracking_events:', trackingError.message)
+      console.log(
+        '   ⚠️ Erro ao criar tabela order_tracking_events:',
+        trackingError.message
+      )
     } else {
       console.log('   ✅ Tabela order_tracking_events criada com sucesso')
     }
 
     // Migration 2: Deliveries
     console.log('⚡ Criando tabela deliveries...')
-    
+
     const createDeliveriesTable = `
       CREATE TABLE IF NOT EXISTS deliveries (
         id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -72,12 +76,15 @@ async function applyMigrations() {
       );
     `
 
-    const { error: deliveriesError } = await supabase.rpc('exec_sql', { 
-      sql: createDeliveriesTable 
+    const { error: deliveriesError } = await supabase.rpc('exec_sql', {
+      sql: createDeliveriesTable,
     })
 
     if (deliveriesError) {
-      console.log('   ⚠️ Erro ao criar tabela deliveries:', deliveriesError.message)
+      console.log(
+        '   ⚠️ Erro ao criar tabela deliveries:',
+        deliveriesError.message
+      )
     } else {
       console.log('   ✅ Tabela deliveries criada com sucesso')
     }
@@ -93,13 +100,17 @@ async function applyMigrations() {
         .insert({
           order_id: '00000000-0000-0000-0000-000000000000',
           status: 'test',
-          description: 'Teste de criação da tabela'
+          description: 'Teste de criação da tabela',
         })
 
       if (testTrackingError) {
-        console.log('   ⚠️ Tabela order_tracking_events: Erro no teste (esperado)')
+        console.log(
+          '   ⚠️ Tabela order_tracking_events: Erro no teste (esperado)'
+        )
       } else {
-        console.log('   ✅ Tabela order_tracking_events: Funcionando corretamente')
+        console.log(
+          '   ✅ Tabela order_tracking_events: Funcionando corretamente'
+        )
       }
     } catch (error) {
       console.log('   ⚠️ Tabela order_tracking_events: Erro no teste')
@@ -117,7 +128,7 @@ async function applyMigrations() {
           street_address: 'Rua Teste, 123',
           city: 'São Paulo',
           state: 'SP',
-          postal_code: '01234-567'
+          postal_code: '01234-567',
         })
 
       if (testDeliveriesError) {
@@ -133,13 +144,16 @@ async function applyMigrations() {
     console.log('🎉 Migrations aplicadas com sucesso!')
     console.log('')
     console.log('📋 Próximos passos:')
-    console.log('   1. Testar a página de tracking: http://localhost:3001/tracking')
+    console.log(
+      '   1. Testar a página de tracking: http://localhost:3001/tracking'
+    )
     console.log('   2. Testar os modais de edição, status e entrega')
     console.log('   3. Verificar integração com Cubbo')
     console.log('')
-    console.log('💡 Se houver problemas, execute o SQL manualmente no Supabase Studio:')
+    console.log(
+      '💡 Se houver problemas, execute o SQL manualmente no Supabase Studio:'
+    )
     console.log('   http://localhost:54323')
-
   } catch (error) {
     console.error('❌ Erro durante a aplicação das migrations:', error)
     console.log('')

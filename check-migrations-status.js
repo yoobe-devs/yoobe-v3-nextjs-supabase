@@ -9,7 +9,8 @@ const { createClient } = require('@supabase/supabase-js')
 
 // Configurações do Supabase local
 const SUPABASE_URL = 'http://127.0.0.1:54321'
-const SUPABASE_SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+const SUPABASE_SERVICE_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
@@ -20,7 +21,7 @@ async function checkMigrationsStatus() {
   try {
     // Verificar se o Supabase está acessível
     console.log('📡 Testando conexão com Supabase...')
-    
+
     const { data: testData, error: testError } = await supabase
       .from('users')
       .select('id')
@@ -36,13 +37,13 @@ async function checkMigrationsStatus() {
 
     // Verificar tabelas existentes
     console.log('📊 Verificando tabelas existentes...')
-    
+
     const tablesToCheck = [
       'orders',
-      'users', 
+      'users',
       'companies',
       'order_tracking_events',
-      'deliveries'
+      'deliveries',
     ]
 
     const tableStatus = {}
@@ -78,7 +79,9 @@ async function checkMigrationsStatus() {
 
     // Verificar se as migrations do SwagTrack foram aplicadas
     const swagTrackTables = ['order_tracking_events', 'deliveries']
-    const swagTrackStatus = swagTrackTables.every(table => tableStatus[table]?.exists)
+    const swagTrackStatus = swagTrackTables.every(
+      table => tableStatus[table]?.exists
+    )
 
     if (swagTrackStatus) {
       console.log('🎉 Migrations do SwagTrack aplicadas com sucesso!')
@@ -89,7 +92,9 @@ async function checkMigrationsStatus() {
       console.log('   - APIs de tracking e entregas')
       console.log('   - Integração com Cubbo')
     } else {
-      console.log('⚠️ Migrations do SwagTrack não foram aplicadas completamente')
+      console.log(
+        '⚠️ Migrations do SwagTrack não foram aplicadas completamente'
+      )
       console.log('')
       console.log('📋 Tabelas faltando:')
       for (const table of swagTrackTables) {
@@ -101,14 +106,16 @@ async function checkMigrationsStatus() {
       console.log('💡 Para aplicar as migrations:')
       console.log('   1. Acesse: http://localhost:54323')
       console.log('   2. Vá para SQL Editor')
-      console.log('   3. Execute os SQLs do arquivo: APLICAR_MIGRATIONS_MANUAL.md')
+      console.log(
+        '   3. Execute os SQLs do arquivo: APLICAR_MIGRATIONS_MANUAL.md'
+      )
     }
 
     console.log('')
 
     // Verificar APIs disponíveis
     console.log('🔌 Testando APIs do SwagTrack...')
-    
+
     try {
       const { data: orders, error: ordersError } = await supabase
         .from('orders')
@@ -148,7 +155,6 @@ async function checkMigrationsStatus() {
       console.log('   2. Verificar criação das tabelas')
       console.log('   3. Testar funcionalidades')
     }
-
   } catch (error) {
     console.error('❌ Erro durante a verificação:', error)
     console.log('')
