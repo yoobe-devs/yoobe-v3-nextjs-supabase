@@ -1,0 +1,114 @@
+{
+  "id": "error-spec-err_1757360437512_system_protection_implementation",
+  "title": "Error Prevention: Sistema de Proteção e Monitoramento Completo",
+  "description": "Specification for preventing and handling: Faltava um sistema abrangente para proteger e monitorar o middleware e MCPs, resultando em dificuldades para detectar problemas, monitorar performance e prevenir erros. O sistema precisava de rate limiting, health checks, auditoria e métricas em tempo real.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "system_architecture",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437512_system_protection_implementation-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-prevention-0",
+          "description": "SEMPRE implementar sistemas de proteção para componentes críticos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-prevention-1",
+          "description": "SEMPRE incluir rate limiting para prevenir abusos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-prevention-2",
+          "description": "SEMPRE implementar health checks automáticos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-prevention-3",
+          "description": "SEMPRE criar dashboards de monitoramento para visibilidade",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-prevention-4",
+          "description": "SEMPRE integrar com sistemas de auditoria e log de erros",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-prevention-5",
+          "description": "SEMPRE documentar sistemas de proteção e monitoramento",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-prevention-6",
+          "description": "SEMPRE testar sistemas de proteção em cenários de stress",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437512_system_protection_implementation-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437512_system_protection_implementation-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437512_system_protection_implementation-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Sistema de proteção do middleware\nexport const middleware = withMiddlewareProtection(middlewareLogic)\n\n// Monitoramento de MCPs\nconst monitoredFunction = withMCPMonitoring(\n  'MCP_DOCKER',\n  'github_operation',\n  async (repo: string) => {\n    return await mcpOperation(repo)\n  }\n)",
+    "filePath": "lib/middleware-protection.ts, lib/mcp-monitoring.ts, app/api/system/health/route.ts, app/api/system/metrics/route.ts, app/admin/system-monitoring/page.tsx, docs/SYSTEM_PROTECTION_GUIDE.md, middleware.ts",
+    "solution": "1) Criado sistema de proteção do middleware (lib/middleware-protection.ts) com rate limiting, health checks, auditoria e tratamento de erros, 2) Implementado sistema de monitoramento de MCPs (lib/mcp-monitoring.ts) com tracking de operações, métricas de performance e status de saúde, 3) Criadas APIs de monitoramento (/api/system/health e /api/system/metrics) para verificar status e métricas, 4) Desenvolvido dashboard visual (/admin/system-monitoring) para monitoramento em tempo real, 5) Integrado com sistema de memória de erros e auditoria existente, 6) Documentado completamente em docs/SYSTEM_PROTECTION_GUIDE.md",
+    "relatedErrors": [],
+    "documentationLinks": [
+      "docs/SYSTEM_PROTECTION_GUIDE.md",
+      "docs/MCP_COMPLETE_GUIDE.md",
+      "docs/ERROR_PREVENTION.md"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437512_system_protection_implementation",
+    "errorType": "system_architecture",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T23:00:00.000Z",
+    "resolutionDate": "2025-09-08T23:05:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

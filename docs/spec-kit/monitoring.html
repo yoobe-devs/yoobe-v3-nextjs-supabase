@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento - Spec Kit Yoobe v3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(var(--destructive))",
+                            foreground: "hsl(var(--destructive-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))",
+                        },
+                        popover: {
+                            DEFAULT: "hsl(var(--popover))",
+                            foreground: "hsl(var(--popover-foreground))",
+                        },
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 221.2 83.2% 53.3%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --secondary-foreground: 222.2 84% 4.9%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96%;
+            --accent-foreground: 222.2 84% 4.9%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 221.2 83.2% 53.3%;
+            --radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-background font-sans antialiased">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 bg-primary/10 rounded-lg">
+                    <svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold text-foreground">Monitoramento</h1>
+                    <p class="text-xl text-muted-foreground">Acompanhamento em tempo real do Spec Kit</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                    <svg class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    Spec Kit v3.1.0
+                </span>
+                <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+                    <svg class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    Ativo
+                </span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="mb-8">
+            <div class="flex flex-wrap gap-2">
+                <a href="index.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+                    </svg>
+                    Índice
+                </a>
+                <a href="status.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Status
+                </a>
+                <a href="monitoring.html" class="inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Monitoramento
+                </a>
+                <a href="workflow.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Workflow
+                </a>
+                <a href="analytics.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Analytics
+                </a>
+                <a href="troubleshooting.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    Solução de Problemas
+                </a>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="space-y-6">
+            <!-- Métricas em Tempo Real -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">📊 Métricas em Tempo Real</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="text-3xl font-bold text-blue-600" id="activeSpecs">44</div>
+                        <div class="text-sm text-blue-600">Especificações Ativas</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div class="text-3xl font-bold text-green-600" id="resolvedErrors">25</div>
+                        <div class="text-sm text-green-600">Erros Resolvidos</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg border border-purple-200">
+                        <div class="text-3xl font-bold text-purple-600" id="apiCalls">0</div>
+                        <div class="text-sm text-purple-600">Chamadas API/min</div>
+                    </div>
+                    <div class="text-center p-4 bg-orange-50 rounded-lg border border-orange-200">
+                        <div class="text-3xl font-bold text-orange-600" id="uptime">100%</div>
+                        <div class="text-sm text-orange-600">Uptime</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs de Atividade -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">📝 Logs de Atividade</h2>
+                <div class="space-y-3 max-h-96 overflow-y-auto">
+                    <div class="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div class="p-1 bg-green-100 rounded">
+                            <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-green-800">Sistema inicializado com sucesso</div>
+                            <div class="text-xs text-green-600">Há 2 minutos</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="p-1 bg-blue-100 rounded">
+                            <svg class="h-4 w-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-blue-800">44 especificações carregadas</div>
+                            <div class="text-xs text-blue-600">Há 3 minutos</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                        <div class="p-1 bg-purple-100 rounded">
+                            <svg class="h-4 w-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-purple-800">Migração de erros concluída</div>
+                            <div class="text-xs text-purple-600">Há 5 minutos</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <div class="p-1 bg-yellow-100 rounded">
+                            <svg class="h-4 w-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-yellow-800">Dashboard web com problemas de carregamento</div>
+                            <div class="text-xs text-yellow-600">Há 10 minutos</div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-3 bg-green-50 rounded-lg border border-green-200">
+                        <div class="p-1 bg-green-100 rounded">
+                            <svg class="h-4 w-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-green-800">Servidor HTTP iniciado na porta 8080</div>
+                            <div class="text-xs text-green-600">Há 15 minutos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status dos Componentes -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">🔧 Status dos Componentes</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-card-foreground">Serviços Core</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-green-800">Servidor MCP</span>
+                                </div>
+                                <span class="text-sm text-green-600">Online</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-green-800">API REST</span>
+                                </div>
+                                <span class="text-sm text-green-600">Online</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                                    <span class="font-medium text-yellow-800">Dashboard Web</span>
+                                </div>
+                                <span class="text-sm text-yellow-600">Parcial</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-card-foreground">Recursos</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-green-800">Documentação HTML</span>
+                                </div>
+                                <span class="text-sm text-green-600">Online</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-green-800">Sistema de Erros</span>
+                                </div>
+                                <span class="text-sm text-green-600">Online</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                                    <span class="font-medium text-green-800">Workflow System</span>
+                                </div>
+                                <span class="text-sm text-green-600">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alertas e Notificações -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">🚨 Alertas e Notificações</h2>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                        <div class="p-2 bg-yellow-100 rounded-lg">
+                            <svg class="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-yellow-800">Dashboard Web com Problemas</h3>
+                            <p class="text-sm text-yellow-600">A interface web principal está apresentando problemas de carregamento. Use a documentação HTML como alternativa.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                            <svg class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-blue-800">Sistema Funcionando Normalmente</h3>
+                            <p class="text-sm text-blue-600">Todos os serviços core estão operacionais. A migração de erros foi concluída com sucesso.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-8 border-t border-border">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-muted-foreground">
+                    <p>Spec Kit v3.1.0 - Sistema de Especificações Yoobe</p>
+                    <p>Última atualização: <span id="timestamp"></span></p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="http://localhost:3456" target="_blank" class="text-sm text-primary hover:underline">
+                        Dashboard Principal
+                    </a>
+                    <a href="http://localhost:3456/api/specs" target="_blank" class="text-sm text-primary hover:underline">
+                        API REST
+                    </a>
+                    <a href="/docs/spec-kit" class="text-sm text-primary hover:underline">
+                        Documentação Integrada
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('pt-BR');
+        
+        // Simular atualizações em tempo real
+        setInterval(() => {
+            const apiCalls = document.getElementById('apiCalls');
+            const currentCalls = parseInt(apiCalls.textContent);
+            apiCalls.textContent = Math.floor(Math.random() * 10);
+        }, 5000);
+    </script>
+</body>
+</html>

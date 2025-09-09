@@ -1,0 +1,123 @@
+{
+  "id": "error-spec-err_1757360437506_mcp_integration_rules",
+  "title": "Error Prevention: MCP Integration Rules and Best Practices",
+  "description": "Specification for preventing and handling: Estabelecimento de regras obrigatórias para uso de MCPs (Model Context Protocol) na plataforma Yoobe para automatizar operações e garantir consistência.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "best_practice",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437506_mcp_integration_rules-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-0",
+          "description": "SEMPRE usar 'use context7' ao buscar documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-1",
+          "description": "SEMPRE usar MCP_DOCKER para operações GitHub/Stripe",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-2",
+          "description": "SEMPRE usar gemini-mcp-tool para análises complexas",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-3",
+          "description": "SEMPRE usar playwright para testes e automação de browser",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-4",
+          "description": "SEMPRE atualizar error-memory.json com novos erros",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-5",
+          "description": "SEMPRE seguir o fluxo de trabalho MCP estabelecido",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-6",
+          "description": "NUNCA fazer operações GitHub/Stripe manualmente",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-7",
+          "description": "NUNCA usar documentação desatualizada sem Context 7",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-prevention-8",
+          "description": "NUNCA fazer testes manuais quando playwright está disponível",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437506_mcp_integration_rules-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437506_mcp_integration_rules-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437506_mcp_integration_rules-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Regras MCP obrigatórias\n// 1. SEMPRE usar 'use context7' para documentação\n// 2. SEMPRE usar MCP_DOCKER para GitHub/Stripe\n// 3. SEMPRE usar gemini-mcp-tool para análises\n// 4. SEMPRE atualizar error-memory.json",
+    "filePath": "docs/MCP_INTEGRATION_GUIDE.md, data/error-memory.json",
+    "solution": "Criado guia completo de integração MCP com regras obrigatórias: SEMPRE usar 'use context7' para documentação, MCP_DOCKER para operações GitHub/Stripe, gemini-mcp-tool para análises complexas. Documentação criada em docs/MCP_INTEGRATION_GUIDE.md",
+    "relatedErrors": [],
+    "documentationLinks": [
+      "docs/MCP_INTEGRATION_GUIDE.md",
+      "data/error-memory.json"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437506_mcp_integration_rules",
+    "errorType": "best_practice",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T22:00:00.000Z",
+    "resolutionDate": "2025-09-08T22:05:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

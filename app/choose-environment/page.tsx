@@ -1,36 +1,38 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/components/auth/auth-provider-simple'
+import { useAuth } from '@/components/auth/auth-provider-simple-fixed'
+import { getDashboardRoute, getUserRole } from '@/lib/auth-redirects'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Crown, Building, User, LogOut } from 'lucide-react'
 
 export default function ChooseEnvironmentPage() {
-  const { user, loading } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const router = useRouter()
-  const supabase = createClientComponentClient()
   const [role, setRole] = useState<string>('')
-  const [actionMsg, setActionMsg] = useState<string>('')
 
   useEffect(() => {
     if (!loading && user) {
       console.log('ChooseEnvironment: User logged in:', user.email)
+      // Extrair role dos metadados do usuário
+      const userRole = getUserRole(user)
+      setRole(userRole.role)
     }
   }, [user, loading])
 
-  useEffect(() => {
-    const loadRole = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        const r = (session?.user?.user_metadata as any)?.role || ''
-        setRole(r)
-      } catch {}
-    }
-    loadRole()
-  }, [supabase])
+  const handleLogout = async () => {
+    await signOut()
+    router.push('/auth/login')
+  }
 
   if (loading) {
     return (
@@ -49,146 +51,195 @@ export default function ChooseEnvironmentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <div className="mx-auto h-16 w-16 bg-blue-600 rounded-full flex items-center justify-center mb-4">
+            <span className="text-white font-bold text-2xl">Y</span>
+          </div>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Escolha seu Ambiente
           </h1>
-          <p className="text-gray-600">
-            Bem-vindo, {user.email}! Escolha o ambiente que deseja acessar.
+          <p className="text-lg text-gray-600 mb-4">
+            Bem-vindo,{' '}
+            <span className="font-semibold text-blue-600">{user.email}</span>!
           </p>
-          {(role === 'superadmin' || role === 'admin_global') && (
-            <div className="mt-4">
-              <Button onClick={() => router.push('/admin/dashboard')}>
-                Entrar no Admin Global
-              </Button>
-            </div>
-          )}
+          <Badge variant="secondary" className="text-sm">
+            {role === 'admin' && <Crown className="h-3 w-3 mr-1" />}
+            {role === 'manager' && <Building className="h-3 w-3 mr-1" />}
+            {role === 'user' && <User className="h-3 w-3 mr-1" />}
+            {role}
+          </Badge>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Environment Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Admin Global */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => window.location.href = '/admin/dashboard'}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">Admin Global</CardTitle>
-                <Badge variant="secondary">Super Admin</Badge>
+          <Card
+            className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-purple-300 bg-white/80 backdrop-blur-sm"
+            onClick={() => router.push('/admin/dashboard')}
+          >
+            <CardHeader className="text-center">
+              <div className="mx-auto h-12 w-12 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+                <Crown className="h-6 w-6 text-purple-600" />
               </div>
-              <CardDescription>
-                Gerencie todas as lojas, empresas e usuários do sistema
-              </CardDescription>
+              <CardTitle className="text-xl text-gray-900">
+                Admin Global
+              </CardTitle>
+              <Badge variant="secondary" className="w-fit mx-auto">
+                Super Admin
+              </Badge>
             </CardHeader>
             <CardContent>
+              <CardDescription className="text-center mb-4">
+                Gerencie todas as empresas, usuários e configurações do sistema
+              </CardDescription>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Gerenciar empresas</li>
-                <li>• Configurar produtos globais</li>
-                <li>• Monitorar todas as lojas</li>
-                <li>• Relatórios consolidados</li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
+                  Gerenciar empresas
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
+                  Configurar produtos globais
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
+                  Monitorar todas as lojas
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-400 rounded-full mr-2"></span>
+                  Relatórios consolidados
+                </li>
               </ul>
             </CardContent>
           </Card>
 
           {/* Gestor da Loja */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => window.location.href = '/gestor/dashboard'}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">Gestor da Loja</CardTitle>
-                <Badge variant="outline">Client Admin</Badge>
+          <Card
+            className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-orange-300 bg-white/80 backdrop-blur-sm"
+            onClick={() => router.push('/gestor/dashboard')}
+          >
+            <CardHeader className="text-center">
+              <div className="mx-auto h-12 w-12 bg-orange-100 rounded-full flex items-center justify-center mb-3">
+                <Building className="h-6 w-6 text-orange-600" />
               </div>
-              <CardDescription>
-                Gerencie sua empresa, funcionários e produtos
-              </CardDescription>
+              <CardTitle className="text-xl text-gray-900">
+                Gestor da Loja
+              </CardTitle>
+              <Badge variant="outline" className="w-fit mx-auto">
+                Client Admin
+              </Badge>
             </CardHeader>
             <CardContent>
+              <CardDescription className="text-center mb-4">
+                Gerencie sua empresa, funcionários e produtos
+              </CardDescription>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Gerenciar funcionários</li>
-                <li>• Configurar produtos</li>
-                <li>• Campanhas e promoções</li>
-                <li>• Relatórios da empresa</li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                  Gerenciar funcionários
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                  Configurar produtos
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                  Campanhas e promoções
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-orange-400 rounded-full mr-2"></span>
+                  Relatórios da empresa
+                </li>
               </ul>
             </CardContent>
           </Card>
 
           {/* Funcionário */}
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => window.location.href = '/store/dashboard'}>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl">Funcionário</CardTitle>
-                <Badge variant="default">Client User</Badge>
+          <Card
+            className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-teal-300 bg-white/80 backdrop-blur-sm"
+            onClick={() => router.push('/funcionario/dashboard')}
+          >
+            <CardHeader className="text-center">
+              <div className="mx-auto h-12 w-12 bg-teal-100 rounded-full flex items-center justify-center mb-3">
+                <User className="h-6 w-6 text-teal-600" />
               </div>
-              <CardDescription>
-                Acesse a loja corporativa e gerencie seus resgates
-              </CardDescription>
+              <CardTitle className="text-xl text-gray-900">
+                Funcionário
+              </CardTitle>
+              <Badge variant="default" className="w-fit mx-auto">
+                Client User
+              </Badge>
             </CardHeader>
             <CardContent>
+              <CardDescription className="text-center mb-4">
+                Acesse a loja corporativa e gerencie seus resgates
+              </CardDescription>
               <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Visualizar produtos</li>
-                <li>• Fazer resgates</li>
-                <li>• Acompanhar pedidos</li>
-                <li>• Ver histórico</li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>
+                  Visualizar produtos
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>
+                  Fazer resgates
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>
+                  Acompanhar pedidos
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-teal-400 rounded-full mr-2"></span>
+                  Ver histórico
+                </li>
               </ul>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mt-8 text-center">
-          <Button
-            variant="outline"
-            onClick={() => router.push('/legacy')}
-            className="mr-4"
-          >
-            Funcionalidades Antigas
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => router.push('/auth/login')}
-          >
-            Sair
-          </Button>
+        {/* Actions */}
+        <div className="text-center space-y-4">
+          <div className="flex justify-center space-x-4">
+            <Button
+              variant="outline"
+              onClick={() => router.push('/auth/login')}
+              className="px-6"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Trocar Usuário
+            </Button>
+            <Button variant="outline" onClick={handleLogout} className="px-6">
+              Sair do Sistema
+            </Button>
+          </div>
         </div>
 
-        {process.env.NODE_ENV !== 'production' && (
-          <div className="mt-8 p-4 bg-purple-50 rounded-lg">
-            <h3 className="text-sm font-medium text-purple-900 mb-2">Ações de Desenvolvimento</h3>
-            <div className="flex gap-2 flex-wrap">
-              <Button
-                variant="outline"
-                onClick={async () => {
-                  setActionMsg('')
-                  try {
-                    const r = await fetch('/api/admin/promote-self', { method: 'POST' })
-                    const j = await r.json().catch(()=>({}))
-                    setActionMsg(r.ok ? '✅ Promovido a superadmin (recarregue a página)' : (j?.error || 'Falha ao promover'))
-                  } catch (e) { setActionMsg('Falha ao promover') }
-                }}
-              >
-                Promover-me a Superadmin
-              </Button>
-              <Button
-                variant="outline"
-                onClick={async () => {
-                  setActionMsg('')
-                  try {
-                    const r = await fetch('/api/admin/superadmin/seed', { method: 'POST' })
-                    const j = await r.json().catch(()=>({}))
-                    setActionMsg(r.ok ? '✅ Superadmin de teste criado (veja logs do servidor)' : (j?.error || 'Falha no seed'))
-                  } catch (e) { setActionMsg('Falha no seed') }
-                }}
-              >
-                Seed Superadmin (dev)
-              </Button>
+        {/* User Info */}
+        <div className="mt-8 p-6 bg-white/60 backdrop-blur-sm rounded-lg border border-white/20">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
+            Informações da Sessão
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+            <div>
+              <p className="text-sm text-gray-500">Email</p>
+              <p className="font-medium text-gray-900">{user.email}</p>
             </div>
-            {actionMsg && (<div className="mt-2 text-sm text-purple-800">{actionMsg}</div>)}
+            <div>
+              <p className="text-sm text-gray-500">Tipo de Usuário</p>
+              <p className="font-medium text-gray-900 capitalize">{role}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500">ID</p>
+              <p className="font-medium text-gray-900 text-xs">{user.id}</p>
+            </div>
           </div>
-        )}
+        </div>
 
-        <div className="mt-8 p-4 bg-blue-50 rounded-lg">
-          <h3 className="text-sm font-medium text-blue-900 mb-2">Informações do Usuário:</h3>
-          <p className="text-sm text-blue-700">Email: {user.email}</p>
-          <p className="text-sm text-blue-700">ID: {user.id}</p>
-          <p className="text-sm text-blue-700">Criado em: {new Date(user.created_at).toLocaleString()}</p>
-          {role && <p className="text-sm text-blue-700">Role (metadados): {role}</p>}
+        {/* Footer */}
+        <div className="mt-8 text-center text-sm text-gray-500">
+          <p>Yoobe v3.3.0 - Sistema Real com Supabase</p>
         </div>
       </div>
     </div>

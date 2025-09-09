@@ -1,11 +1,14 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@/components/auth/auth-provider-simple'
+import { useAuth } from '@/components/auth/auth-provider-simple-fixed'
+import { getDashboardRoute } from '@/lib/auth-redirects'
 
 export default function AuthCallbackPage() {
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
+    'loading'
+  )
   const [message, setMessage] = useState('Processing authentication...')
   const router = useRouter()
   const { user, loading } = useAuth()
@@ -14,7 +17,7 @@ export default function AuthCallbackPage() {
     console.log('AuthCallback: Page loaded')
     console.log('AuthCallback: Current user:', user)
     console.log('AuthCallback: Loading:', loading)
-    
+
     const handleCallback = async () => {
       try {
         // Aguarda o carregamento da autenticação
@@ -22,24 +25,17 @@ export default function AuthCallbackPage() {
           console.log('AuthCallback: Still loading, waiting...')
           return
         }
-        
+
         if (user) {
           console.log('AuthCallback: User authenticated:', user.email)
           setStatus('success')
           setMessage('Authentication successful! Redirecting...')
-          
-          // Redireciona baseado no email
+
+          // Redireciona baseado no role do usuário
           setTimeout(() => {
-            if (user.email === 'admin@yoobe.co') {
-              router.push('/admin/dashboard')
-            } else if (user.email === 'gestor@jointecnologia.com') {
-              router.push('/gestor/dashboard')
-            } else if (user.email === 'user@jointecnologia.com') {
-              router.push('/store/dashboard')
-            } else {
-              router.push('/choose-environment')
-            }
-          }, 2000)
+            const dashboardRoute = getDashboardRoute(user)
+            window.location.href = dashboardRoute
+          }, 1000)
         } else {
           console.log('AuthCallback: No user found, redirecting to login')
           setStatus('error')
@@ -71,9 +67,7 @@ export default function AuthCallbackPage() {
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
             Processing Authentication
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {message}
-          </p>
+          <p className="mt-2 text-sm text-gray-600">{message}</p>
         </div>
 
         <div className="mt-8 space-y-6">
@@ -87,8 +81,18 @@ export default function AuthCallbackPage() {
           {status === 'success' && (
             <div className="text-center">
               <div className="mx-auto h-12 w-12 bg-green-600 rounded-full flex items-center justify-center">
-                <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                <svg
+                  className="h-6 w-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
               </div>
               <p className="mt-4 text-green-600 font-medium">Success!</p>
@@ -98,8 +102,18 @@ export default function AuthCallbackPage() {
           {status === 'error' && (
             <div className="text-center">
               <div className="mx-auto h-12 w-12 bg-red-600 rounded-full flex items-center justify-center">
-                <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="h-6 w-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </div>
               <p className="mt-4 text-red-600 font-medium">Error</p>
@@ -107,11 +121,20 @@ export default function AuthCallbackPage() {
           )}
 
           <div className="mt-6 p-4 bg-gray-50 rounded-md">
-            <h3 className="text-sm font-medium text-gray-900 mb-2">Debug Information:</h3>
+            <h3 className="text-sm font-medium text-gray-900 mb-2">
+              Debug Information:
+            </h3>
             <p className="text-sm text-gray-600">Status: {status}</p>
-            <p className="text-sm text-gray-600">Loading: {loading ? 'Yes' : 'No'}</p>
-            <p className="text-sm text-gray-600">User: {user ? user.email : 'None'}</p>
-            <p className="text-sm text-gray-600">URL: {typeof window !== 'undefined' ? window.location.href : 'SSR'}</p>
+            <p className="text-sm text-gray-600">
+              Loading: {loading ? 'Yes' : 'No'}
+            </p>
+            <p className="text-sm text-gray-600">
+              User: {user ? user.email : 'None'}
+            </p>
+            <p className="text-sm text-gray-600">
+              URL:{' '}
+              {typeof window !== 'undefined' ? window.location.href : 'SSR'}
+            </p>
           </div>
 
           <div className="text-center">

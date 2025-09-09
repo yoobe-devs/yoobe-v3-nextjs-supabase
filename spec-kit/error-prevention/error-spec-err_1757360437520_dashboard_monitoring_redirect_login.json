@@ -1,0 +1,111 @@
+{
+  "id": "error-spec-err_1757360437520_dashboard_monitoring_redirect_login",
+  "title": "Error Prevention: Dashboard de monitoramento redirecionando para login",
+  "description": "Specification for preventing and handling: O dashboard de monitoramento em /admin/system-monitoring estava redirecionando para a página de login, impedindo o acesso ao monitoramento do sistema. Isso acontecia porque o dashboard estava protegido por autenticação, mas o usuário precisava de acesso público ao monitoramento.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "authentication",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437520_dashboard_monitoring_redirect_login-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-prevention-0",
+          "description": "SEMPRE criar dashboards públicos para monitoramento básico",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-prevention-1",
+          "description": "SEMPRE manter dashboards administrativos protegidos por autenticação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-prevention-2",
+          "description": "SEMPRE documentar diferenças entre dashboards públicos e privados",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-prevention-3",
+          "description": "SEMPRE testar acesso sem autenticação aos dashboards públicos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-prevention-4",
+          "description": "SEMPRE implementar atualização automática em dashboards de monitoramento",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-prevention-5",
+          "description": "SEMPRE fornecer interface visual intuitiva para monitoramento",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437520_dashboard_monitoring_redirect_login-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437520_dashboard_monitoring_redirect_login-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437520_dashboard_monitoring_redirect_login-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Dashboard público sem autenticação\nGET /monitor\n\n// Dashboard administrativo (requer login)\nGET /admin/system-monitoring\n\n// Interface visual com:\n// - Status em tempo real\n// - Métricas de uptime, requisições, taxa de erro\n// - Health checks automáticos\n// - Atualização a cada 30 segundos",
+    "filePath": "app/monitor/page.tsx, app/docs/SYSTEM_PROTECTION/page.tsx, SYSTEM_MONITORING_README.md",
+    "solution": "1) Criado dashboard público em /monitor sem necessidade de autenticação, 2) Implementado interface visual completa com status em tempo real, métricas, health checks e atualização automática, 3) Atualizado documentação para incluir link para dashboard público, 4) Mantido dashboard administrativo protegido para administradores, 5) Adicionado seção de acesso aos dashboards no README, 6) Testado funcionamento completo do dashboard público (200 OK)",
+    "relatedErrors": [
+      "err_1757360437519_system_apis_not_working"
+    ],
+    "documentationLinks": [
+      "app/monitor/page.tsx",
+      "app/docs/SYSTEM_PROTECTION/page.tsx",
+      "SYSTEM_MONITORING_README.md"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437520_dashboard_monitoring_redirect_login",
+    "errorType": "authentication",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-09T01:28:00.000Z",
+    "resolutionDate": "2025-09-09T01:29:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

@@ -1,41 +1,55 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
+import { authenticateAndAuthorize } from '@/lib/user-utils'
+
+const supabaseUrl =
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const serviceKey =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+
+const supabaseService = createClient(supabaseUrl, serviceKey)
 
 // GET - Buscar pedidos da empresa do gestor
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
-    // Verificar autenticação
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+    // Verificar autenticação e autorização
+    const authResult = await authenticateAndAuthorize(request, [
+      'manager',
+      'gestor',
+      'admin',
+      'admin_global',
+      'superadmin',
+    ])
+    if (!authResult.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: { code: 'UNAUTHORIZED', message: authResult.error },
+        },
+        { status: authResult.status }
+      )
     }
 
-    // Buscar dados do usuário
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('company_id, role, store_id')
-      .eq('id', user.id)
-      .single()
+    const { user } = authResult
+    const companyId = user.company_id
 
-    if (userError || !userData) {
-      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 })
-    }
+    // Parâmetros de busca
+    const { searchParams } = new URL(request.url)
+    const search = searchParams.get('search') || ''
+    const status = searchParams.get('status') || ''
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '20')
 
-    if (userData.role !== 'manager') {
-      return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
-    }
-
-    // Buscar pedidos da loja
-    const { data: orders, error: ordersError } = await supabase
+    // Query base para pedidos
+    let query = supabaseService
       .from('orders')
-      .select(`
+      .select(
+        `
         *,
         users (
           id,
-          full_name,
+          name,
           email
         ),
         order_items (
@@ -49,18 +63,77 @@ export async function GET() {
             image_url
           )
         )
-      `)
-      .eq('store_id', userData.store_id)
+      `,
+        { count: 'exact' }
+      )
+      .eq('company_id', companyId)
       .order('created_at', { ascending: false })
+
+    // Aplicar filtros
+    if (search) {
+      query = query.or(
+        `order_number.ilike.%${search}%,tracking_code.ilike.%${search}%,shipping_address.ilike.%${search}%`
+      )
+    }
+    if (status) {
+      query = query.eq('status', status)
+    }
+
+    // Paginação
+    const startIndex = (page - 1) * limit
+    query = query.range(startIndex, startIndex + limit - 1)
+
+    const { data: orders, error: ordersError, count } = await query
 
     if (ordersError) {
       console.error('Erro ao buscar pedidos:', ordersError)
-      return NextResponse.json({ error: 'Erro ao buscar pedidos' }, { status: 500 })
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INTERNAL_ERROR',
+            message: 'Erro ao buscar pedidos',
+            details: ordersError.message,
+          },
+        },
+        { status: 500 }
+      )
     }
 
-    return NextResponse.json(orders || [])
+    // Calcular estatísticas
+    const stats = {
+      total: count || 0,
+      byStatus: {},
+      totalValue: 0,
+    }
+
+    orders?.forEach(order => {
+      stats.byStatus[order.status] = (stats.byStatus[order.status] || 0) + 1
+      stats.totalValue += order.total_amount || 0
+    })
+
+    return NextResponse.json({
+      success: true,
+      data: orders,
+      meta: {
+        pagination: {
+          page,
+          limit,
+          total: count || 0,
+          totalPages: Math.ceil((count || 0) / limit),
+        },
+        stats,
+        company_id: companyId,
+      },
+    })
   } catch (error) {
     console.error('Erro na API de pedidos do gestor:', error)
-    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
+    return NextResponse.json(
+      {
+        success: false,
+        error: { code: 'INTERNAL_ERROR', message: 'Erro interno do servidor' },
+      },
+      { status: 500 }
+    )
   }
 }

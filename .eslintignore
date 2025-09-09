@@ -1,0 +1,5 @@
+feature-patches/**
+supabase/migrations/**
+coverage/**
+.next/**
+**/node_modules/**

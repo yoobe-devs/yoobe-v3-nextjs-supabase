@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spec Kit - Status do Dashboard</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 3em;
+        font-weight: 300;
+      }
+      .header p {
+        margin: 15px 0 0 0;
+        opacity: 0.9;
+        font-size: 1.2em;
+      }
+      .content {
+        padding: 40px;
+      }
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+      .status-card {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        text-align: center;
+        border-left: 5px solid #3498db;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+      .status-card.online {
+        border-left-color: #27ae60;
+      }
+      .status-card.warning {
+        border-left-color: #f39c12;
+      }
+      .status-card.offline {
+        border-left-color: #e74c3c;
+      }
+      .status-card h3 {
+        color: #2c3e50;
+        margin: 0 0 15px 0;
+        font-size: 1.4em;
+      }
+      .status-card .status {
+        font-weight: 600;
+        padding: 8px 16px;
+        border-radius: 25px;
+        font-size: 1em;
+        margin: 10px 0;
+      }
+      .status.online {
+        background: #d5f4e6;
+        color: #27ae60;
+      }
+      .status.warning {
+        background: #fef9e7;
+        color: #f39c12;
+      }
+      .status.offline {
+        background: #fadbd8;
+        color: #e74c3c;
+      }
+      .diagnostic-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        border-left: 5px solid #e74c3c;
+      }
+      .diagnostic-section h3 {
+        color: #e74c3c;
+        margin: 0 0 20px 0;
+        font-size: 1.5em;
+      }
+      .diagnostic-item {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+      .diagnostic-item h4 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+      }
+      .diagnostic-item p {
+        margin: 0;
+        color: #7f8c8d;
+        line-height: 1.5;
+      }
+      .command-box {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+      .solution-section {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+        border-left: 5px solid #27ae60;
+      }
+      .solution-section h3 {
+        color: #27ae60;
+        margin: 0 0 20px 0;
+        font-size: 1.5em;
+      }
+      .solution-step {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+      .solution-step h4 {
+        margin: 0 0 10px 0;
+        color: #2c3e50;
+      }
+      .solution-step p {
+        margin: 0;
+        color: #7f8c8d;
+        line-height: 1.5;
+      }
+      .timestamp {
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 0.9em;
+        padding: 20px;
+        border-top: 1px solid #ecf0f1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔧 Spec Kit Dashboard</h1>
+        <p>Status e Diagnóstico do Sistema</p>
+      </div>
+
+      <div class="content">
+        <!-- Status Atual -->
+        <div class="status-grid">
+          <div class="status-card online">
+            <h3>🌐 Servidor MCP</h3>
+            <div class="status online">ONLINE</div>
+            <p>Servidor MCP rodando na porta 3456</p>
+          </div>
+
+          <div class="status-card online">
+            <h3>🔗 API REST</h3>
+            <div class="status online">FUNCIONANDO</div>
+            <p>Endpoints da API respondendo corretamente</p>
+          </div>
+
+          <div class="status-card warning">
+            <h3>🖥️ Dashboard Web</h3>
+            <div class="status warning">PROBLEMA DE INTERFACE</div>
+            <p>HTML carrega, mas interface pode ter problemas</p>
+          </div>
+
+          <div class="status-card online">
+            <h3>📚 Documentação</h3>
+            <div class="status online">DISPONÍVEL</div>
+            <p>Todos os relatórios e guias acessíveis</p>
+          </div>
+        </div>
+
+        <!-- Diagnóstico Detalhado -->
+        <div class="diagnostic-section">
+          <h3>🔍 Diagnóstico Detalhado</h3>
+
+          <div class="diagnostic-item">
+            <h4>✅ Servidor HTTP</h4>
+            <p>
+              O servidor está respondendo com HTTP 200 OK. O HTML base está
+              sendo servido corretamente.
+            </p>
+          </div>
+
+          <div class="diagnostic-item">
+            <h4>✅ Assets JavaScript</h4>
+            <p>
+              O arquivo JavaScript principal (index-DMhIadFO.js) está disponível
+              e sendo servido corretamente (1MB).
+            </p>
+          </div>
+
+          <div class="diagnostic-item">
+            <h4>✅ Assets CSS</h4>
+            <p>
+              O arquivo CSS (index-CwlwIaSg.css) está disponível e sendo servido
+              corretamente.
+            </p>
+          </div>
+
+          <div class="diagnostic-item">
+            <h4>⚠️ Possível Problema de Interface</h4>
+            <p>
+              O dashboard pode estar carregando, mas a interface React pode não
+              estar renderizando corretamente. Isso pode ser devido a problemas
+              de JavaScript ou configuração do React.
+            </p>
+          </div>
+
+          <div class="diagnostic-item">
+            <h4>✅ Processo Ativo</h4>
+            <p>
+              O processo spec-workflow-mcp está rodando ativamente (PID: 73373)
+              e consumindo recursos normalmente.
+            </p>
+          </div>
+        </div>
+
+        <!-- Soluções -->
+        <div class="solution-section">
+          <h3>🛠️ Soluções Recomendadas</h3>
+
+          <div class="solution-step">
+            <h4>1. Limpar Cache do Navegador</h4>
+            <p>
+              Pressione Ctrl+Shift+R (ou Cmd+Shift+R no Mac) para fazer um hard
+              refresh e limpar o cache.
+            </p>
+          </div>
+
+          <div class="solution-step">
+            <h4>2. Verificar Console do Navegador</h4>
+            <p>
+              Abra as Ferramentas de Desenvolvedor (F12) e verifique se há erros
+              JavaScript no console.
+            </p>
+          </div>
+
+          <div class="solution-step">
+            <h4>3. Tentar Navegador Diferente</h4>
+            <p>
+              Teste o dashboard em um navegador diferente para descartar
+              problemas específicos do navegador.
+            </p>
+          </div>
+
+          <div class="solution-step">
+            <h4>4. Reiniciar Spec Kit</h4>
+            <div class="command-box">
+              # Parar o processo atual<br />
+              pkill -f spec-workflow-mcp<br /><br />
+              # Aguardar 3 segundos<br />
+              sleep 3<br /><br />
+              # Reiniciar o Spec Kit<br />
+              npx -y @pimzino/spec-workflow-mcp@latest
+              /Users/genautech/Downloads/v3-main/yoobe-v3 --AutoStartDashboard
+              --port 3456
+            </div>
+          </div>
+
+          <div class="solution-step">
+            <h4>5. Usar Documentação Alternativa</h4>
+            <p>
+              Enquanto o dashboard é corrigido, use os relatórios HTML
+              disponíveis:
+            </p>
+            <ul>
+              <li>
+                <a href="spec-kit-status-simple.html" target="_blank"
+                  >Status Simples</a
+                >
+              </li>
+              <li>
+                <a href="spec-kit-monitoring-report.html" target="_blank"
+                  >Relatório de Monitoramento</a
+                >
+              </li>
+              <li>
+                <a href="spec-kit/index.html" target="_blank"
+                  >Índice Completo</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- URLs Importantes -->
+        <div class="diagnostic-section">
+          <h3>🔗 URLs Importantes</h3>
+          <div class="diagnostic-item">
+            <h4>Dashboard Principal</h4>
+            <p>
+              <strong>URL:</strong>
+              <a href="http://localhost:3456" target="_blank"
+                >http://localhost:3456</a
+              >
+            </p>
+            <p>
+              <strong>Status:</strong> Servidor online, interface com problemas
+            </p>
+          </div>
+          <div class="diagnostic-item">
+            <h4>API de Especificações</h4>
+            <p>
+              <strong>URL:</strong>
+              <a href="http://localhost:3456/api/specs" target="_blank"
+                >http://localhost:3456/api/specs</a
+              >
+            </p>
+            <p><strong>Status:</strong> Funcionando corretamente</p>
+          </div>
+          <div class="diagnostic-item">
+            <h4>Documentação Local</h4>
+            <p>
+              <strong>URL:</strong>
+              <a href="http://localhost:8080/" target="_blank"
+                >http://localhost:8080/</a
+              >
+            </p>
+            <p><strong>Status:</strong> Disponível e funcionando</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="timestamp">
+        Relatório gerado em: <span id="timestamp"></span>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('timestamp').textContent =
+        new Date().toLocaleString('pt-BR')
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,110 @@
+{
+  "id": "error-spec-err_1757360437517_date_validation_system",
+  "title": "Error Prevention: Sistema de validação de datas implementado para prevenir erros futuros",
+  "description": "Specification for preventing and handling: Implementado sistema completo de validação e gerenciamento de datas para evitar erros de data incorreta em documentação e memória de erros. Criado utilitários de data centralizados e atualizado sistema de memória de erros para usar datas automáticas.",
+  "category": "error-prevention",
+  "priority": "low",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "system",
+    "low"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437517_date_validation_system-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437517_date_validation_system-prevention-0",
+          "description": "SEMPRE usar funções utilitárias de data em vez de hardcode",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437517_date_validation_system-prevention-1",
+          "description": "SEMPRE importar getCurrentTimestamp() para timestamps automáticos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437517_date_validation_system-prevention-2",
+          "description": "SEMPRE usar getCurrentDocumentationDate() para datas de documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437517_date_validation_system-prevention-3",
+          "description": "SEMPRE validar datas com isValidDate() antes de usar",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437517_date_validation_system-prevention-4",
+          "description": "SEMPRE revisar datas em documentação antes de commits",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437517_date_validation_system-prevention-5",
+          "description": "SEMPRE manter sistema de validação de datas atualizado",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437517_date_validation_system-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437517_date_validation_system-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437517_date_validation_system-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437517_date_validation_system-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437517_date_validation_system-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437517_date_validation_system-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Funções utilitárias de data\nimport { getCurrentTimestamp, getCurrentDocumentationDate } from '@/lib/date-utils'\n\n// Uso automático de datas corretas\nconst timestamp = getCurrentTimestamp() // 2025-09-08T23:45:00.000Z\nconst docDate = getCurrentDocumentationDate() // Setembro 2025",
+    "filePath": "lib/date-utils.ts, lib/error-memory-edge.ts, data/error-memory.json",
+    "solution": "1) Criado lib/date-utils.ts com funções utilitárias para gerenciamento de datas, 2) Implementado getCurrentDocumentationDate() para datas de documentação, 3) Implementado getCurrentTimestamp() para timestamps automáticos, 4) Adicionado validação de datas com isValidDate(), 5) Atualizado ErrorMemorySystemEdge para usar funções utilitárias, 6) Corrigido todas as datas incorretas em toda a documentação, 7) Sistema agora previne automaticamente erros de data",
+    "relatedErrors": [
+      "err_1757360437516_incorrect_dates_documentation"
+    ],
+    "documentationLinks": [
+      "lib/date-utils.ts",
+      "lib/error-memory-edge.ts"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437517_date_validation_system",
+    "errorType": "system",
+    "severity": "low",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T23:50:00.000Z",
+    "resolutionDate": "2025-09-08T23:55:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

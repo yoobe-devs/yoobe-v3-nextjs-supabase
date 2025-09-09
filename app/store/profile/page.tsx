@@ -26,6 +26,7 @@ import {
   History
 } from "lucide-react"
 import { YoobeLogo } from "@/components/ui/yoobe-logo"
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 interface UserProfile {
   id: string
@@ -102,6 +103,35 @@ export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [editedProfile, setEditedProfile] = useState<UserProfile>(mockProfile)
   const [loading, setLoading] = useState(false)
+  const [companyName, setCompanyName] = useState<string>('Yoobe')
+  const supabase = createClientComponentClient()
+
+  useEffect(() => {
+    // Resolve company name from authenticated user metadata or fallback to DB
+    const loadCompanyName = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        const metaCompanyName = user?.user_metadata?.company_name as string | undefined
+        const metaCompanyId = user?.user_metadata?.company_id as string | undefined
+        if (metaCompanyName) {
+          setCompanyName(metaCompanyName)
+          return
+        }
+        if (metaCompanyId) {
+          const { data: company } = await supabase
+            .from('companies')
+            .select('name')
+            .eq('id', metaCompanyId)
+            .single()
+          if (company?.name) setCompanyName(company.name)
+        }
+      } catch (e) {
+        // keep default
+        console.warn('profile: failed to resolve company name')
+      }
+    }
+    loadCompanyName()
+  }, [])
 
   const handleSave = async () => {
     setLoading(true)
@@ -443,7 +473,7 @@ export default function ProfilePage() {
               <CardContent className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600">Empresa</p>
-                  <p className="font-medium">Join Tecnologia</p>
+                  <p className="font-medium">{companyName}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Departamento</p>

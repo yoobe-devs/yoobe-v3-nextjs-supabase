@@ -15,6 +15,7 @@ import {
   Download,
   Share2
 } from 'lucide-react'
+import { getOrderById } from '@/lib/queries/orders'
 
 interface Order {
   id: string
@@ -37,27 +38,24 @@ export default function OrderConfirmedPage() {
   useEffect(() => {
     const loadOrder = async () => {
       try {
-        // Mock order data - em produção viria da API
-        const mockOrder: Order = {
-          id: params.id as string,
-          order_number: 'ORD-20241201-001',
-          status: 'confirmed',
-          total_amount: 0,
-          points_used: 450,
+        const o = await getOrderById(params.id as string)
+        const items = (o.order_items || []).map((it: any) => ({
+          id: String(it.id),
+          name: it.products?.name || 'Item do pedido',
+          quantity: it.quantity || 1,
+          price: it.unit_price || 0,
+          points: 0,
+        }))
+        setOrder({
+          id: o.id,
+          order_number: o.order_number || o.id,
+          status: o.status,
+          total_amount: o.total_amount || 0,
+          points_used: 0,
           currency: 'BRL',
-          created_at: new Date().toISOString(),
-          items: [
-            {
-              id: '1',
-              name: 'Camiseta Corporativa Join Tecnologia',
-              quantity: 1,
-              price: 45.00,
-              points: 450
-            }
-          ]
-        }
-        
-        setOrder(mockOrder)
+          created_at: o.created_at,
+          items,
+        })
       } catch (error) {
         console.error('Erro ao carregar pedido:', error)
       } finally {

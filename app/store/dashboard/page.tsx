@@ -16,6 +16,8 @@ import {
 } from "lucide-react"
 import { YoobeLogo } from "@/components/ui/yoobe-logo"
 import { PointsBalance } from "@/components/ui/points-balance"
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { getOrders } from '@/lib/queries/orders'
 
 interface StoreStats {
   totalProducts: number
@@ -39,33 +41,83 @@ const mockStats: StoreStats = {
   favoriteProducts: 8
 }
 
-const mockRecentOrders: RecentOrder[] = [
-  {
-    id: "ORD-001",
-    productName: "Camiseta Join Tecnologia",
-    status: "delivered",
-    date: "2024-01-15",
-    points: 150
-  },
-  {
-    id: "ORD-002",
-    productName: "Mochila Corporativa",
-    status: "shipped",
-    date: "2024-01-14",
-    points: 300
-  },
-  {
-    id: "ORD-003",
-    productName: "Caneca Personalizada",
-    status: "processing",
-    date: "2024-01-13",
-    points: 80
+async function loadRecent(): Promise<RecentOrder[]> {
+  try {
+    const list = await getOrders()
+    return (list || []).slice(0, 5).map((o: any) => ({
+      id: o.id,
+      productName: o.order_items?.[0]?.products?.name || 'Pedido',
+      status: o.status || 'pending',
+      date: o.created_at,
+      points: 0,
+    }))
+  } catch {
+    return []
   }
-]
+}
 
 export default function StoreDashboardPage() {
+  const supabase = createClientComponentClient()
   const [stats, setStats] = useState<StoreStats>(mockStats)
-  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>(mockRecentOrders)
+  const [recentOrders, setRecentOrders] = useState<RecentOrder[]>([])
+
+  useEffect(() => {
+    (async () => {
+      const data = await loadRecent()
+      setRecentOrders(data)
+      if (data.length) setStats(s => ({ ...s, totalOrders: data.length }))
+    })()
+  }, [])
+
+  useEffect(() => {
+    // Carregar métricas reais: totalProducts e pointsBalance
+    (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        const storeId = user?.user_metadata?.store_id || user?.user_metadata?.company_id
+        // totalProducts
+        let totalProducts = 0
+        if (storeId) {
+          const { count } = await supabase
+            .from('store_products')
+            .select('id', { count: 'exact', head: true })
+            .eq('store_id', storeId)
+          totalProducts = count || 0
+        }
+        // pointsBalance do perfil (tabela users)
+        let pointsBalance = 0
+        if (user?.email) {
+          const { data: profile } = await supabase
+            .from('users')
+            .select('points_balance')
+            .eq('email', user.email)
+            .maybeSingle()
+          pointsBalance = Number(profile?.points_balance || 0)
+        }
+        // favoritos (se houver tabela user_favorites)
+        let favoriteProducts = 0
+        try {
+          if (user?.id) {
+            const { count: favCount } = await supabase
+              .from('user_favorites')
+              .select('id', { count: 'exact', head: true })
+              .eq('user_id', user.id)
+            favoriteProducts = favCount || 0
+          }
+        } catch {
+          favoriteProducts = 0
+        }
+        setStats(s => ({
+          ...s,
+          totalProducts,
+          pointsBalance,
+          favoriteProducts,
+        }))
+      } catch (e) {
+        // mantém mock em caso de erro
+      }
+    })()
+  }, [])
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -234,5 +286,3 @@ export default function StoreDashboardPage() {
     </div>
   )
 }
-
-

@@ -1,138 +1,156 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { LayoutDashboard, ShoppingCart, Package, Store, Users, Gift, BookOpen, Boxes, Megaphone, UserPlus, BarChart, Settings, LogOut, HelpCircle, GitBranch, Bell } from 'lucide-react'
-import { ChangelogButton } from "@/components/ui/changelog-button"
-import { ChangelogNotification } from "@/components/ui/changelog-notification"
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
+import {
+  LayoutDashboard,
+  ShoppingCart,
+  Package,
+  Store,
+  Users,
+  Gift,
+  BookOpen,
+  Boxes,
+  Megaphone,
+  UserPlus,
+  BarChart,
+  Settings,
+  LogOut,
+  HelpCircle,
+  GitBranch,
+  Bell,
+} from 'lucide-react'
+import { ChangelogButton } from '@/components/ui/changelog-button'
+import { ChangelogNotification } from '@/components/ui/changelog-notification'
+import { SmartLink } from '@/components/smart-link'
 
 const mainNav = [
   {
-    title: "Dashboard",
-    href: "/",
-    icon: LayoutDashboard
+    title: 'Dashboard',
+    href: '/',
+    icon: LayoutDashboard,
   },
   {
-    title: "Pedidos",
-    href: "/pedidos",
-    icon: ShoppingCart
+    title: 'Pedidos',
+    href: '/pedidos',
+    icon: ShoppingCart,
   },
   {
-    title: "Estoque",
-    href: "/estoque",
-    icon: Package
+    title: 'Estoque',
+    href: '/estoque',
+    icon: Package,
   },
   {
-    title: "Meus Produtos",
-    href: "/produtos",
-    icon: Store
+    title: 'Meus Produtos',
+    href: '/produtos',
+    icon: Store,
   },
   {
-    title: "Loja de Brindes",
-    href: "/loja-brindes",
-    icon: Gift
+    title: 'Loja de Brindes',
+    href: '/loja-brindes',
+    icon: Gift,
   },
   {
-    title: "Minha Loja",
-    href: "/minha-loja",
-    icon: Store
+    title: 'Minha Loja',
+    href: '/minha-loja',
+    icon: Store,
   },
   {
-    title: "Usuários",
-    href: "/usuarios",
-    icon: Users
+    title: 'Usuários',
+    href: '/usuarios',
+    icon: Users,
   },
   {
-    title: "Ativar produtos",
-    href: "/ativar-produtos",
-    icon: Gift
+    title: 'Ativar produtos',
+    href: '/ativar-produtos',
+    icon: Gift,
   },
   {
-    title: "Catálogo Online",
-    href: "/catalogo",
-    icon: BookOpen
+    title: 'Catálogo Online',
+    href: '/catalogo',
+    icon: BookOpen,
   },
   {
-    title: "Criar Kit",
-    href: "/criar-kit",
-    icon: Boxes
+    title: 'Criar Kit',
+    href: '/criar-kit',
+    icon: Boxes,
   },
   {
-    title: "Campanhas",
-    href: "https://kzmlzd9rhnwg7sqfdn4e.lite.vusercontent.net/campanhas",
+    title: 'Campanhas',
+    href: 'https://kzmlzd9rhnwg7sqfdn4e.lite.vusercontent.net/campanhas',
     icon: Megaphone,
-    project: "campanhas"
+    project: 'campanhas',
   },
   {
-    title: "Onboarding",
-    href: "/onboarding",
-    icon: UserPlus
+    title: 'Onboarding',
+    href: '/onboarding',
+    icon: UserPlus,
   },
   {
-    title: "Swag Track",
-    href: "/swag-track",
-    icon: BarChart
+    title: 'Swag Track',
+    href: '/swag-track',
+    icon: BarChart,
   },
   {
-    title: "Configurações",
-    href: "/configuracoes",
-    icon: Settings
+    title: 'Configurações',
+    href: '/configuracoes',
+    icon: Settings,
   },
   {
-    title: "Admin Produtos",
-    href: "/admin/produtos",
-    icon: Package
+    title: 'Admin Produtos',
+    href: '/admin/produtos',
+    icon: Package,
   },
   {
-    title: "Categorias",
-    href: "/admin/categorias",
-    icon: BookOpen
+    title: 'Categorias',
+    href: '/admin/categorias',
+    icon: BookOpen,
   },
   {
-    title: "Produtos-Base",
-    href: "/admin/produtos-base",
-    icon: Boxes
+    title: 'Produtos-Base',
+    href: '/admin/produtos-base',
+    icon: Boxes,
   },
   {
-    title: "Changelog",
-    href: "/admin/changelog",
-    icon: GitBranch
+    title: 'Changelog',
+    href: '/admin/changelog',
+    icon: GitBranch,
   },
   {
-    title: "Integrações",
-    href: "/admin/integracoes",
-    icon: Settings
+    title: 'Integrações',
+    href: '/admin/integracoes',
+    icon: Settings,
   },
   {
-    title: "Documentação",
-    href: "/admin/documentacao",
-    icon: BookOpen
-  }
+    title: 'Documentação',
+    href: '/admin/documentacao',
+    icon: BookOpen,
+  },
 ]
 
 const footerNav = [
   {
-    title: "Política de Privacidade",
-    href: "/privacidade"
+    title: 'Política de Privacidade',
+    href: '/privacidade',
   },
   {
-    title: "Termos de Uso", 
-    href: "/termos"
+    title: 'Termos de Uso',
+    href: '/termos',
   },
   {
-    title: "Contato",
-    href: "/contato"
+    title: 'Contato',
+    href: '/contato',
   },
   {
-    title: "Documentação",
-    href: "/admin/documentacao"
+    title: 'Documentação',
+    href: '/admin/documentacao',
   },
   {
-    title: "API Reference",
-    href: "/admin/documentacao/viva/API_REFERENCE"
+    title: 'API Reference',
+    href: '/admin/documentacao/viva/API_REFERENCE',
   },
   {
-    title: "Database Schema",
-    href: "/admin/documentacao/viva/DATABASE_SCHEMA"
-  }
+    title: 'Database Schema',
+    href: '/admin/documentacao/viva/DATABASE_SCHEMA',
+  },
 ]
 
 export function MainNav() {
@@ -141,8 +159,8 @@ export function MainNav() {
       <div className="p-6">
         <Link href="/">
           <div className="flex items-center space-x-2">
-            <img 
-              src="/placeholder.svg?height=40&width=40" 
+            <img
+              src="/placeholder.svg?height=40&width=40"
               alt="Yoobe Logo"
               className="h-10 w-10 rounded-full"
             />
@@ -152,17 +170,17 @@ export function MainNav() {
       </div>
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-4 text-sm font-medium">
-          {mainNav.map((item) => {
+          {mainNav.map(item => {
             const Icon = item.icon
             return (
-              <Link
+              <SmartLink
                 key={item.href}
                 href={item.href}
                 className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900"
               >
                 <Icon className="h-4 w-4" />
                 {item.title}
-              </Link>
+              </SmartLink>
             )
           })}
         </nav>
@@ -172,9 +190,9 @@ export function MainNav() {
         <div className="mb-4 flex justify-center">
           <ChangelogNotification />
         </div>
-        
+
         <nav className="grid gap-1">
-          {footerNav.map((item) => (
+          {footerNav.map(item => (
             <Link
               key={item.href}
               href={item.href}
@@ -189,7 +207,10 @@ export function MainNav() {
           <HelpCircle className="h-4 w-4" />
           Tour na plataforma
         </Button>
-        <Button variant="ghost" className="mt-2 w-full justify-start gap-2 text-red-500 hover:text-red-600">
+        <Button
+          variant="ghost"
+          className="mt-2 w-full justify-start gap-2 text-red-500 hover:text-red-600"
+        >
           <LogOut className="h-4 w-4" />
           Sair
         </Button>

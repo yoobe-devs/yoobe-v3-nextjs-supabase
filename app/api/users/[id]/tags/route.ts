@@ -7,8 +7,8 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const supabase = createRouteHandlerClient({ cookies })
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    const role = user.user_metadata?.role
-    if (!['admin','admin_global','superadmin','gestor'].includes(role)) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
+    const role = (user.user_metadata as any)?.role
+    if (!['admin', 'admin_global', 'superadmin', 'manager'].includes($1)) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     const body = await request.json().catch(() => ({}))
     const add: string[] = Array.isArray(body?.add) ? body.add : []
     const remove: string[] = Array.isArray(body?.remove) ? body.remove : []

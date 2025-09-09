@@ -1,0 +1,80 @@
+{
+  "id": "error-spec-err_1756847704543_x3wp8qqpg",
+  "title": "Error Prevention: Exemplo de erro registrado",
+  "description": "Specification for preventing and handling: Este é um erro de exemplo para demonstrar o sistema",
+  "category": "error-prevention",
+  "priority": "low",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "example",
+    "low"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1756847704543_x3wp8qqpg-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756847704543_x3wp8qqpg-prevention-0",
+          "description": "Este é apenas um exemplo",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1756847704543_x3wp8qqpg-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756847704543_x3wp8qqpg-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1756847704543_x3wp8qqpg-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1756847704543_x3wp8qqpg-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756847704543_x3wp8qqpg-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1756847704543_x3wp8qqpg-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "console.log(\"exemplo\")",
+    "filePath": "example.ts",
+    "solution": "Sistema funcionando perfeitamente\n\n**Notas de Resolução:** Exemplo concluído com sucesso",
+    "relatedErrors": [],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1756847704543_x3wp8qqpg",
+    "errorType": "example",
+    "severity": "low",
+    "developer": "Sistema de Demonstração",
+    "timestamp": "2025-09-02T21:15:04.543Z",
+    "resolutionDate": "2025-09-02T21:15:04.546Z",
+    "migratedAt": "2025-09-09T03:18:50.280Z"
+  }
+}

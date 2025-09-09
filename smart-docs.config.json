@@ -1,0 +1,44 @@
+{
+  "version": "1.0.0",
+  "autoStart": true,
+  "autoUpdate": true,
+  "consistencyCheck": true,
+  "reportGeneration": true,
+  "watchDirectories": [
+    "app",
+    "lib",
+    "components",
+    "supabase",
+    "docs"
+  ],
+  "excludePatterns": [
+    "node_modules/**",
+    ".next/**",
+    "*.log",
+    "*.tmp"
+  ],
+  "outputFormats": [
+    "html",
+    "markdown",
+    "json"
+  ],
+  "templates": {
+    "api": "docs/templates/api-template.md",
+    "component": "docs/templates/component-template.md",
+    "system": "docs/templates/system-template.md"
+  },
+  "monitoring": {
+    "enabled": true,
+    "interval": 30000,
+    "logLevel": "info"
+  },
+  "errorPrevention": {
+    "enabled": true,
+    "patterns": [
+      "missing-imports",
+      "unused-variables",
+      "deprecated-apis",
+      "security-issues"
+    ]
+  }
+}

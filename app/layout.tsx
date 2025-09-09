@@ -1,6 +1,5 @@
 import './globals.css'
-import { AuthProviderSimple as AuthProvider } from "@/components/auth/auth-provider-simple"
-import { NotificationProvider } from "@/components/notifications/notification-provider"
+import { AuthProviderSimpleFixed as AuthProvider } from '@/components/auth/auth-provider-simple-fixed'
 import { Toaster } from 'sonner'
 
 export default function RootLayout({
@@ -10,19 +9,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Yoobe v3.3</title>
+      </head>
+      <body className="antialiased">
         <AuthProvider>
-          <NotificationProvider>
-            {children}
-            <Toaster 
-              position="top-right"
-              richColors
-              closeButton
-            />
-          </NotificationProvider>
+          {children}
+          <Toaster position="top-right" richColors closeButton />
         </AuthProvider>
       </body>
     </html>
   )
 }
-

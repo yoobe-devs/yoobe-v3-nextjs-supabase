@@ -198,14 +198,14 @@ export default function NovoGestorPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {loadingCompanies ? (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="loading" disabled>
                         <div className="flex items-center gap-2">
                           <Loader2 className="h-4 w-4 animate-spin" />
                           Carregando empresas...
                         </div>
                       </SelectItem>
                     ) : companies.length === 0 ? (
-                      <SelectItem value="" disabled>
+                      <SelectItem value="empty" disabled>
                         Nenhuma empresa encontrada
                       </SelectItem>
                     ) : (

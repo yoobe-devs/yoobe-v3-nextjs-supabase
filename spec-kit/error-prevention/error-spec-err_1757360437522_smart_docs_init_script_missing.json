@@ -1,0 +1,112 @@
+{
+  "id": "error-spec-err_1757360437522_smart_docs_init_script_missing",
+  "title": "Error Prevention: Script init-smart-docs.js não existia",
+  "description": "Specification for preventing and handling: O usuário tentou executar 'node scripts/init-smart-docs.js' mas o script não existia na pasta scripts/. O sistema de documentação inteligente estava implementado em TypeScript mas não tinha um script de inicialização em JavaScript para facilitar o uso.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "script",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437522_smart_docs_init_script_missing-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-prevention-0",
+          "description": "SEMPRE criar scripts de inicialização para sistemas complexos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-prevention-1",
+          "description": "SEMPRE incluir scripts npm para facilitar uso",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-prevention-2",
+          "description": "SEMPRE implementar APIs de status para verificação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-prevention-3",
+          "description": "SEMPRE criar arquivos de configuração com valores padrão",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-prevention-4",
+          "description": "SEMPRE gerar templates para documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-prevention-5",
+          "description": "SEMPRE incluir fallbacks para dependências opcionais",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437522_smart_docs_init_script_missing-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437522_smart_docs_init_script_missing-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437522_smart_docs_init_script_missing-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Scripts disponíveis\nnpm run smart-docs:init   # Inicializar sistema\nnpm run smart-docs:start  # Iniciar sistema\nnpm run smart-docs:status # Verificar status\n\n// API de status\nGET /api/smart-docs/status\n\n// Arquivos criados\n- scripts/init-smart-docs.js\n- scripts/start-smart-docs.js\n- smart-docs.config.json\n- docs/templates/*.md",
+    "filePath": "scripts/init-smart-docs.js, scripts/start-smart-docs.js, smart-docs.config.json, app/api/smart-docs/status/route.ts, package.json",
+    "solution": "1) Criado script completo init-smart-docs.js com inicialização do sistema, 2) Implementado verificação de dependências e criação de diretórios, 3) Criado arquivo de configuração smart-docs.config.json, 4) Gerado templates de documentação (API, Componente, Sistema), 5) Criado script de inicialização start-smart-docs.js, 6) Adicionado scripts npm (smart-docs:init, smart-docs:start, smart-docs:status), 7) Implementado API /api/smart-docs/status para verificação de status, 8) Corrigido problema de importação TypeScript usando fallback para simulação",
+    "relatedErrors": [
+      "err_1757360437521_dashboard_errors_visualization"
+    ],
+    "documentationLinks": [
+      "scripts/init-smart-docs.js",
+      "scripts/start-smart-docs.js",
+      "smart-docs.config.json",
+      "app/api/smart-docs/status/route.ts"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437522_smart_docs_init_script_missing",
+    "errorType": "script",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-09T01:39:00.000Z",
+    "resolutionDate": "2025-09-09T01:40:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

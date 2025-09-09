@@ -1,161 +1,221 @@
-"use client"
+'use client'
 
-import { useState } from 'react'
-import { useAuth } from '@/components/auth/auth-provider-simple'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useAuth } from '@/components/auth/auth-provider-simple-fixed'
+import { getPostLoginRedirect } from '@/lib/auth-redirects'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Loader2, Mail, Lock } from 'lucide-react'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { toast } from 'sonner'
+import { Loader2, AlertTriangle, CheckCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const { signIn, error } = useAuth()
+  const [error, setError] = useState('')
+  const searchParams = useSearchParams()
+  const { user, signIn, loading: authLoading } = useAuth()
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  // O redirecionamento é gerenciado pelo AuthProvider
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
     try {
       await signIn(email, password)
-      toast.success('Login realizado com sucesso!')
-      // Redirecionar manualmente após login bem-sucedido
-      setTimeout(() => {
-        window.location.href = '/choose-environment'
-      }, 1000)
-    } catch (err) {
-      console.error('Erro no login:', err)
-      toast.error('Erro no login. Verifique suas credenciais.')
+      toast.success('Login realizado com sucesso!', {
+        description: 'Redirecionando para seu dashboard...',
+        duration: 2000,
+      })
+
+      // O redirecionamento será feito pelo useEffect quando o user for atualizado
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao fazer login'
+      setError(errorMessage)
+      toast.error('Erro ao fazer login', {
+        description: 'Verifique suas credenciais e tente novamente.',
+        duration: 4000,
+      })
     } finally {
       setLoading(false)
     }
   }
 
-  const seedSuperadmin = async () => {
+  const handleTestLogin = async (testEmail: string, testPassword: string) => {
+    setEmail(testEmail)
+    setPassword(testPassword)
+    setLoading(true)
+    setError('')
+
     try {
-      const res = await fetch('/api/admin/superadmin/seed', { method: 'POST' })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data?.error || 'Falha ao gerar superadmin')
-      toast.success(`Superadmin pronto: ${data.email}`)
-    } catch (e) {
-      console.error(e)
-      toast.error(e instanceof Error ? e.message : 'Erro ao criar superadmin')
+      await signIn(testEmail, testPassword)
+      toast.success('Login de teste realizado com sucesso!', {
+        description: `Bem-vindo, ${testEmail.split('@')[0]}!`,
+        duration: 2000,
+      })
+
+      // O redirecionamento será feito pelo useEffect quando o user for atualizado
+    } catch (err: unknown) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Erro ao fazer login de teste'
+      setError(errorMessage)
+      toast.error('Erro ao fazer login de teste', {
+        description: 'Tente novamente ou use outro usuário de teste.',
+        duration: 4000,
+      })
+    } finally {
+      setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+      {/* Loading overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg p-6 shadow-xl flex items-center space-x-3">
+            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
+            <span className="text-gray-700 font-medium">Entrando...</span>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Login Yoobe
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Acesse sua conta
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 bg-blue-600 rounded-full flex items-center justify-center">
+            <span className="text-white font-bold text-xl">Y</span>
+          </div>
+          <h1 className="mt-4 text-3xl font-bold text-gray-900">Yoobe</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Sistema de Gestão Empresarial
           </p>
         </div>
-        
-        <Card>
+
+        <Card className="shadow-lg">
           <CardHeader>
-            <CardTitle>Entrar</CardTitle>
-            <CardDescription>
-              Use suas credenciais para acessar o sistema
+            <CardTitle className="text-2xl text-center">Entrar</CardTitle>
+            <CardDescription className="text-center">
+              Digite suas credenciais para acessar o sistema
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <form onSubmit={handleLogin} className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              )}
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="email"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Email
                 </label>
-                <div className="mt-1 relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    placeholder="seu@email.com"
-                  />
-                </div>
+                <Input
+                  id="email"
+                  type="email"
+                  required
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="w-full"
+                />
               </div>
 
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <div className="space-y-2">
+                <label
+                  htmlFor="password"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Senha
                 </label>
-                <div className="mt-1 relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10"
-                    placeholder="Sua senha"
-                  />
-                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  required
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  className="w-full"
+                />
               </div>
-
-              {error && (
-                <div className="text-red-600 text-sm">
-                  {error}
-                </div>
-              )}
 
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full bg-blue-600 hover:bg-blue-700 transition-all duration-200 transform hover:scale-[1.02]"
                 disabled={loading}
               >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Entrando...
-                  </>
-                ) : (
-                  'Entrar'
-                )}
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {loading ? 'Entrando...' : 'Entrar'}
               </Button>
             </form>
 
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Acessos de teste (dev)</span>
-                </div>
-              </div>
-              
-              <div className="mt-4 space-y-2 text-xs text-gray-600">
-                <p><strong>Superadmin:</strong> superadmin@test.com / superadmin123</p>
-                <p><strong>Admin:</strong> admin@yoobe.com / admin123</p>
-                <p><strong>Gestor:</strong> gestor.join.tech@jointecnologia.com.br / gestor123</p>
-                <p><strong>Funcionário 1:</strong> maria.santos@jointecnologia.com.br / maria123</p>
-                <p><strong>Funcionário 2:</strong> pedro.oliveira@jointecnologia.com.br / pedro123</p>
-                <div className="pt-2 text-[11px] text-gray-500">
-                  Servidor: http://localhost:{typeof window !== 'undefined' ? window.location.port || '3001' : '3001'}
-                </div>
-                <div className="pt-2 flex gap-2">
-                  <button type="button" onClick={seedSuperadmin} className="text-blue-600 hover:underline">
-                    Gerar Superadmin (dev)
-                  </button>
-                </div>
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <h4 className="text-sm font-medium text-blue-800 mb-3 flex items-center">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Usuários de Teste (Supabase):
+              </h4>
+              <div className="space-y-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs border-blue-200 hover:bg-blue-100 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-sm"
+                  onClick={() => handleTestLogin('admin@yoobe.com', 'admin123')}
+                  disabled={loading}
+                >
+                  <span className="text-blue-700">
+                    👑 Admin: admin@yoobe.com / admin123
+                  </span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs border-blue-200 hover:bg-blue-100 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-sm"
+                  onClick={() =>
+                    handleTestLogin('gestor@yoobe.com', 'gestor123')
+                  }
+                  disabled={loading}
+                >
+                  <span className="text-blue-700">
+                    🏢 Gestor: gestor@yoobe.com / gestor123
+                  </span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full justify-start text-xs border-blue-200 hover:bg-blue-100 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-sm"
+                  onClick={() =>
+                    handleTestLogin('funcionario@yoobe.com', 'funcionario123')
+                  }
+                  disabled={loading}
+                >
+                  <span className="text-blue-700">
+                    👤 Funcionário: funcionario@yoobe.com / funcionario123
+                  </span>
+                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
+
+        <div className="text-center text-xs text-gray-500">
+          <p>Versão 3.3.0 - Sistema Real com Supabase</p>
+        </div>
       </div>
     </div>
   )

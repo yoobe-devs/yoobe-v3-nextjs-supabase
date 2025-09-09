@@ -1,6 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+
+// Criar cliente Supabase com service key
+const supabaseService = createClient(supabaseUrl, serviceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+})
 
 function ean13FromSku(sku: string): string {
   const digits = (sku || '')
@@ -18,8 +30,33 @@ function ean13FromSku(sku: string): string {
 export async function POST(req: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+    
+    // Verificar autenticação de admin
+    let user = null
+    const { data: { user: cookieUser }, error: authError } = await supabase.auth.getUser()
+    if (authError || !cookieUser) {
+      // Tentar verificar via header Authorization
+      const authHeader = req.headers.get('authorization')
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7)
+        const { data: { user: tokenUser }, error: tokenError } = await supabase.auth.getUser(token)
+        if (tokenError || !tokenUser) {
+          return NextResponse.json({ error: 'Token inválido' }, { status: 401 })
+        }
+        user = tokenUser
+      } else {
+        return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
+      }
+    } else {
+      user = cookieUser
+    }
+
+    // Verificar permissões de admin através dos metadados do usuário
+    const userRole = (user.user_metadata as any)?.role
+    const allowed = ['admin', 'admin_global', 'superadmin']
+    if (!allowed.includes(userRole)) {
+      return NextResponse.json({ error: 'Acesso negado - Apenas administradores podem importar produtos' }, { status: 403 })
+    }
 
     const body = await req.json().catch(() => ({}))
     const rows: any[] = Array.isArray(body?.rows) ? body.rows : []
@@ -40,7 +77,7 @@ export async function POST(req: NextRequest) {
       status: 'active'
     })).filter(i => i.name && i.base_price > 0)
 
-    const { data, error } = await supabase.from('base_products').insert(inserts).select('id')
+    const { data, error } = await supabaseService.from('base_products').insert(inserts).select('id')
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ inserted: data?.length || 0 })
   } catch (e: any) {

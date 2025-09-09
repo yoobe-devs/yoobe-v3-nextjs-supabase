@@ -1,9 +1,10 @@
-"use client"
+'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { User, AuthError } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
+import { getDashboardRoute } from '@/lib/auth-redirects'
 
 interface AuthContextType {
   user: User | null
@@ -31,8 +32,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Get initial session
     const getSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession()
-        
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession()
+
         if (error) {
           setError(error.message)
         } else {
@@ -48,24 +52,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getSession()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        try {
-          setUser(session?.user ?? null)
-          setLoading(false)
-          setError(null)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      try {
+        setUser(session?.user ?? null)
+        setLoading(false)
+        setError(null)
 
-          // Apenas redirecionar se não estiver já na página correta
-          if (event === 'SIGNED_OUT' && window.location.pathname !== '/auth/login') {
-            window.location.href = '/auth/login'
-          } else if (event === 'SIGNED_IN' && window.location.pathname !== '/choose-environment') {
-            window.location.href = '/choose-environment'
+        // Apenas redirecionar se não estiver já na página correta
+        if (
+          event === 'SIGNED_OUT' &&
+          window.location.pathname !== '/auth/login'
+        ) {
+          window.location.href = '/auth/login'
+        } else if (event === 'SIGNED_IN' && session?.user) {
+          // Redirecionar automaticamente para o dashboard correto baseado no role
+          const dashboardRoute = getDashboardRoute(session.user)
+          if (
+            window.location.pathname === '/auth/login' ||
+            window.location.pathname === '/auth/callback'
+          ) {
+            window.location.href = dashboardRoute
           }
-        } catch (err) {
-          setError('Authentication error')
         }
+      } catch (err) {
+        setError('Authentication error')
       }
-    )
+    })
 
     return () => {
       subscription.unsubscribe()
@@ -74,35 +88,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password?: string) => {
     setError(null)
-    
+
     try {
       if (password) {
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
-          password
+          password,
         })
-        
+
         if (error) {
           throw error
         }
-        
+
         // Redirecionamento direto após login bem-sucedido
         if (data.user) {
-          window.location.href = '/choose-environment'
+          const dashboardRoute = getDashboardRoute(data.user)
+          window.location.href = dashboardRoute
         }
       } else {
         const { data, error } = await supabase.auth.signInWithOtp({
           email,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`
-          }
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
         })
-        
+
         if (error) {
           console.error('AuthProvider: OTP sign in error:', error)
           throw error
         }
-        
+
         console.log('AuthProvider: OTP sign in initiated')
       }
     } catch (err) {
@@ -116,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     console.log('AuthProvider: Attempting Google sign in')
     setError(null)
-    
+
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -125,15 +140,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
-          }
-        }
+          },
+        },
       })
-      
+
       if (error) {
         console.error('AuthProvider: Google sign in error:', error)
         throw error
       }
-      
+
       console.log('AuthProvider: Google sign in initiated')
     } catch (err) {
       console.error('AuthProvider: Google sign in error:', err)
@@ -146,20 +161,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithOTP = async (email: string) => {
     console.log('AuthProvider: Attempting OTP sign in:', email)
     setError(null)
-    
+
     try {
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
-      
+
       if (error) {
         console.error('AuthProvider: OTP sign in error:', error)
         throw error
       }
-      
+
       console.log('AuthProvider: OTP sign in initiated')
     } catch (err) {
       console.error('AuthProvider: OTP sign in error:', err)
@@ -172,20 +187,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithMagicLink = async (email: string) => {
     console.log('AuthProvider: Attempting magic link sign in:', email)
     setError(null)
-    
+
     try {
       const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
-      
+
       if (error) {
         console.error('AuthProvider: Magic link sign in error:', error)
         throw error
       }
-      
+
       console.log('AuthProvider: Magic link sign in initiated')
     } catch (err) {
       console.error('AuthProvider: Magic link sign in error:', err)
@@ -198,22 +213,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, metadata?: any) => {
     console.log('AuthProvider: Attempting sign up:', email)
     setError(null)
-    
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: metadata,
-          emailRedirectTo: `${window.location.origin}/auth/callback`
-        }
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
-      
+
       if (error) {
         console.error('AuthProvider: Sign up error:', error)
         throw error
       }
-      
+
       console.log('AuthProvider: Sign up successful')
     } catch (err) {
       console.error('AuthProvider: Sign up error:', err)
@@ -226,15 +241,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     console.log('AuthProvider: Attempting sign out')
     setError(null)
-    
+
     try {
       const { error } = await supabase.auth.signOut()
-      
+
       if (error) {
         console.error('AuthProvider: Sign out error:', error)
         throw error
       }
-      
+
       console.log('AuthProvider: Sign out successful')
       setUser(null)
       router.push('/auth/login')
@@ -256,14 +271,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signOut,
     loading,
-    error
+    error,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

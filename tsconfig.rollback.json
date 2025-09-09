@@ -1,0 +1,41 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "app/gestor/orcamentos/page.tsx",
+    "app/gestor/orcamentos/page-backup.tsx",
+    "components/gestor/catalog/CatalogToolbar.tsx",
+    "components/gestor/catalog/CatalogGrid.tsx",
+    "components/gestor/catalog/ProductSelectSheet.tsx",
+    "components/ui/card.tsx",
+    "components/ui/button.tsx",
+    "components/ui/badge.tsx",
+    "components/ui/input.tsx",
+    "components/ui/label.tsx",
+    "components/ui/textarea.tsx",
+    "components/ui/select.tsx",
+    "components/ui/popover.tsx",
+    "hooks/usePoints.ts",
+    "types/**/*.d.ts",
+    "types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "feature-patches/**",
+    "app/api/**",
+    "app/**",
+    "!app/gestor/orcamentos/page.tsx",
+    "!app/gestor/orcamentos/page-backup.tsx",
+    "docs/**",
+    "components/ui/calendar.tsx",
+    "components/ui/tooltip.tsx",
+    "components/ui/ProductFilters.tsx",
+    "components/ui/BudgetManagementTabs.tsx",
+    "components/ui/BudgetWizard.tsx",
+    "components/ui/BudgetManager.tsx"
+  ]
+}

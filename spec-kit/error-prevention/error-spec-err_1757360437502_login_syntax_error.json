@@ -1,0 +1,90 @@
+{
+  "id": "error-spec-err_1757360437502_login_syntax_error",
+  "title": "Error Prevention: Erro de sintaxe na página de login - aspa simples extra",
+  "description": "Specification for preventing and handling: Página de login não carregava devido a erro de sintaxe na linha 1: aspa simples extra antes de 'use client'",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "syntax",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437502_login_syntax_error-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437502_login_syntax_error-prevention-0",
+          "description": "Verificar sintaxe de arquivos TypeScript/JSX antes de salvar",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437502_login_syntax_error-prevention-1",
+          "description": "Usar linter para detectar erros de sintaxe automaticamente",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437502_login_syntax_error-prevention-2",
+          "description": "Testar páginas após edições para garantir que carregam corretamente",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437502_login_syntax_error-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437502_login_syntax_error-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437502_login_syntax_error-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437502_login_syntax_error-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437502_login_syntax_error-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437502_login_syntax_error-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "'use client'",
+    "filePath": "app/auth/login/page.tsx",
+    "solution": "Removida aspa simples extra da linha 1 do arquivo app/auth/login/page.tsx. Corrigido de \"'\\nuse client'\" para \"'use client'\"",
+    "relatedErrors": [],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437502_login_syntax_error",
+    "errorType": "syntax",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T21:20:37.502Z",
+    "resolutionDate": "2025-09-08T21:21:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

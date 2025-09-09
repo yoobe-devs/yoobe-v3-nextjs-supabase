@@ -1,0 +1,113 @@
+{
+  "id": "error-spec-err_1757360437509_loop_definitive_fix",
+  "title": "Error Prevention: Correção definitiva do loop infinito - Middleware simplificado",
+  "description": "Specification for preventing and handling: Loop persistia mesmo após múltiplas tentativas. Solução definitiva: substituir middleware complexo por versão ultra-simplificada, remover createMiddlewareClient completamente, adicionar verificações extras na página de login, e limpar completamente o cache do Next.js.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "navigation",
+    "critical"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437509_loop_definitive_fix-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-prevention-0",
+          "description": "SEMPRE usar middleware ultra-simplificado para evitar complexidade",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-prevention-1",
+          "description": "NUNCA usar createMiddlewareClient sem necessidade absoluta",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-prevention-2",
+          "description": "SEMPRE adicionar verificações extras para evitar loops",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-prevention-3",
+          "description": "SEMPRE limpar cache completamente após mudanças no middleware",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-prevention-4",
+          "description": "SEMPRE testar com múltiplas requisições simultâneas",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-prevention-5",
+          "description": "SEMPRE verificar se não está já na página de destino",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-prevention-6",
+          "description": "SEMPRE verificar se não há parâmetros de redirect já presentes",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437509_loop_definitive_fix-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437509_loop_definitive_fix-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437509_loop_definitive_fix-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Middleware ultra-simplificado\nconst publicRoutes = ['/', '/auth', '/api/health', '/api/auth', '/_next', '/favicon.ico', '/choose-environment']\nconst isPublic = publicRoutes.some(route => path.startsWith(route))\nif (isPublic) return NextResponse.next()\n\n// Login page com verificações extras\nif (window.location.pathname !== targetRoute && \n    !window.location.pathname.includes('login') &&\n    !window.location.search.includes('redirect')) {\n  window.location.replace(targetRoute)\n}",
+    "filePath": "middleware.ts, app/auth/login/page.tsx",
+    "solution": "1) Criado middleware ultra-simplificado sem createMiddlewareClient, 2) Adicionadas verificações extras na página de login para evitar loops, 3) Limpeza completa do cache (.next e node_modules/.cache), 4) Teste de stress com 10 requisições simultâneas confirmou correção definitiva.",
+    "relatedErrors": [
+      "err_1757360437507_login_redirect_loop",
+      "err_1757360437508_middleware_loop_fix"
+    ],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437509_loop_definitive_fix",
+    "errorType": "navigation",
+    "severity": "critical",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T22:30:00.000Z",
+    "resolutionDate": "2025-09-08T22:35:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

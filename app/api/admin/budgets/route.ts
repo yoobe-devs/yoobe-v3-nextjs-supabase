@@ -232,7 +232,7 @@ export async function POST(request: NextRequest) {
     // Inserir itens do orçamento
     const budgetItems = payload.items.map((item: any) => ({
       budget_id: budget.id,
-      product_id: item.product_id,
+      base_product_id: item.product_id, // Usar base_product_id para v3.1 schema
       qty: item.qty,
       unit_price: item.unit_price,
       unit_points: item.unit_points,

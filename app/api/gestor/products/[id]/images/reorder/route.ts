@@ -13,7 +13,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     const supabase = createRouteHandlerClient({ cookies })
     const { data: { user }, error } = await supabase.auth.getUser()
     if (error || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
-    const role = user.user_metadata?.role
+    const role = (user.user_metadata as any)?.role
     if (!['manager','gestor','admin','admin_global','superadmin'].includes(role)) return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
 
     const body = await request.json().catch(() => ({}))

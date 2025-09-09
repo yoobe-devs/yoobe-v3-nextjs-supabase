@@ -1,0 +1,107 @@
+{
+  "id": "error-spec-err_1757360437508_middleware_loop_fix",
+  "title": "Error Prevention: Correção definitiva do loop infinito no middleware",
+  "description": "Specification for preventing and handling: Loop persistia mesmo após correções no auth provider. Problema estava no middleware que não verificava se já estava na página de login, causando redirecionamentos infinitos. Também removido createMiddlewareClient que poderia causar problemas de autenticação.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "navigation",
+    "critical"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437508_middleware_loop_fix-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-prevention-0",
+          "description": "SEMPRE verificar se já está na página de destino antes de redirecionar",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-prevention-1",
+          "description": "SEMPRE verificar se já tem redirect param antes de adicionar novo",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-prevention-2",
+          "description": "NUNCA usar createMiddlewareClient sem verificação adequada",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-prevention-3",
+          "description": "SEMPRE limpar cache (.next) após mudanças no middleware",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-prevention-4",
+          "description": "Testar com múltiplas requisições simultâneas para detectar loops",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-prevention-5",
+          "description": "Usar ferramentas de teste automatizado para validar correções",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437508_middleware_loop_fix-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437508_middleware_loop_fix-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437508_middleware_loop_fix-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Middleware simplificado para evitar loops\nif (path.startsWith('/auth/login')) {\n  return res\n}\n\n// Verificar se já tem redirect param para evitar loops\nconst hasRedirect = req.nextUrl.searchParams.has('redirect')\nif (!hasRedirect) {\n  url.searchParams.set('redirect', path)\n  return NextResponse.redirect(url)\n}",
+    "filePath": "middleware.ts, app/auth/login/page.tsx",
+    "solution": "Simplificado middleware para evitar loops: 1) Verificar se já está em /auth/login e retornar sem redirecionar, 2) Verificar se já tem redirect param antes de adicionar novo, 3) Removido createMiddlewareClient para evitar problemas de auth, 4) Limpado cache do Next.js (.next) e reiniciado servidor.",
+    "relatedErrors": [
+      "err_1757360437507_login_redirect_loop"
+    ],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437508_middleware_loop_fix",
+    "errorType": "navigation",
+    "severity": "critical",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T22:20:00.000Z",
+    "resolutionDate": "2025-09-08T22:25:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

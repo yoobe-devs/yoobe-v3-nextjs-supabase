@@ -105,11 +105,11 @@ export default function StoreProductsPage() {
         return
       }
 
-      // Buscar produtos da empresa
+      // Buscar produtos da empresa (client_products)
       const { data, error } = await supabase
-        .from('company_products')
+        .from('client_products')
         .select('*')
-        .eq('company_id', storeData.company_id)
+        .eq('client_id', storeData.company_id)
         .order('created_at', { ascending: false })
 
       if (error) {
@@ -133,22 +133,20 @@ export default function StoreProductsPage() {
     }
 
     try {
-      const { error } = await supabase
-        .from('company_products')
-        .delete()
-        .eq('id', productId)
+      const res = await fetch(`/api/admin/lojas/${storeId}/produtos/${productId}`, {
+        method: 'DELETE',
+      })
 
-      if (error) {
-        console.error('Erro ao excluir produto:', error)
-        toast.error('Erro ao excluir produto')
-        return
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || 'Erro ao excluir produto')
       }
 
       toast.success('Produto excluído com sucesso')
       fetchProducts() // Recarregar lista
     } catch (error) {
       console.error('Erro ao excluir produto:', error)
-      toast.error('Erro ao excluir produto')
+      toast.error(error instanceof Error ? error.message : 'Erro ao excluir produto')
     }
   }
 

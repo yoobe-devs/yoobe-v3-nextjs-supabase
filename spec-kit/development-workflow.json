@@ -1,0 +1,358 @@
+{
+  "id": "development-workflow",
+  "title": "Spec Kit Development Workflow",
+  "description": "Comprehensive workflow for all future development tasks using Spec Kit specifications",
+  "category": "workflow",
+  "priority": "high",
+  "status": "active",
+  "tags": ["workflow", "development", "spec-kit", "process"],
+  "requirements": [
+    {
+      "id": "req-workflow-planning",
+      "title": "Task Planning and Specification",
+      "description": "All development tasks must start with proper specification creation",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-workflow-planning-1",
+          "description": "Create specification using /spec create command before starting any task",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-planning-2",
+          "description": "Define clear requirements and acceptance criteria",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-planning-3",
+          "description": "Assign priority and category to specification",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-workflow-tracking",
+      "title": "Progress Tracking",
+      "description": "Track progress using Spec Kit tracking system",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-workflow-tracking-1",
+          "description": "Update progress using /spec track command regularly",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-tracking-2",
+          "description": "Mark acceptance criteria as completed when done",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-tracking-3",
+          "description": "Document any blockers or issues encountered",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-workflow-approval",
+      "title": "Approval Process",
+      "description": "Implement approval workflow for completed tasks",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-workflow-approval-1",
+          "description": "Request approval using /spec approve command when task is complete",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-approval-2",
+          "description": "All acceptance criteria must be met before approval request",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-approval-3",
+          "description": "Document any feedback or changes requested during approval",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-workflow-documentation",
+      "title": "Documentation Updates",
+      "description": "Automatically update documentation when tasks are completed",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-workflow-documentation-1",
+          "description": "Use /spec docs command to update relevant documentation",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-documentation-2",
+          "description": "Ensure documentation reflects current system state",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-documentation-3",
+          "description": "Update changelog and version information when applicable",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-workflow-error-handling",
+      "title": "Error Handling and Prevention",
+      "description": "Integrate error prevention into development workflow",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-workflow-error-handling-1",
+          "description": "Check error prevention specifications before implementing features",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-error-handling-2",
+          "description": "Report bugs using /spec bug command when encountered",
+          "status": "pending"
+        },
+        {
+          "id": "ac-workflow-error-handling-3",
+          "description": "Update error prevention specifications based on new learnings",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    }
+  ],
+  "workflow": {
+    "phases": [
+      {
+        "id": "phase-planning",
+        "title": "Planning Phase",
+        "description": "Initial planning and specification creation",
+        "steps": [
+          "Analyze requirements and scope",
+          "Create specification using /spec create",
+          "Define acceptance criteria",
+          "Assign priority and category",
+          "Review with team if needed"
+        ],
+        "deliverables": [
+          "Complete specification document",
+          "Clear acceptance criteria",
+          "Priority and category assignment"
+        ]
+      },
+      {
+        "id": "phase-development",
+        "title": "Development Phase",
+        "description": "Implementation and progress tracking",
+        "steps": [
+          "Start implementation",
+          "Update progress using /spec track",
+          "Mark acceptance criteria as completed",
+          "Document any issues or blockers",
+          "Regular progress updates"
+        ],
+        "deliverables": [
+          "Working implementation",
+          "Progress tracking updates",
+          "Issue documentation"
+        ]
+      },
+      {
+        "id": "phase-testing",
+        "title": "Testing Phase",
+        "description": "Testing and validation",
+        "steps": [
+          "Test against acceptance criteria",
+          "Verify all requirements are met",
+          "Document test results",
+          "Fix any issues found",
+          "Update progress tracking"
+        ],
+        "deliverables": [
+          "Tested implementation",
+          "Test documentation",
+          "Issue resolution"
+        ]
+      },
+      {
+        "id": "phase-approval",
+        "title": "Approval Phase",
+        "description": "Review and approval process",
+        "steps": [
+          "Request approval using /spec approve",
+          "Address any feedback",
+          "Make necessary changes",
+          "Final review and approval",
+          "Mark specification as completed"
+        ],
+        "deliverables": [
+          "Approved implementation",
+          "Feedback resolution",
+          "Completed specification"
+        ]
+      },
+      {
+        "id": "phase-documentation",
+        "title": "Documentation Phase",
+        "description": "Update documentation and knowledge base",
+        "steps": [
+          "Update documentation using /spec docs",
+          "Update changelog if applicable",
+          "Update error prevention specifications",
+          "Share knowledge with team",
+          "Archive completed specification"
+        ],
+        "deliverables": [
+          "Updated documentation",
+          "Updated changelog",
+          "Knowledge sharing"
+        ]
+      }
+    ],
+    "commands": {
+      "planning": "/spec create",
+      "tracking": "/spec track",
+      "approval": "/spec approve",
+      "documentation": "/spec docs",
+      "bug_reporting": "/spec bug"
+    },
+    "integrations": {
+      "error_prevention": "Check error prevention specifications before implementation",
+      "documentation": "Auto-update documentation when specifications are completed",
+      "monitoring": "Track metrics and insights for continuous improvement"
+    }
+  },
+  "templates": {
+    "feature_specification": {
+      "title": "Feature: {feature_name}",
+      "description": "Implementation of {feature_name} with {key_requirements}",
+      "category": "feature",
+      "priority": "medium",
+      "requirements": [
+        {
+          "title": "Core Functionality",
+          "description": "Implement core functionality for {feature_name}",
+          "acceptanceCriteria": [
+            "Feature works as specified",
+            "All edge cases are handled",
+            "Performance requirements are met"
+          ]
+        },
+        {
+          "title": "Testing",
+          "description": "Comprehensive testing of {feature_name}",
+          "acceptanceCriteria": [
+            "Unit tests pass",
+            "Integration tests pass",
+            "Manual testing completed"
+          ]
+        },
+        {
+          "title": "Documentation",
+          "description": "Document {feature_name} implementation",
+          "acceptanceCriteria": [
+            "API documentation updated",
+            "User guide updated",
+            "Code comments added"
+          ]
+        }
+      ]
+    },
+    "bug_fix_specification": {
+      "title": "Bug Fix: {bug_description}",
+      "description": "Fix for {bug_description} affecting {affected_components}",
+      "category": "bug-fix",
+      "priority": "high",
+      "requirements": [
+        {
+          "title": "Root Cause Analysis",
+          "description": "Identify and document root cause of bug",
+          "acceptanceCriteria": [
+            "Root cause identified",
+            "Impact analysis completed",
+            "Prevention measures defined"
+          ]
+        },
+        {
+          "title": "Fix Implementation",
+          "description": "Implement fix for identified bug",
+          "acceptanceCriteria": [
+            "Fix implemented",
+            "Fix tested thoroughly",
+            "No regression introduced"
+          ]
+        },
+        {
+          "title": "Prevention",
+          "description": "Update error prevention specifications",
+          "acceptanceCriteria": [
+            "Error prevention updated",
+            "Team notified of prevention measures",
+            "Monitoring added if needed"
+          ]
+        }
+      ]
+    },
+    "refactoring_specification": {
+      "title": "Refactoring: {component_name}",
+      "description": "Refactor {component_name} to improve {improvement_goals}",
+      "category": "refactoring",
+      "priority": "medium",
+      "requirements": [
+        {
+          "title": "Analysis",
+          "description": "Analyze current implementation and identify improvements",
+          "acceptanceCriteria": [
+            "Current issues identified",
+            "Improvement opportunities documented",
+            "Refactoring plan created"
+          ]
+        },
+        {
+          "title": "Implementation",
+          "description": "Implement refactoring changes",
+          "acceptanceCriteria": [
+            "Refactoring completed",
+            "Functionality preserved",
+            "Code quality improved"
+          ]
+        },
+        {
+          "title": "Validation",
+          "description": "Validate refactoring results",
+          "acceptanceCriteria": [
+            "All tests pass",
+            "Performance maintained or improved",
+            "Documentation updated"
+          ]
+        }
+      ]
+    }
+  },
+  "metrics": {
+    "tracking": [
+      "Specifications created per week",
+      "Average time to completion",
+      "Approval success rate",
+      "Documentation update frequency",
+      "Error prevention effectiveness"
+    ],
+    "goals": {
+      "specification_coverage": "100% of development tasks have specifications",
+      "completion_rate": "90% of specifications completed on time",
+      "approval_rate": "95% of specifications approved on first review",
+      "documentation_currency": "Documentation updated within 24 hours of completion"
+    }
+  },
+  "metadata": {
+    "createdAt": "2025-09-09T03:20:00.000Z",
+    "version": "1.0.0",
+    "author": "Yoobe Development Team",
+    "relatedSpecifications": [
+      "error-management-system",
+      "error-prevention-index"
+    ]
+  }
+}

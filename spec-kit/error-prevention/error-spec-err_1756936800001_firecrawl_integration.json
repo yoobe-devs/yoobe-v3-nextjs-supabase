@@ -1,0 +1,93 @@
+{
+  "id": "error-spec-err_1756936800001_firecrawl_integration",
+  "title": "Error Prevention: Firecrawl API Key Required Error",
+  "description": "Specification for preventing and handling: FirecrawlApp constructor throws error when no API key is provided, causing scraper initialization to fail.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "integration",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1756936800001_firecrawl_integration-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756936800001_firecrawl_integration-prevention-0",
+          "description": "Always provide fallback mechanisms for optional integrations",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1756936800001_firecrawl_integration-prevention-1",
+          "description": "Test integrations with and without API keys",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1756936800001_firecrawl_integration-prevention-2",
+          "description": "Use proper TypeScript null handling for optional dependencies",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1756936800001_firecrawl_integration-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756936800001_firecrawl_integration-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1756936800001_firecrawl_integration-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1756936800001_firecrawl_integration-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756936800001_firecrawl_integration-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1756936800001_firecrawl_integration-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "constructor() {\n  const apiKey = process.env.FIRECRAWL_API_KEY\n  if (!apiKey) {\n    console.warn('⚠️ FIRECRAWL_API_KEY not found. Using fallback scraping method.')\n    this.firecrawl = null\n  } else {\n    this.firecrawl = new FirecrawlApp({ apiKey })\n  }\n}",
+    "filePath": "lib/services/catalog-scraper.ts",
+    "solution": "Modified CatalogScraper constructor to handle null API key gracefully by setting firecrawl to null and using fallback scraping method. Updated type definitions and scraping logic to handle null firecrawl instance.",
+    "relatedErrors": [],
+    "documentationLinks": [
+      "docs/FIRECRAWL_INTEGRATION.md",
+      "CHANGELOG_FIRECRAWL_v3.3.1.md"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1756936800001_firecrawl_integration",
+    "errorType": "integration",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T00:00:00.000Z",
+    "resolutionDate": "2025-09-08T00:10:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

@@ -1,0 +1,104 @@
+name: Check Mock Data
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Executar toda segunda-feira às 9h
+    - cron: '0 9 * * 1'
+
+jobs:
+  check-mock-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start Supabase
+        run: |
+          npx supabase start
+
+      - name: Wait for Supabase to be ready
+        run: |
+          sleep 30
+
+      - name: Check for mock data
+        run: npm run check:mock
+        env:
+          SUPABASE_URL: http://localhost:54321
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+      - name: Clean mock data if found
+        if: failure()
+        run: npm run clean:mock
+        env:
+          SUPABASE_URL: http://localhost:54321
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+      - name: Verify cleanup
+        run: npm run check:mock
+        env:
+          SUPABASE_URL: http://localhost:54321
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('Mock Data Check')
+            );
+
+            const commentBody = `## 🔍 Mock Data Check
+
+            **Status**: ✅ No mock data found
+
+            **Actions taken**:
+            - Checked for mock data patterns
+            - Verified data integrity
+            - Ensured system stability
+
+            **Next steps**:
+            - Continue with normal development
+            - Monitor for new mock data patterns
+            - Report any issues to the team`;
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }
+
+      - name: Stop Supabase
+        if: always()
+        run: npx supabase stop

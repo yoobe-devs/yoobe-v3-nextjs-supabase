@@ -1,0 +1,111 @@
+{
+  "id": "error-spec-err_1757360437518_broken_documentation_links",
+  "title": "Error Prevention: Links quebrados na documentação - Erros de sintaxe JSX",
+  "description": "Specification for preventing and handling: Várias páginas de documentação estavam retornando erro 500 devido a problemas de sintaxe JSX. As páginas /docs/SYSTEM_PROTECTION, /docs/WALLET_SYSTEM e /docs/USER_MANAGEMENT não estavam funcionando. O problema estava em imports faltando e erros de sintaxe JSX que impediam a compilação correta pelo Next.js.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "documentation",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437518_broken_documentation_links-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-prevention-0",
+          "description": "SEMPRE verificar imports antes de usar componentes",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-prevention-1",
+          "description": "SEMPRE validar sintaxe JSX antes de salvar arquivos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-prevention-2",
+          "description": "SEMPRE testar páginas após mudanças na documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-prevention-3",
+          "description": "SEMPRE usar linter para detectar erros de sintaxe",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-prevention-4",
+          "description": "SEMPRE manter backups de arquivos funcionais",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-prevention-5",
+          "description": "SEMPRE verificar se páginas carregam corretamente após mudanças",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437518_broken_documentation_links-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437518_broken_documentation_links-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437518_broken_documentation_links-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Problema: Import faltando\nimport { BookOpen } from 'lucide-react' // Faltava este import\n\n// Problema: Sintaxe JSX inválida\n// Arquivos com muitos erros de compilação JSX\n// Solução: Recriar com sintaxe válida",
+    "filePath": "app/docs/SYSTEM_PROTECTION/page.tsx, app/docs/WALLET_SYSTEM/page.tsx, app/docs/USER_MANAGEMENT/page.tsx",
+    "solution": "1) Corrigido import BookOpen faltando na página SYSTEM_PROTECTION, 2) Identificado que WALLET_SYSTEM e USER_MANAGEMENT tinham erros de sintaxe JSX, 3) Criado versões corrigidas das páginas com sintaxe JSX válida, 4) Substituído arquivos quebrados pelas versões funcionais, 5) Testado todas as páginas para confirmar funcionamento (200 OK), 6) Mantido backups dos arquivos originais para referência",
+    "relatedErrors": [
+      "err_1757360437513_documentation_system_update"
+    ],
+    "documentationLinks": [
+      "app/docs/SYSTEM_PROTECTION/page.tsx",
+      "app/docs/WALLET_SYSTEM/page.tsx",
+      "app/docs/USER_MANAGEMENT/page.tsx"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437518_broken_documentation_links",
+    "errorType": "documentation",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T23:56:00.000Z",
+    "resolutionDate": "2025-09-08T23:58:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

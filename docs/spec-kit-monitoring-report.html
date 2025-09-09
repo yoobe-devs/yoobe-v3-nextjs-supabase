@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spec Kit - Relatório de Monitoramento</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+      }
+      .header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+      .status-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 30px;
+      }
+      .status-card {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        border-left: 5px solid #3498db;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      }
+      .status-card.success {
+        border-left-color: #27ae60;
+      }
+      .status-card.warning {
+        border-left-color: #f39c12;
+      }
+      .status-card.error {
+        border-left-color: #e74c3c;
+      }
+      .status-card h3 {
+        margin: 0 0 15px 0;
+        color: #2c3e50;
+        font-size: 1.3em;
+      }
+      .status-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #ecf0f1;
+      }
+      .status-item:last-child {
+        border-bottom: none;
+      }
+      .status-label {
+        font-weight: 500;
+        color: #34495e;
+      }
+      .status-value {
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.9em;
+      }
+      .status-value.online {
+        background: #d5f4e6;
+        color: #27ae60;
+      }
+      .status-value.offline {
+        background: #fadbd8;
+        color: #e74c3c;
+      }
+      .status-value.pending {
+        background: #fef9e7;
+        color: #f39c12;
+      }
+      .info-section {
+        padding: 30px;
+        background: #f8f9fa;
+        border-top: 1px solid #ecf0f1;
+      }
+      .info-section h2 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+      .info-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+      .info-card h4 {
+        color: #3498db;
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+      }
+      .info-card p {
+        margin: 0;
+        color: #7f8c8d;
+        line-height: 1.5;
+      }
+      .command-box {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+      .timestamp {
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 0.9em;
+        padding: 20px;
+        border-top: 1px solid #ecf0f1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔧 Spec Kit Monitoramento</h1>
+        <p>Sistema de Gerenciamento de Especificações e Workflows</p>
+      </div>
+
+      <div class="status-grid">
+        <div class="status-card success">
+          <h3>📊 Status do Servidor</h3>
+          <div class="status-item">
+            <span class="status-label">Dashboard Web</span>
+            <span class="status-value online">ONLINE</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Porta 3456</span>
+            <span class="status-value online">ATIVA</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">MCP Server</span>
+            <span class="status-value online">CONECTADO</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Projeto</span>
+            <span class="status-value online">yoobe-v3</span>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h3>📋 Especificações</h3>
+          <div class="status-item">
+            <span class="status-label">Total de Specs</span>
+            <span class="status-value pending">0</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Em Progresso</span>
+            <span class="status-value pending">0</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Aprovadas</span>
+            <span class="status-value pending">0</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Pendentes</span>
+            <span class="status-value pending">0</span>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h3>🔗 Integração MCP</h3>
+          <div class="status-item">
+            <span class="status-label">Spec Kit</span>
+            <span class="status-value online">ATIVO</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">MCP Docker</span>
+            <span class="status-value online">ATIVO</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Gemini MCP</span>
+            <span class="status-value online">ATIVO</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Context7</span>
+            <span class="status-value online">ATIVO</span>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h3>📈 Atualizações Recentes</h3>
+          <div class="status-item">
+            <span class="status-label">Última Atualização</span>
+            <span class="status-value pending">Agora</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Configuração</span>
+            <span class="status-value online">COMPLETA</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Dashboard</span>
+            <span class="status-value online">ACESSÍVEL</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Regras</span>
+            <span class="status-value online">IMPLEMENTADAS</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section">
+        <h2>📚 Informações Úteis do Spec Kit</h2>
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>🌐 Acesso ao Dashboard</h4>
+            <p>O dashboard do Spec Kit está rodando em:</p>
+            <div class="command-box">http://localhost:3456</div>
+            <p>
+              Interface web completa para gerenciar especificações, tarefas e
+              workflows.
+            </p>
+          </div>
+
+          <div class="info-card">
+            <h4>⚙️ Comandos Disponíveis</h4>
+            <p>Comandos principais do Spec Kit:</p>
+            <div class="command-box">
+              /spec create - Criar especificações<br />
+              /spec track - Rastrear progresso<br />
+              /spec approve - Gerenciar aprovações<br />
+              /spec bug - Relatórios de bugs<br />
+              /spec docs - Atualizar documentação
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h4>🔧 Configuração Atual</h4>
+            <p>Servidor MCP configurado com:</p>
+            <div class="command-box">
+              Projeto: yoobe-v3<br />
+              Porta: 3456<br />
+              Auto-start: Habilitado<br />
+              Modo: MCP + Dashboard
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h4>📊 Funcionalidades</h4>
+            <p>Recursos disponíveis:</p>
+            <ul style="margin: 0; padding-left: 20px; color: #7f8c8d">
+              <li>Workflows estruturados</li>
+              <li>Rastreamento de tarefas</li>
+              <li>Sistema de aprovação</li>
+              <li>Relatórios de bugs</li>
+              <li>Documentação automática</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h4>🔄 Integração com Plataforma</h4>
+            <p>Integrado com:</p>
+            <ul style="margin: 0; padding-left: 20px; color: #7f8c8d">
+              <li>Sistema de documentação</li>
+              <li>Base de conhecimento de erros</li>
+              <li>Workflows de desenvolvimento</li>
+              <li>Auditoria e compliance</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h4>📝 Próximos Passos</h4>
+            <p>Para começar a usar:</p>
+            <ol style="margin: 0; padding-left: 20px; color: #7f8c8d">
+              <li>Acesse o dashboard</li>
+              <li>Crie sua primeira especificação</li>
+              <li>Configure workflows</li>
+              <li>Integre com desenvolvimento</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+
+      <div class="timestamp">
+        Última atualização: <span id="timestamp"></span>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('timestamp').textContent =
+        new Date().toLocaleString('pt-BR')
+    </script>
+  </body>
+</html>
+

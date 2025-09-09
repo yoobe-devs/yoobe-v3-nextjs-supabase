@@ -49,7 +49,7 @@ export async function POST(
     if (error || !user)
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
     const role = (user.user_metadata as any)?.role
-    if (!['admin', 'admin_global', 'superadmin'].includes(role)) {
+    if (!['admin', 'admin_global', 'superadmin', 'manager'].includes($1)) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
     const clientId = params.clientId

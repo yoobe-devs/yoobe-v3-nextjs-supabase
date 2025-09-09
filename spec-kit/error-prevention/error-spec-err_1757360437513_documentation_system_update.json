@@ -1,0 +1,111 @@
+{
+  "id": "error-spec-err_1757360437513_documentation_system_update",
+  "title": "Error Prevention: Atualização completa do sistema de documentação com Sistema de Proteção",
+  "description": "Specification for preventing and handling: Sistema de documentação precisava ser atualizado para incluir o novo Sistema de Proteção e Monitoramento, corrigir links quebrados e integrar com a área de desenvolvedores. Links estavam quebrados e a documentação não estava centralizada.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "documentation",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437513_documentation_system_update-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-prevention-0",
+          "description": "SEMPRE atualizar sistema de documentação quando novos sistemas são implementados",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-prevention-1",
+          "description": "SEMPRE verificar links após mudanças na estrutura de documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-prevention-2",
+          "description": "SEMPRE integrar novos sistemas com áreas de desenvolvedores",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-prevention-3",
+          "description": "SEMPRE testar todos os links de documentação após atualizações",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-prevention-4",
+          "description": "SEMPRE manter consistência entre diferentes áreas de documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-prevention-5",
+          "description": "SEMPRE usar MCPs para backup e atualização segura da documentação",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437513_documentation_system_update-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437513_documentation_system_update-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437513_documentation_system_update-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Nova página de documentação\nurl: '/docs/SYSTEM_PROTECTION'\n\n// Links atualizados na área de desenvolvedores\n<Link href=\"/admin/system-monitoring\">\n  Ver Monitoramento →\n</Link>\n\n// Navegação corrigida\nfeatured: true,\ncategory: 'Segurança'",
+    "filePath": "app/docs/SYSTEM_PROTECTION/page.tsx, app/docs/components/DocsNavigation.tsx, app/docs/page.tsx, app/admin/changelog/page.tsx, app/admin/configuracoes/page.tsx, app/admin/documentacao/page.tsx",
+    "solution": "1) Criado página completa do Sistema de Proteção em /docs/SYSTEM_PROTECTION, 2) Atualizado DocsNavigation.tsx para incluir o novo sistema como destaque, 3) Corrigido duplicação do WALLET_SYSTEM na navegação, 4) Atualizado página principal de docs para incluir o sistema, 5) Integrado com área de desenvolvedores no changelog e configurações, 6) Adicionado links para monitoramento em tempo real, 7) Documentação agora está centralizada e todos os links funcionando",
+    "relatedErrors": [
+      "err_1757360437512_system_protection_implementation"
+    ],
+    "documentationLinks": [
+      "docs/SYSTEM_PROTECTION_GUIDE.md",
+      "app/docs/SYSTEM_PROTECTION/page.tsx",
+      "app/docs/components/DocsNavigation.tsx"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437513_documentation_system_update",
+    "errorType": "documentation",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T23:10:00.000Z",
+    "resolutionDate": "2025-09-08T23:15:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

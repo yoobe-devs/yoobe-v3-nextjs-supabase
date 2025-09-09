@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spec Kit - Status Simples</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f5f5f5;
+        color: #333;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .header {
+        background: #3498db;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .status-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .status-item:last-child {
+        border-bottom: none;
+      }
+      .status-label {
+        font-weight: bold;
+      }
+      .status-value {
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9em;
+      }
+      .online {
+        background: #d5f4e6;
+        color: #27ae60;
+      }
+      .offline {
+        background: #fadbd8;
+        color: #e74c3c;
+      }
+      .warning {
+        background: #fef9e7;
+        color: #f39c12;
+      }
+      .section {
+        margin: 20px 0;
+        padding: 15px;
+        border-left: 4px solid #3498db;
+        background: #f8f9fa;
+      }
+      .section h3 {
+        margin-top: 0;
+        color: #2c3e50;
+      }
+      .command {
+        background: #2c3e50;
+        color: white;
+        padding: 10px;
+        border-radius: 4px;
+        font-family: monospace;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔧 Spec Kit - Status Simples</h1>
+        <p>Diagnóstico rápido do sistema</p>
+      </div>
+
+      <div class="section">
+        <h3>📊 Status do Servidor</h3>
+        <div class="status-item">
+          <span class="status-label">Dashboard Web</span>
+          <span class="status-value online">ONLINE</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Porta 3456</span>
+          <span class="status-value online">ATIVA</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Processo Node</span>
+          <span class="status-value online">RODANDO</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">API Specs</span>
+          <span class="status-value online">FUNCIONANDO</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>🌐 URLs de Acesso</h3>
+        <div class="status-item">
+          <span class="status-label">Dashboard Principal</span>
+          <span class="status-value online">http://localhost:3456</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">API Especificações</span>
+          <span class="status-value online"
+            >http://localhost:3456/api/specs</span
+          >
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>🔧 Comandos Úteis</h3>
+        <div class="command">
+          # Verificar se está rodando<br />ps aux | grep spec-workflow
+        </div>
+        <div class="command">
+          # Testar dashboard<br />curl -s http://localhost:3456/ | head -5
+        </div>
+        <div class="command">
+          # Reiniciar se necessário<br />pkill -f spec-workflow-mcp
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>⚠️ Problema Identificado</h3>
+        <p><strong>Dashboard Completo não disponível</strong></p>
+        <p>
+          O servidor está funcionando, mas a interface pode ter problemas de
+          JavaScript.
+        </p>
+
+        <h4>Soluções:</h4>
+        <ol>
+          <li>Acesse http://localhost:3456 no navegador</li>
+          <li>Pressione F12 para ver erros no console</li>
+          <li>Limpe o cache (Ctrl+Shift+R)</li>
+          <li>Use comandos MCP diretamente no Cursor</li>
+        </ol>
+      </div>
+
+      <div class="section">
+        <h3>✅ Status Geral</h3>
+        <div class="status-item">
+          <span class="status-label">Servidor MCP</span>
+          <span class="status-value online">FUNCIONANDO</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">API REST</span>
+          <span class="status-value online">FUNCIONANDO</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Dashboard Web</span>
+          <span class="status-value warning">PROBLEMA DE INTERFACE</span>
+        </div>
+        <div class="status-item">
+          <span class="status-label">Comandos MCP</span>
+          <span class="status-value online">DISPONÍVEIS</span>
+        </div>
+      </div>
+
+      <div
+        style="
+          text-align: center;
+          margin-top: 30px;
+          color: #7f8c8d;
+          font-size: 0.9em;
+        "
+      >
+        Atualizado em: <span id="timestamp"></span>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('timestamp').textContent =
+        new Date().toLocaleString('pt-BR')
+    </script>
+  </body>
+</html>
+

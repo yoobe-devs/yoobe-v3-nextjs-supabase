@@ -1,13 +1,19 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { 
-  ShoppingCart, 
-  Search, 
+import { useState, useEffect } from 'react'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import {
+  ShoppingCart,
+  Search,
   Filter,
   Eye,
   Download,
@@ -15,9 +21,13 @@ import {
   User,
   Store,
   Package,
-  DollarSign
-} from "lucide-react"
-import { YoobeLogo } from "@/components/ui/yoobe-logo"
+  DollarSign,
+  Plus,
+  FileText,
+} from 'lucide-react'
+import { YoobeLogo } from '@/components/ui/yoobe-logo'
+import { EmptyState } from '@/components/ui/empty-state'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 
 interface Order {
   id: string
@@ -33,76 +43,102 @@ interface Order {
   updated_at: string
 }
 
-const mockOrders: Order[] = [
-  {
-    id: "1",
-    order_number: "ORD-2024-001",
-    customer_name: "João Silva",
-    customer_email: "joao.silva@jointecnologia.com",
-    company_name: "Join Tecnologia",
-    store_name: "Loja Corporativa Join",
-    status: "delivered",
-    total_amount: 150.00,
-    items_count: 2,
-    created_at: "2024-01-15T10:30:00Z",
-    updated_at: "2024-01-18T14:20:00Z"
-  },
-  {
-    id: "2",
-    order_number: "ORD-2024-002",
-    customer_name: "Maria Oliveira",
-    customer_email: "maria.oliveira@techcorp.com",
-    company_name: "TechCorp Solutions",
-    store_name: "Loja TechCorp",
-    status: "processing",
-    total_amount: 200.00,
-    items_count: 3,
-    created_at: "2024-01-16T09:15:00Z",
-    updated_at: "2024-01-17T11:45:00Z"
-  },
-  {
-    id: "3",
-    order_number: "ORD-2024-003",
-    customer_name: "Pedro Santos",
-    customer_email: "pedro.santos@jointecnologia.com",
-    company_name: "Join Tecnologia",
-    store_name: "Loja Corporativa Join",
-    status: "pending",
-    total_amount: 100.00,
-    items_count: 1,
-    created_at: "2024-01-17T16:20:00Z",
-    updated_at: "2024-01-17T16:20:00Z"
-  },
-  {
-    id: "4",
-    order_number: "ORD-2024-004",
-    customer_name: "Ana Costa",
-    customer_email: "ana.costa@techcorp.com",
-    company_name: "TechCorp Solutions",
-    store_name: "Loja TechCorp",
-    status: "shipped",
-    total_amount: 300.00,
-    items_count: 4,
-    created_at: "2024-01-14T13:45:00Z",
-    updated_at: "2024-01-16T08:30:00Z"
-  }
-]
-
 export default function AdminPedidosPage() {
-  const [orders, setOrders] = useState<Order[]>(mockOrders)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedStatus, setSelectedStatus] = useState("all")
-  const [selectedCompany, setSelectedCompany] = useState("all")
+  const [orders, setOrders] = useState<Order[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedCompany, setSelectedCompany] = useState('all')
 
-  const statuses = ["all", "pending", "processing", "shipped", "delivered", "cancelled"]
-  const companies = ["all", "Join Tecnologia", "TechCorp Solutions", "Inovação Digital"]
+  const statuses = [
+    'all',
+    'pending',
+    'processing',
+    'shipped',
+    'delivered',
+    'cancelled',
+  ]
+  const [companies, setCompanies] = useState<string[]>(['all'])
+
+  // Carregar dados reais
+  useEffect(() => {
+    const loadOrders = async () => {
+      try {
+        setLoading(true)
+        const supabase = createClientComponentClient()
+
+        // Carregar pedidos reais
+        const { data: ordersData, error: ordersError } = await supabase
+          .from('orders')
+          .select(
+            `
+            id,
+            order_number,
+            status,
+            total_amount,
+            created_at,
+            updated_at,
+            profiles:user_id (
+              name,
+              email
+            ),
+            stores:store_id (
+              name,
+              companies:company_id (
+                name
+              )
+            )
+          `
+          )
+          .order('created_at', { ascending: false })
+          .limit(100)
+
+        if (ordersError) {
+          console.error('Erro ao carregar pedidos:', ordersError)
+          return
+        }
+
+        // Mapear dados para o formato esperado
+        const mappedOrders: Order[] = (ordersData || []).map((order: any) => ({
+          id: order.id,
+          order_number: order.order_number || `ORD-${order.id.slice(0, 8)}`,
+          customer_name: order.profiles?.name || 'Cliente',
+          customer_email: order.profiles?.email || '',
+          company_name: order.stores?.companies?.name || 'Empresa',
+          store_name: order.stores?.name || 'Loja',
+          status: order.status || 'pending',
+          total_amount: Number(order.total_amount || 0),
+          items_count: 1, // Será calculado separadamente se necessário
+          created_at: order.created_at,
+          updated_at: order.updated_at,
+        }))
+
+        setOrders(mappedOrders)
+
+        // Carregar empresas únicas para filtro
+        const uniqueCompanies = Array.from(
+          new Set(mappedOrders.map(o => o.company_name))
+        )
+        setCompanies(['all', ...uniqueCompanies])
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadOrders()
+  }, [])
 
   const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         order.customer_email.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = selectedStatus === "all" || order.status === selectedStatus
-    const matchesCompany = selectedCompany === "all" || order.company_name === selectedCompany
+    const matchesSearch =
+      order.order_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.customer_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.customer_email.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesStatus =
+      selectedStatus === 'all' || order.status === selectedStatus
+    const matchesCompany =
+      selectedCompany === 'all' || order.company_name === selectedCompany
     return matchesSearch && matchesStatus && matchesCompany
   })
 
@@ -129,13 +165,75 @@ export default function AdminPedidosPage() {
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
-  const totalRevenue = orders.reduce((sum, order) => sum + order.total_amount, 0)
+  const totalRevenue = orders.reduce(
+    (sum, order) => sum + order.total_amount,
+    0
+  )
   const totalOrders = orders.length
   const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="flex items-center gap-3">
+          <YoobeLogo size={40} />
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Gerenciar Pedidos
+            </h1>
+            <p className="text-gray-600">Carregando pedidos...</p>
+          </div>
+        </div>
+        <div className="flex items-center justify-center py-20">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    )
+  }
+
+  // Tela de primeiro registro quando não há pedidos
+  if (!loading && orders.length === 0) {
+    return (
+      <div className="p-6 space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <YoobeLogo size={40} />
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Gerenciar Pedidos
+              </h1>
+              <p className="text-gray-600">
+                Gerencie todos os pedidos do sistema
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Empty State */}
+        <EmptyState
+          icon={ShoppingCart}
+          title="Nenhum pedido encontrado"
+          description="Quando os clientes começarem a fazer pedidos, eles aparecerão aqui. Você pode acompanhar o status, gerenciar entregas e analisar o desempenho."
+          primaryAction={{
+            label: 'Criar Primeiro Pedido',
+            onClick: () => console.log('Criar pedido'),
+            icon: Plus,
+          }}
+          secondaryAction={{
+            label: 'Ver Documentação',
+            onClick: () => console.log('Ver docs'),
+            icon: FileText,
+          }}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -144,16 +242,20 @@ export default function AdminPedidosPage() {
         <div className="flex items-center gap-3">
           <YoobeLogo size={40} />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Gerenciar Pedidos</h1>
-            <p className="text-gray-600">Gerencie todos os pedidos do sistema</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Gerenciar Pedidos
+            </h1>
+            <p className="text-gray-600">
+              Gerencie todos os pedidos do sistema
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" disabled={orders.length === 0}>
             <Download className="h-4 w-4 mr-2" />
             Exportar
           </Button>
-          <Button>
+          <Button disabled={orders.length === 0}>
             <Eye className="h-4 w-4 mr-2" />
             Ver Relatórios
           </Button>
@@ -200,7 +302,9 @@ export default function AdminPedidosPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pedidos Pendentes</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Pedidos Pendentes
+            </CardTitle>
             <Calendar className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
@@ -216,7 +320,9 @@ export default function AdminPedidosPage() {
       <Card>
         <CardHeader>
           <CardTitle>Filtros</CardTitle>
-          <CardDescription>Filtre os pedidos por número, cliente, empresa ou status</CardDescription>
+          <CardDescription>
+            Filtre os pedidos por número, cliente, empresa ou status
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
@@ -226,7 +332,7 @@ export default function AdminPedidosPage() {
                 <Input
                   placeholder="Buscar por número do pedido, cliente ou email..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
@@ -234,22 +340,28 @@ export default function AdminPedidosPage() {
             <div className="flex gap-2">
               <select
                 value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
+                onChange={e => setSelectedStatus(e.target.value)}
                 className="border border-gray-300 rounded-md px-3 py-2"
               >
                 {statuses.map(status => (
                   <option key={status} value={status}>
-                    {status === 'all' ? 'Todos os Status' : 
-                     status === 'pending' ? 'Pendente' :
-                     status === 'processing' ? 'Processando' :
-                     status === 'shipped' ? 'Enviado' :
-                     status === 'delivered' ? 'Entregue' : 'Cancelado'}
+                    {status === 'all'
+                      ? 'Todos os Status'
+                      : status === 'pending'
+                        ? 'Pendente'
+                        : status === 'processing'
+                          ? 'Processando'
+                          : status === 'shipped'
+                            ? 'Enviado'
+                            : status === 'delivered'
+                              ? 'Entregue'
+                              : 'Cancelado'}
                   </option>
                 ))}
               </select>
               <select
                 value={selectedCompany}
-                onChange={(e) => setSelectedCompany(e.target.value)}
+                onChange={e => setSelectedCompany(e.target.value)}
                 className="border border-gray-300 rounded-md px-3 py-2"
               >
                 {companies.map(company => (
@@ -271,19 +383,26 @@ export default function AdminPedidosPage() {
       <Card>
         <CardHeader>
           <CardTitle>Pedidos ({filteredOrders.length})</CardTitle>
-          <CardDescription>Lista de todos os pedidos do sistema</CardDescription>
+          <CardDescription>
+            Lista de todos os pedidos do sistema
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {filteredOrders.map((order) => (
-              <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+            {filteredOrders.map(order => (
+              <div
+                key={order.id}
+                className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50"
+              >
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col items-center justify-center w-12 h-12 bg-blue-100 rounded-lg">
                     <ShoppingCart className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900">{order.order_number}</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        {order.order_number}
+                      </h3>
                       {getStatusBadge(order.status)}
                     </div>
                     <div className="flex items-center gap-4 mt-1">
@@ -307,8 +426,12 @@ export default function AdminPedidosPage() {
                 </div>
                 <div className="flex items-center gap-4">
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">R$ {order.total_amount.toFixed(2)}</p>
-                    <p className="text-sm text-gray-500">{order.customer_email}</p>
+                    <p className="font-semibold text-gray-900">
+                      R$ {order.total_amount.toFixed(2)}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {order.customer_email}
+                    </p>
                   </div>
                   <div className="flex gap-1">
                     <Button variant="outline" size="sm">
@@ -327,5 +450,3 @@ export default function AdminPedidosPage() {
     </div>
   )
 }
-
-

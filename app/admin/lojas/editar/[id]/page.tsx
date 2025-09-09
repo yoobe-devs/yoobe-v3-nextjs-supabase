@@ -1,20 +1,26 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ImageUpload } from '@/components/ui/image-upload'
-import { 
-  ArrowLeft, 
-  Save, 
-  Loader2,
-  Store,
-  AlertCircle
-} from 'lucide-react'
+import { ArrowLeft, Save, Loader2, Store, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Company {
@@ -44,7 +50,20 @@ export default function EditLojaPage() {
     name: '',
     company_id: '',
     status: 'active',
-    logo_url: ''
+    logo_url: '',
+    description: '',
+    domain: '',
+    primary_color: '#3B82F6',
+    secondary_color: '#1E40AF',
+    contact_email: '',
+    contact_phone: '',
+    address: '',
+    features: {
+      points_enabled: true,
+      cash_enabled: true,
+      mixed_payment: true,
+      auto_activation: false,
+    },
   })
 
   useEffect(() => {
@@ -60,16 +79,29 @@ export default function EditLojaPage() {
     try {
       setLoading(true)
       const response = await fetch(`/api/stores/${id}`)
-      
+
       if (response.ok) {
         const data = await response.json()
         const store = data.store
-        
+
         setFormData({
           name: store.name || '',
           company_id: store.company_id || '',
           status: store.status || 'active',
-          logo_url: store.logo_url || ''
+          logo_url: store.logo_url || '',
+          description: store.description || '',
+          domain: store.domain || '',
+          primary_color: store.primary_color || '#3B82F6',
+          secondary_color: store.secondary_color || '#1E40AF',
+          contact_email: store.contact_email || '',
+          contact_phone: store.contact_phone || '',
+          address: store.address || '',
+          features: {
+            points_enabled: store.features?.points_enabled ?? true,
+            cash_enabled: store.features?.cash_enabled ?? true,
+            mixed_payment: store.features?.mixed_payment ?? true,
+            auto_activation: store.features?.auto_activation ?? false,
+          },
         })
       } else {
         throw new Error('Loja não encontrada')
@@ -98,13 +130,13 @@ export default function EditLojaPage() {
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!formData.name || !formData.company_id) {
       toast.error('Preencha todos os campos obrigatórios')
       return
@@ -117,7 +149,15 @@ export default function EditLojaPage() {
         name: formData.name,
         company_id: formData.company_id,
         status: formData.status,
-        logo_url: formData.logo_url || null
+        logo_url: formData.logo_url || null,
+        description: formData.description,
+        domain: formData.domain,
+        primary_color: formData.primary_color,
+        secondary_color: formData.secondary_color,
+        contact_email: formData.contact_email,
+        contact_phone: formData.contact_phone,
+        address: formData.address,
+        features: formData.features,
       }
 
       const response = await fetch(`/api/stores/${id}`, {
@@ -138,7 +178,9 @@ export default function EditLojaPage() {
       }
     } catch (error) {
       console.error('Erro ao atualizar loja:', error)
-      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar loja')
+      toast.error(
+        error instanceof Error ? error.message : 'Erro ao atualizar loja'
+      )
     } finally {
       setSubmitting(false)
     }
@@ -164,8 +206,8 @@ export default function EditLojaPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             onClick={() => router.push('/admin/lojas')}
             className="flex items-center gap-2"
           >
@@ -195,7 +237,7 @@ export default function EditLojaPage() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      onChange={e => handleInputChange('name', e.target.value)}
                       placeholder="Ex: Loja Corporativa Join"
                       required
                     />
@@ -206,14 +248,16 @@ export default function EditLojaPage() {
                     <Label htmlFor="company">Empresa *</Label>
                     <Select
                       value={formData.company_id}
-                      onValueChange={(value) => handleInputChange('company_id', value)}
+                      onValueChange={value =>
+                        handleInputChange('company_id', value)
+                      }
                       required
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecione uma empresa" />
                       </SelectTrigger>
                       <SelectContent>
-                        {companies.map((company) => (
+                        {companies.map(company => (
                           <SelectItem key={company.id} value={company.id}>
                             {company.name}
                           </SelectItem>
@@ -227,7 +271,9 @@ export default function EditLojaPage() {
                     <Label htmlFor="status">Status</Label>
                     <Select
                       value={formData.status}
-                      onValueChange={(value) => handleInputChange('status', value)}
+                      onValueChange={value =>
+                        handleInputChange('status', value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -238,6 +284,122 @@ export default function EditLojaPage() {
                         <SelectItem value="maintenance">Manutenção</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  {/* Descrição */}
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Descrição</Label>
+                    <textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={e =>
+                        handleInputChange('description', e.target.value)
+                      }
+                      placeholder="Descrição da loja..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* Domínio */}
+                  <div className="space-y-2">
+                    <Label htmlFor="domain">Domínio</Label>
+                    <Input
+                      id="domain"
+                      value={formData.domain}
+                      onChange={e =>
+                        handleInputChange('domain', e.target.value)
+                      }
+                      placeholder="minhaloja.com"
+                    />
+                  </div>
+
+                  {/* Cores */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="primary_color">Cor Primária</Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="primary_color"
+                          type="color"
+                          value={formData.primary_color}
+                          onChange={e =>
+                            handleInputChange('primary_color', e.target.value)
+                          }
+                          className="w-16 h-10"
+                        />
+                        <Input
+                          value={formData.primary_color}
+                          onChange={e =>
+                            handleInputChange('primary_color', e.target.value)
+                          }
+                          placeholder="#3B82F6"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="secondary_color">Cor Secundária</Label>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          id="secondary_color"
+                          type="color"
+                          value={formData.secondary_color}
+                          onChange={e =>
+                            handleInputChange('secondary_color', e.target.value)
+                          }
+                          className="w-16 h-10"
+                        />
+                        <Input
+                          value={formData.secondary_color}
+                          onChange={e =>
+                            handleInputChange('secondary_color', e.target.value)
+                          }
+                          placeholder="#1E40AF"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Contato */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_email">Email de Contato</Label>
+                      <Input
+                        id="contact_email"
+                        type="email"
+                        value={formData.contact_email}
+                        onChange={e =>
+                          handleInputChange('contact_email', e.target.value)
+                        }
+                        placeholder="contato@loja.com"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contact_phone">Telefone</Label>
+                      <Input
+                        id="contact_phone"
+                        value={formData.contact_phone}
+                        onChange={e =>
+                          handleInputChange('contact_phone', e.target.value)
+                        }
+                        placeholder="(11) 99999-9999"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Endereço */}
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Endereço</Label>
+                    <textarea
+                      id="address"
+                      value={formData.address}
+                      onChange={e =>
+                        handleInputChange('address', e.target.value)
+                      }
+                      placeholder="Endereço completo da loja..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={2}
+                    />
                   </div>
 
                   {/* Submit */}
@@ -278,9 +440,7 @@ export default function EditLojaPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Logo da Loja</CardTitle>
-                <CardDescription>
-                  Atualize o logo da loja
-                </CardDescription>
+                <CardDescription>Atualize o logo da loja</CardDescription>
               </CardHeader>
               <CardContent>
                 <ImageUpload
@@ -305,7 +465,7 @@ export default function EditLojaPage() {
                 <p>• Campos marcados com * são obrigatórios</p>
                 <p>• O domínio será gerado automaticamente</p>
                 <p>• Logo é opcional</p>
-                <p>• Clique em "Salvar" para aplicar as mudanças</p>
+                <p>• Clique em &quot;Salvar&quot; para aplicar as mudanças</p>
               </CardContent>
             </Card>
           </div>

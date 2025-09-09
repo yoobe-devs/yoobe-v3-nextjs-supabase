@@ -6,7 +6,7 @@ import { cookies } from 'next/headers'
 export async function POST(request: NextRequest) {
   try {
     const supabase = createRouteHandlerClient({ cookies })
-    
+
     const body = await request.json()
     const { store_id, customer_info, items } = body
 
@@ -22,7 +22,10 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (storeError || !store) {
-      return NextResponse.json({ error: 'Loja não encontrada' }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Loja não encontrada' },
+        { status: 404 }
+      )
     }
 
     // Verificar se o usuário já existe
@@ -46,14 +49,17 @@ export async function POST(request: NextRequest) {
           role: 'user',
           company_id: store.company_id,
           store_id: store_id,
-          status: 'active'
+          status: 'active',
         })
         .select('id')
         .single()
 
       if (createUserError) {
         console.error('Erro ao criar usuário:', createUserError)
-        return NextResponse.json({ error: 'Erro ao criar usuário' }, { status: 500 })
+        return NextResponse.json(
+          { error: 'Erro ao criar usuário' },
+          { status: 500 }
+        )
       }
 
       userId = newUser.id
@@ -77,10 +83,20 @@ export async function POST(request: NextRequest) {
           product_id: item.product_id,
           quantity: item.quantity,
           unit_price: product.price,
-          points_cost: product.points_cost
+          points_cost: product.points_cost,
         })
       }
     }
+
+    // Gerar número do pedido e código de rastreamento
+    const orderNumber = `ORD-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)
+      .toUpperCase()}`
+    const trackingCode = `TRK-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)
+      .toUpperCase()}`
 
     // Criar pedido
     const { data: order, error: orderError } = await supabase
@@ -93,36 +109,44 @@ export async function POST(request: NextRequest) {
         points_used: 0,
         payment_method: 'money',
         status: 'pending',
-        shipping_address: customer_info.address || ''
+        shipping_address: customer_info.address || '',
+        order_number: orderNumber,
+        tracking_code: trackingCode,
       })
-      .select('id')
+      .select('id, order_number, tracking_code')
       .single()
 
     if (orderError) {
       console.error('Erro ao criar pedido:', orderError)
-      return NextResponse.json({ error: 'Erro ao criar pedido' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Erro ao criar pedido' },
+        { status: 500 }
+      )
     }
 
     // Criar itens do pedido
     for (const item of orderItems) {
-      await supabase
-        .from('order_items')
-        .insert({
-          order_id: order.id,
-          product_id: item.product_id,
-          quantity: item.quantity,
-          unit_price: item.unit_price,
-          points_cost: item.points_cost
-        })
+      await supabase.from('order_items').insert({
+        order_id: order.id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        points_cost: item.points_cost,
+      })
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Pedido criado com sucesso',
       order_id: order.id,
-      total_amount: totalAmount
+      order_number: order.order_number,
+      tracking_code: order.tracking_code,
+      total_amount: totalAmount,
     })
   } catch (error) {
     console.error('Erro na API de checkout:', error)
-    return NextResponse.json({ error: 'Erro interno do servidor' }, { status: 500 })
+    return NextResponse.json(
+      { error: 'Erro interno do servidor' },
+      { status: 500 }
+    )
   }
 }

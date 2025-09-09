@@ -1,0 +1,114 @@
+{
+  "id": "error-spec-err_1757360437519_system_apis_not_working",
+  "title": "Error Prevention: APIs de sistema não funcionando - Erro de autenticação",
+  "description": "Specification for preventing and handling: As APIs /api/system/health e /api/system/metrics estavam retornando erro 500 devido a problemas de autenticação. O sistema estava tentando usar requireUser() que falhava, impedindo o acesso às APIs de monitoramento. Isso afetava a capacidade de monitorar a saúde do sistema.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "api",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437519_system_apis_not_working-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-prevention-0",
+          "description": "SEMPRE criar APIs públicas para health checks básicos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-prevention-1",
+          "description": "SEMPRE implementar sistema de monitoramento automático",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-prevention-2",
+          "description": "SEMPRE ter scripts de recuperação automática",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-prevention-3",
+          "description": "SEMPRE testar APIs de sistema após mudanças",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-prevention-4",
+          "description": "SEMPRE manter logs de monitoramento",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-prevention-5",
+          "description": "SEMPRE ter estratégias de recuperação definidas",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437519_system_apis_not_working-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437519_system_apis_not_working-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437519_system_apis_not_working-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// APIs públicas sem autenticação\nGET /api/system/health-public\nGET /api/system/metrics-public\nGET /api/system/status\n\n// Scripts de monitoramento\nnpm run health\nnpm run status\nnpm run monitor",
+    "filePath": "app/api/system/health-public/route.ts, app/api/system/metrics-public/route.ts, app/api/system/status/route.ts, lib/system-monitor.ts, scripts/ensure-system-availability.js",
+    "solution": "1) Criado APIs públicas /api/system/health-public e /api/system/metrics-public sem autenticação, 2) Implementado sistema de monitoramento automático (SystemMonitor) com verificações periódicas, 3) Criado script de disponibilidade (ensure-system-availability.js) para manter sistema sempre ativo, 4) Adicionado API /api/system/status para status completo do monitoramento, 5) Configurado scripts npm para facilitar monitoramento (npm run health, npm run status), 6) Atualizado documentação com novas APIs públicas",
+    "relatedErrors": [
+      "err_1757360437518_broken_documentation_links"
+    ],
+    "documentationLinks": [
+      "app/api/system/health-public/route.ts",
+      "app/api/system/metrics-public/route.ts",
+      "app/api/system/status/route.ts",
+      "lib/system-monitor.ts",
+      "scripts/ensure-system-availability.js",
+      "system-monitor.config.js"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437519_system_apis_not_working",
+    "errorType": "api",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T23:59:00.000Z",
+    "resolutionDate": "2025-09-09T01:22:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

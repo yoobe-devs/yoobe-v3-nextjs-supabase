@@ -1,0 +1,95 @@
+{
+  "id": "error-spec-err_1757360437503_redirect_system_fix",
+  "title": "Error Prevention: Sistema de redirecionamento inconsistente e fragmentado",
+  "description": "Specification for preventing and handling: Múltiplos problemas de redirecionamento: emails incorretos nos callbacks, middleware não tratando /choose-environment como público, falta de sistema unificado baseado em roles",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "navigation",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437503_redirect_system_fix-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-prevention-0",
+          "description": "Sempre usar sistema centralizado de redirecionamento baseado em roles",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-prevention-1",
+          "description": "Manter mapeamento de emails de teste atualizado",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-prevention-2",
+          "description": "Testar fluxos de autenticação após mudanças",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-prevention-3",
+          "description": "Usar middleware para controlar rotas públicas vs protegidas",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437503_redirect_system_fix-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437503_redirect_system_fix-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437503_redirect_system_fix-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "export const ROLE_DASHBOARDS = {\n  admin: '/admin/dashboard',\n  manager: '/gestor/dashboard', \n  user: '/funcionario/dashboard'\n} as const",
+    "filePath": "lib/auth-redirects.ts",
+    "solution": "Criado sistema unificado de redirecionamento em lib/auth-redirects.ts com mapeamento de roles para dashboards, atualizado middleware.ts para incluir /choose-environment como rota pública, corrigido emails nos callbacks para usar admin@yoobe.com, gestor@yoobe.com, funcionario@yoobe.com",
+    "relatedErrors": [],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437503_redirect_system_fix",
+    "errorType": "navigation",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T21:25:00.000Z",
+    "resolutionDate": "2025-09-08T21:30:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

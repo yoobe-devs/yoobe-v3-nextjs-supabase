@@ -1,127 +1,126 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/components/auth/auth-provider-simple"
-import { YoobeLogo } from "@/components/ui/yoobe-logo"
-import { 
-  LayoutDashboard, 
-  Building2, 
-  Users, 
-  Package, 
-  ShoppingCart, 
-  Settings, 
-  LogOut, 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/components/auth/auth-provider-simple'
+import { YoobeLogo } from '@/components/ui/yoobe-logo'
+import {
+  LayoutDashboard,
+  Building2,
+  Users,
+  Package,
+  ShoppingCart,
+  Settings,
+  LogOut,
   HelpCircle,
   BarChart3,
   Store,
   FileText,
   GitBranch,
   BookOpen,
-  Code
+  Code,
 } from 'lucide-react'
-import { ChangelogNotification } from "@/components/ui/changelog-notification"
 
 const mainNav = [
   {
-    title: "Dashboard",
-    href: "/admin/dashboard",
-    icon: LayoutDashboard
+    title: 'Dashboard',
+    href: '/admin/dashboard',
+    icon: LayoutDashboard,
   },
   {
-    title: "Empresas",
-    href: "/admin/empresas",
-    icon: Building2
+    title: 'Empresas',
+    href: '/admin/empresas',
+    icon: Building2,
   },
   {
-    title: "Usuários",
-    href: "/admin/usuarios",
-    icon: Users
+    title: 'Usuários',
+    href: '/admin/usuarios',
+    icon: Users,
   },
   {
-    title: "Ativação de Produtos",
-    href: "/admin/produtos",
+    title: 'Ativação de Produtos',
+    href: '/admin/produtos',
     icon: Package,
     items: [
       {
-        title: "Gerenciar Produtos",
-        href: "/admin/produtos",
-        description: "Produtos das empresas"
+        title: 'Gerenciar Produtos',
+        href: '/admin/produtos',
+        description: 'Produtos das empresas',
       },
       {
-        title: "Catálogo Base",
-        href: "/admin/produtos/catalogo-base",
-        description: "Repositório central de produtos"
+        title: 'Catálogo Base',
+        href: '/admin/produtos/catalogo-base',
+        description: 'Repositório central de produtos',
       },
       {
-        title: "Importar Catálogo",
-        href: "/admin/produtos/catalogo-base/importar",
-        description: "Importar do catálogo externo"
-      }
-    ]
+        title: 'Importar Catálogo',
+        href: '/admin/produtos/catalogo-base/importar',
+        description: 'Importar do catálogo externo',
+      },
+    ],
   },
   {
-    title: "Orçamentos",
-    href: "/admin/orcamentos",
-    icon: FileText
+    title: 'Orçamentos',
+    href: '/admin/orcamentos',
+    icon: FileText,
   },
   {
-    title: "Pedidos",
-    href: "/admin/pedidos",
-    icon: ShoppingCart
+    title: 'Pedidos',
+    href: '/admin/pedidos',
+    icon: ShoppingCart,
   },
   {
-    title: "Lojas",
-    href: "/admin/lojas",
-    icon: Store
+    title: 'Lojas',
+    href: '/admin/lojas',
+    icon: Store,
   },
   {
-    title: "Relatórios",
-    href: "/admin/relatorios",
-    icon: BarChart3
+    title: 'Relatórios',
+    href: '/admin/relatorios',
+    icon: BarChart3,
   },
   {
-    title: "Templates",
-    href: "/admin/templates",
-    icon: FileText
+    title: 'Templates',
+    href: '/admin/templates',
+    icon: FileText,
   },
   {
-    title: "Configurações",
-    href: "/admin/configuracoes",
-    icon: Settings
+    title: 'Configurações',
+    href: '/admin/configuracoes',
+    icon: Settings,
   },
   {
-    title: "Changelog",
-    href: "/admin/changelog",
-    icon: GitBranch
+    title: 'Changelog',
+    href: '/admin/changelog',
+    icon: GitBranch,
   },
   {
-    title: "Documentação",
-    href: "/admin/documentacao",
-    icon: BookOpen
+    title: 'Documentação',
+    href: '/admin/documentacao',
+    icon: BookOpen,
   },
   {
-    title: "Desenvolvimento",
-    href: "/admin/desenvolvimento",
-    icon: Code
-  }
+    title: 'Desenvolvimento',
+    href: '/admin/desenvolvimento',
+    icon: Code,
+  },
 ]
 
 const footerNav = [
   {
-    title: "Política de Privacidade",
-    href: "/privacidade"
+    title: 'Política de Privacidade',
+    href: '/privacidade',
   },
   {
-    title: "Termos de Uso", 
-    href: "/termos"
+    title: 'Termos de Uso',
+    href: '/termos',
   },
   {
-    title: "Contato",
-    href: "/contato"
-  }
+    title: 'Contato',
+    href: '/contato',
+  },
 ]
 
 export function AdminNavigationMenu() {
@@ -148,17 +147,18 @@ export function AdminNavigationMenu() {
       </div>
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-4 text-sm font-medium">
-          {mainNav.map((item) => {
+          {mainNav.map(item => {
             const Icon = item.icon
-            const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
-            
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.href + '/')
+
             return (
               <div key={item.href}>
                 <Link
                   href={item.href}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
-                    isActive ? "bg-gray-100 text-gray-900" : ""
+                    'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900',
+                    isActive ? 'bg-gray-100 text-gray-900' : ''
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -166,13 +166,15 @@ export function AdminNavigationMenu() {
                 </Link>
                 {item.items && isActive && (
                   <div className="ml-6 mt-1 space-y-1">
-                    {item.items.map((subItem) => (
+                    {item.items.map(subItem => (
                       <Link
                         key={subItem.href}
                         href={subItem.href}
                         className={cn(
-                          "block rounded-lg px-3 py-2 text-xs text-gray-500 transition-all hover:text-gray-900",
-                          pathname === subItem.href ? "bg-gray-50 text-gray-900" : ""
+                          'block rounded-lg px-3 py-2 text-xs text-gray-500 transition-all hover:text-gray-900',
+                          pathname === subItem.href
+                            ? 'bg-gray-50 text-gray-900'
+                            : ''
                         )}
                         title={subItem.description}
                       >
@@ -187,13 +189,8 @@ export function AdminNavigationMenu() {
         </nav>
       </div>
       <div className="mt-auto p-4">
-        {/* Notificação de Changelog */}
-        <div className="mb-4 flex justify-center">
-          <ChangelogNotification />
-        </div>
-        
         <nav className="grid gap-1">
-          {footerNav.map((item) => (
+          {footerNav.map(item => (
             <Link
               key={item.href}
               href={item.href}
@@ -207,8 +204,8 @@ export function AdminNavigationMenu() {
           <HelpCircle className="h-4 w-4" />
           Ajuda
         </Button>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="mt-2 w-full justify-start gap-2 text-red-500 hover:text-red-600"
           onClick={handleLogout}
         >
@@ -219,4 +216,3 @@ export function AdminNavigationMenu() {
     </div>
   )
 }
-

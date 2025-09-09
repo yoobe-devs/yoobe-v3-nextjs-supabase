@@ -1,0 +1,68 @@
+{
+  "id": "error-category-navigation",
+  "title": "Error Category: NAVIGATION",
+  "description": "Comprehensive error prevention and handling for navigation errors",
+  "category": "error-prevention",
+  "priority": "low",
+  "status": "active",
+  "tags": [
+    "error-prevention",
+    "category",
+    "navigation"
+  ],
+  "requirements": [
+    {
+      "id": "req-navigation-monitoring",
+      "title": "Error Monitoring",
+      "description": "Monitor and track navigation errors",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-navigation-monitoring-1",
+          "description": "All navigation errors are logged and categorized",
+          "status": "pending"
+        },
+        {
+          "id": "ac-navigation-monitoring-2",
+          "description": "Error trends are tracked and reported",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-navigation-prevention",
+      "title": "Prevention Strategy",
+      "description": "Implement prevention strategies for navigation errors",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-navigation-prevention-1",
+          "description": "Prevention measures are documented and implemented",
+          "status": "pending"
+        },
+        {
+          "id": "ac-navigation-prevention-2",
+          "description": "Team is trained on prevention strategies",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    }
+  ],
+  "metrics": {
+    "totalErrors": 5,
+    "resolvedErrors": 5,
+    "resolutionRate": 100,
+    "averageSeverity": "critical"
+  },
+  "metadata": {
+    "errorType": "navigation",
+    "migratedAt": "2025-09-09T03:18:50.281Z",
+    "relatedSpecifications": [
+      "error-spec-err_1757360437503_redirect_system_fix",
+      "error-spec-err_1757360437504_gestor_redirect_fix",
+      "error-spec-err_1757360437507_login_redirect_loop",
+      "error-spec-err_1757360437508_middleware_loop_fix",
+      "error-spec-err_1757360437509_loop_definitive_fix"
+    ]
+  }
+}

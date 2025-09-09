@@ -1,0 +1,111 @@
+{
+  "id": "error-spec-err_1757360437515_localhost_not_working",
+  "title": "Error Prevention: Localhost não está funcionando - Erro 500 no servidor",
+  "description": "Specification for preventing and handling: O servidor Next.js estava retornando erro 500 e o localhost não estava acessível. O problema estava no arquivo lib/error-memory.ts que tentava usar módulos do Node.js (fs, path) no Edge Runtime do middleware, que não suporta esses módulos.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "system",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437515_localhost_not_working-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-prevention-0",
+          "description": "SEMPRE verificar se módulos Node.js são compatíveis com Edge Runtime",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-prevention-1",
+          "description": "SEMPRE criar versões simplificadas para Edge Runtime quando necessário",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-prevention-2",
+          "description": "SEMPRE testar middleware em ambiente de desenvolvimento",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-prevention-3",
+          "description": "SEMPRE verificar logs de erro do Next.js para identificar problemas",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-prevention-4",
+          "description": "SEMPRE usar alternativas compatíveis com Edge Runtime",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-prevention-5",
+          "description": "SEMPRE documentar limitações do Edge Runtime",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437515_localhost_not_working-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437515_localhost_not_working-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437515_localhost_not_working-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Versão Edge Runtime\nimport { ErrorMemorySystemEdge } from '@/lib/error-memory-edge'\n\n// Não usa fs, path ou outros módulos Node.js\n// Funciona no Edge Runtime do middleware",
+    "filePath": "lib/error-memory-edge.ts, lib/middleware-protection.ts, lib/mcp-monitoring.ts",
+    "solution": "1) Identificado que o erro estava no lib/error-memory.ts usando módulos Node.js no Edge Runtime, 2) Criado lib/error-memory-edge.ts versão simplificada para Edge Runtime, 3) Atualizado lib/middleware-protection.ts e lib/mcp-monitoring.ts para usar a versão Edge, 4) Removido dependências de fs e path que não funcionam no Edge Runtime, 5) Servidor agora funciona perfeitamente em http://localhost:3000",
+    "relatedErrors": [
+      "err_1757360437514_system_monitoring_not_working"
+    ],
+    "documentationLinks": [
+      "lib/error-memory-edge.ts",
+      "lib/middleware-protection.ts",
+      "lib/mcp-monitoring.ts"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437515_localhost_not_working",
+    "errorType": "system",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T23:30:00.000Z",
+    "resolutionDate": "2025-09-08T23:35:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

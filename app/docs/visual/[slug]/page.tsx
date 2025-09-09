@@ -16,10 +16,10 @@ interface Document {
 }
 
 const documents: Record<string, Document> = {
-  'PLATFORM_OVERVIEW': {
+  PLATFORM_OVERVIEW: {
     title: 'Visão Geral da Plataforma',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     content: `# 🚀 Yoobe Platform - Visão Geral Completa
 
 ## 📋 Índice
@@ -443,9 +443,9 @@ A Yoobe Platform oferece uma solução completa e escalável para gestão de bri
 
 **Versão atual**: v2.0.0  
 **Última atualização**: Janeiro 2024  
-**Status**: ✅ Produção`
+**Status**: ✅ Produção`,
   },
-  'CUBBO_INTEGRATION': {
+  CUBBO_INTEGRATION: {
     title: 'Integração Cubbo',
     version: 'v2.0.0',
     lastUpdated: '17 de Janeiro, 2024',
@@ -699,9 +699,9 @@ Para suporte técnico sobre a integração Cubbo:
 
 **Versão atual**: v2.0.0  
 **Última atualização**: Janeiro 2024  
-**Status**: ✅ Ativo`
+**Status**: ✅ Ativo`,
   },
-  'API_REFERENCE': {
+  API_REFERENCE: {
     title: 'Referência da API',
     version: 'v2.0.0',
     lastUpdated: '17 de Janeiro, 2024',
@@ -849,9 +849,9 @@ Sincronizar com Cubbo
 - **Headers**: X-RateLimit-Remaining, X-RateLimit-Reset
 
 **Versão**: v2.0.0  
-**Status**: ✅ Ativo`
+**Status**: ✅ Ativo`,
   },
-  'ERP_CRM_INTEGRATION': {
+  ERP_CRM_INTEGRATION: {
     title: 'Integração ERP/CRM',
     version: 'v2.0.0',
     lastUpdated: '17 de Janeiro, 2024',
@@ -1089,9 +1089,9 @@ Para suporte técnico sobre integrações ERP/CRM:
 
 **Versão atual**: v2.0.0  
 **Última atualização**: Janeiro 2024  
-**Status**: ✅ Ativo`
+**Status**: ✅ Ativo`,
   },
-  'DEPLOYMENT_GUIDE': {
+  DEPLOYMENT_GUIDE: {
     title: 'Guia de Deploy',
     version: 'v2.0.0',
     lastUpdated: '17 de Janeiro, 2024',
@@ -1610,9 +1610,9 @@ Para suporte técnico sobre deploy:
 
 **Versão atual**: v2.0.0  
 **Última atualização**: Janeiro 2024  
-**Status**: ✅ Ativo`
+**Status**: ✅ Ativo`,
   },
-  'GAMIFICATION_INTEGRATION': {
+  GAMIFICATION_INTEGRATION: {
     title: 'Integração Gamificação',
     version: 'v2.0.0',
     lastUpdated: '17 de Janeiro, 2024',
@@ -1983,9 +1983,9 @@ Para suporte técnico sobre integrações de gamificação:
 
 **Versão atual**: v2.0.0  
 **Última atualização**: Janeiro 2024  
-**Status**: ✅ Ativo`
+**Status**: ✅ Ativo`,
   },
-  'AUTOMATION_INTEGRATION': {
+  AUTOMATION_INTEGRATION: {
     title: 'Integração Automação',
     version: 'v2.0.0',
     lastUpdated: '17 de Janeiro, 2024',
@@ -2410,8 +2410,8 @@ Para suporte técnico sobre automação:
 
  **Versão atual**: v2.0.0  
  **Última atualização**: Janeiro 2024  
- **Status**: ✅ Ativo`
-  }
+ **Status**: ✅ Ativo`,
+  },
 }
 
 export default function VisualDocumentPage() {
@@ -2453,8 +2453,13 @@ export default function VisualDocumentPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-600 mb-4">O documento solicitado não foi encontrado.</p>
-              <Button onClick={() => router.push('/admin/documentacao')} className="bg-blue-600 hover:bg-blue-700">
+              <p className="text-gray-600 mb-4">
+                O documento solicitado não foi encontrado.
+              </p>
+              <Button
+                onClick={() => router.push('/admin/documentacao')}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Voltar para Documentação
               </Button>

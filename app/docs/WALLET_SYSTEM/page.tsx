@@ -99,15 +99,11 @@ export default function WalletSystemPage() {
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      Gestão de pontos e créditos
+                      Gestão de pontos e recompensas
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      Histórico completo de transações
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                      Sistema de recompensas automático
+                      Sistema de transações completo
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
@@ -115,28 +111,28 @@ export default function WalletSystemPage() {
                     </li>
                     <li className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500" />
-                      Relatórios e analytics
+                      Analytics e relatórios
                     </li>
                   </ul>
                 </div>
                 <div className="space-y-3">
-                  <h4 className="font-medium text-gray-900">Tecnologias Utilizadas</h4>
+                  <h4 className="font-medium text-gray-900">Benefícios</h4>
                   <ul className="space-y-2 text-sm text-gray-600">
                     <li className="flex items-center gap-2">
-                      <Code className="h-4 w-4 text-blue-500" />
-                      Next.js 14 + TypeScript
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Fidelização de clientes
                     </li>
                     <li className="flex items-center gap-2">
-                      <Database className="h-4 w-4 text-green-500" />
-                      Supabase (PostgreSQL)
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Aumento de engajamento
                     </li>
                     <li className="flex items-center gap-2">
-                      <Shield className="h-4 w-4 text-purple-500" />
-                      RLS (Row Level Security)
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Dados de comportamento
                     </li>
                     <li className="flex items-center gap-2">
-                      <Zap className="h-4 w-4 text-orange-500" />
-                      Webhooks e notificações
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      ROI mensurável
                     </li>
                   </ul>
                 </div>
@@ -144,43 +140,53 @@ export default function WalletSystemPage() {
             </CardContent>
           </Card>
 
-          {/* Wallet Types */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wallet className="h-5 w-5 text-blue-600" />
-                Tipos de Carteira
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="text-center p-4 border rounded-lg">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Coins className="h-6 w-6 text-blue-600" />
+          {/* Quick Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Wallet className="h-5 w-5 text-blue-600" />
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">1,250</p>
+                    <p className="text-sm text-gray-600">Carteiras Ativas</p>
                   </div>
-                  <h4 className="font-medium text-gray-900">Carteira de Pontos</h4>
-                  <p className="text-sm text-gray-600">Acumulação por compras e ações</p>
-                  <Badge className="mt-2 bg-blue-100 text-blue-800">Gratuita</Badge>
                 </div>
-                <div className="text-center p-4 border rounded-lg">
-                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <CreditCard className="h-6 w-6 text-green-600" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <Coins className="h-5 w-5 text-green-600" />
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">45,230</p>
+                    <p className="text-sm text-gray-600">Pontos em Circulação</p>
                   </div>
-                  <h4 className="font-medium text-gray-900">Carteira de Crédito</h4>
-                  <p className="text-sm text-gray-600">Depósitos e transferências</p>
-                  <Badge className="mt-2 bg-green-100 text-green-800">Premium</Badge>
                 </div>
-                <div className="text-center p-4 border rounded-lg">
-                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <TrendingUp className="h-6 w-6 text-purple-600" />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5 text-purple-600" />
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">89%</p>
+                    <p className="text-sm text-gray-600">Taxa de Engajamento</p>
                   </div>
-                  <h4 className="font-medium text-gray-900">Carteira de Investimento</h4>
-                  <p className="text-sm text-gray-600">Rendimentos e aplicações</p>
-                  <Badge className="mt-2 bg-purple-100 text-purple-800">Enterprise</Badge>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2">
+                  <History className="h-5 w-5 text-orange-600" />
+                  <div>
+                    <p className="text-2xl font-bold text-gray-900">3,456</p>
+                    <p className="text-sm text-gray-600">Transações Hoje</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
 
         {/* Workflow Tab */}
@@ -188,92 +194,33 @@ export default function WalletSystemPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5 text-blue-600" />
+                <ArrowRight className="h-5 w-5 text-blue-600" />
                 Fluxo de Transações
               </CardTitle>
+              <CardDescription>
+                Como o sistema processa transações de pontos e créditos
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {/* Transaction Flow */}
-                <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-blue-600 font-bold">1</span>
-                    </div>
-                    <h4 className="font-medium text-sm">Ação</h4>
-                    <p className="text-xs text-gray-500">Compra, login, etc.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <h4 className="font-semibold mb-3">📈 Acumulação de Pontos</h4>
+                    <ul className="space-y-2 text-sm">
+                      <li>• Compra de produtos/serviços</li>
+                      <li>• Login diário</li>
+                      <li>• Referências de usuários</li>
+                      <li>• Participação em campanhas</li>
+                    </ul>
                   </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-yellow-600 font-bold">2</span>
-                    </div>
-                    <h4 className="font-medium text-sm">Validação</h4>
-                    <p className="text-xs text-gray-500">Regras aplicadas</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-purple-600 font-bold">3</span>
-                    </div>
-                    <h4 className="font-medium text-sm">Cálculo</h4>
-                    <p className="text-xs text-gray-500">Pontos calculados</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-green-600 font-bold">4</span>
-                    </div>
-                    <h4 className="font-medium text-sm">Aplicação</h4>
-                    <p className="text-xs text-gray-500">Saldo atualizado</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-orange-600 font-bold">5</span>
-                    </div>
-                    <h4 className="font-medium text-sm">Notificação</h4>
-                    <p className="text-xs text-gray-500">Usuário informado</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-red-600 font-bold">6</span>
-                    </div>
-                    <h4 className="font-medium text-sm">Log</h4>
-                    <p className="text-xs text-gray-500">Transação registrada</p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Transaction Types */}
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-3">Tipos de Transação</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-green-100 text-green-800">+ Compra</Badge>
-                        <span className="text-sm text-gray-600">Pontos por compras realizadas</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-blue-100 text-blue-800">+ Login Diário</Badge>
-                        <span className="text-sm text-gray-600">Bônus por acesso diário</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-purple-100 text-purple-800">+ Referência</Badge>
-                        <span className="text-sm text-gray-600">Pontos por indicações</span>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-red-100 text-red-800">- Resgate</Badge>
-                        <span className="text-sm text-gray-600">Uso de pontos em compras</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-yellow-100 text-yellow-800">- Expiração</Badge>
-                        <span className="text-sm text-gray-600">Pontos vencidos</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="bg-gray-100 text-gray-800">= Transferência</Badge>
-                        <span className="text-sm text-gray-600">Entre carteiras</span>
-                      </div>
-                    </div>
+                  <div>
+                    <h4 className="font-semibold mb-3">📉 Uso de Pontos</h4>
+                    <ul className="space-y-2 text-sm">
+                      <li>• Resgate em compras</li>
+                      <li>• Expiração por tempo</li>
+                      <li>• Transferência entre carteiras</li>
+                      <li>• Conversão para crédito</li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -284,17 +231,16 @@ export default function WalletSystemPage() {
         {/* Features Tab */}
         <TabsContent value="features" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Core Features */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Package className="h-5 w-5 text-blue-600" />
-                  Funcionalidades Principais
+                  Gestão de Pontos
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
-                  <h5 className="font-medium text-gray-900">Gestão de Pontos</h5>
+                  <h5 className="font-medium text-gray-900">Funcionalidades</h5>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li>• Acumulação automática por ações</li>
                     <li>• Sistema de recompensas configurável</li>
@@ -302,29 +248,18 @@ export default function WalletSystemPage() {
                     <li>• Conversão de moedas</li>
                   </ul>
                 </div>
-                <div className="space-y-2">
-                  <h5 className="font-medium text-gray-900">Transações</h5>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>• Histórico completo de movimentações</li>
-                    <li>• Categorização automática</li>
-                    <li>• Comprovantes digitais</li>
-                    <li>• Exportação de relatórios</li>
-                  </ul>
-                </div>
               </CardContent>
             </Card>
-
-            {/* Advanced Features */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="h-5 w-5 text-yellow-600" />
-                  Funcionalidades Avançadas
+                  Integrações
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="space-y-2">
-                  <h5 className="font-medium text-gray-900">Integrações</h5>
+                  <h5 className="font-medium text-gray-900">Conectores</h5>
                   <ul className="text-sm text-gray-600 space-y-1">
                     <li>• Checkout automático com pontos</li>
                     <li>• Webhooks para sistemas externos</li>
@@ -332,27 +267,18 @@ export default function WalletSystemPage() {
                     <li>• SDK para aplicações</li>
                   </ul>
                 </div>
-                <div className="space-y-2">
-                  <h5 className="font-medium text-gray-900">Analytics</h5>
-                  <ul className="text-sm text-gray-600 space-y-1">
-                    <li>• Dashboards em tempo real</li>
-                    <li>• Relatórios personalizados</li>
-                    <li>• Métricas de engajamento</li>
-                    <li>• Previsões de comportamento</li>
-                  </ul>
-                </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
 
-        {/* API Reference Tab */}
+        {/* API Tab */}
         <TabsContent value="api" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Code className="h-5 w-5 text-blue-600" />
-                Referência da API
+                API Reference
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -378,44 +304,6 @@ export default function WalletSystemPage() {
                         <span className="text-gray-500 ml-2">- Histórico de transações</span>
                       </code>
                     </div>
-                    <div className="bg-gray-50 p-3 rounded">
-                      <code className="text-sm">
-                        <span className="text-purple-600">POST</span> /api/wallet/redeem
-                        <span className="text-gray-500 ml-2">- Resgatar pontos</span>
-                      </code>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Modelos de Dados</h4>
-                  <div className="bg-gray-50 p-4 rounded">
-                    <pre className="text-sm text-gray-700">
-{`interface Wallet {
-  id: string
-  user_id: string
-  company_id: string
-  type: 'points' | 'credit' | 'investment'
-  balance: number
-  currency: string
-  status: 'active' | 'suspended' | 'closed'
-  created_at: string
-  updated_at: string
-}
-
-interface Transaction {
-  id: string
-  wallet_id: string
-  type: 'credit' | 'debit' | 'transfer'
-  amount: number
-  description: string
-  category: string
-  metadata?: object
-  created_at: string
-}`}
-                    </pre>
                   </div>
                 </div>
               </div>
@@ -438,64 +326,20 @@ interface Transaction {
                   <h4 className="font-medium text-gray-900 mb-2">Adicionar Pontos por Compra</h4>
                   <div className="bg-gray-50 p-4 rounded">
                     <pre className="text-sm text-gray-700">
-{`// Adicionar pontos após compra confirmada
-const response = await fetch('/api/wallet/transactions', {
+{`// Exemplo de adição de pontos
+const transaction = {
+  userId: "user123",
+  type: "credit",
+  amount: 100,
+  reason: "purchase",
+  orderId: "order456"
+}
+
+await fetch('/api/wallet/transactions', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    wallet_id: 'wallet_123',
-    type: 'credit',
-    amount: 150, // 1.5% da compra de R$ 100
-    description: 'Pontos por compra #ORD-456',
-    category: 'purchase_reward',
-    metadata: {
-      order_id: 'ORD-456',
-      purchase_amount: 10000, // R$ 100,00
-      reward_rate: 0.015
-    }
-  })
-})
-
-const transaction = await response.json()`}
-                    </pre>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Resgatar Pontos no Checkout</h4>
-                  <div className="bg-gray-50 p-4 rounded">
-                    <pre className="text-sm text-gray-700">
-{`// Resgatar pontos durante checkout
-const response = await fetch('/api/wallet/redeem', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    wallet_id: 'wallet_123',
-    amount: 500, // 500 pontos = R$ 5,00
-    checkout_session_id: 'session_789',
-    description: 'Resgate para compra #ORD-789'
-  })
-})
-
-const redemption = await response.json()`}
-                    </pre>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Verificar Saldo e Histórico</h4>
-                  <div className="bg-gray-50 p-4 rounded">
-                    <pre className="text-sm text-gray-700">
-{`// Obter saldo atual
-const balanceResponse = await fetch('/api/wallet/balance/wallet_123')
-const balance = await balanceResponse.json()
-
-// Obter histórico de transações
-const historyResponse = await fetch('/api/wallet/history/wallet_123?limit=10&offset=0')
-const history = await historyResponse.json()
-
-console.log('Saldo atual:', balance.balance)
-console.log('Últimas transações:', history.transactions)`}
+  body: JSON.stringify(transaction)
+})`}
                     </pre>
                   </div>
                 </div>
@@ -525,30 +369,6 @@ console.log('Últimas transações:', history.transactions)`}
                     <div className="border-l-4 border-red-400 pl-4">
                       <h5 className="font-medium text-gray-900">Transação falha</h5>
                       <p className="text-sm text-gray-600">Verificar saldo disponível, permissões do usuário e configuração da carteira.</p>
-                    </div>
-                    <div className="border-l-4 border-blue-400 pl-4">
-                      <h5 className="font-medium text-gray-900">Sincronização incorreta</h5>
-                      <p className="text-sm text-gray-600">Verificar webhooks, logs de transação e configuração de notificações.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <h4 className="font-medium text-gray-900 mb-2">Comandos de Diagnóstico</h4>
-                  <div className="space-y-2">
-                    <div className="bg-gray-50 p-3 rounded">
-                      <code className="text-sm">
-                        curl -X GET "http://localhost:3000/api/wallet/health"
-                        <span className="text-gray-500 ml-2">- Verificar saúde do sistema</span>
-                      </code>
-                    </div>
-                    <div className="bg-gray-50 p-3 rounded">
-                      <code className="text-sm">
-                        curl -X GET "http://localhost:3000/api/wallet/transactions/pending"
-                        <span className="text-gray-500 ml-2">- Verificar transações pendentes</span>
-                      </code>
                     </div>
                   </div>
                 </div>

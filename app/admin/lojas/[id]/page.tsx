@@ -1,15 +1,21 @@
-"use client"
+'use client'
 
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { SafeImage } from '@/components/ui/safe-image'
-import { 
-  ArrowLeft, 
-  Edit, 
-  Trash2, 
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
   Store,
   Building,
   Globe,
@@ -18,9 +24,11 @@ import {
   ShoppingCart,
   Calendar,
   Loader2,
-  DollarSign
+  DollarSign,
+  RefreshCw,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useRealtimeUpdates } from '@/hooks/useRealtimeUpdates'
 
 interface Store {
   id: string
@@ -29,15 +37,21 @@ interface Store {
   status: string
   logo_url?: string
   created_at: string
-  companies: { 
+  companies: {
     id: string
     name: string
     email: string
     phone: string
     address: string
+    city?: string
+    state?: string
+    zip_code?: string
   }
   users_count: number
   products_count: number
+  products_ativo: number
+  products_draft: number
+  products_inativo: number
   orders_count: number
   revenue: number
 }
@@ -48,6 +62,27 @@ export default function StoreViewPage() {
   const id = params?.id as string
   const [store, setStore] = useState<Store | null>(null)
   const [loading, setLoading] = useState(true)
+
+  // Hook para atualizações em tempo real
+  const { isConnected, forceRecompute } = useRealtimeUpdates({
+    onProductUpdate: event => {
+      console.log('🔄 Atualização de produto detectada, recarregando loja...')
+      loadStore()
+    },
+    onStatsUpdate: event => {
+      console.log(
+        '📊 Atualização de estatísticas detectada, recarregando loja...'
+      )
+      loadStore()
+    },
+    onConnectionChange: connected => {
+      if (connected) {
+        toast.success('Conexão em tempo real estabelecida')
+      } else {
+        toast.warning('Conexão em tempo real perdida')
+      }
+    },
+  })
 
   useEffect(() => {
     if (!id) {
@@ -61,7 +96,7 @@ export default function StoreViewPage() {
     try {
       setLoading(true)
       const response = await fetch(`/api/stores/${id}`)
-      
+
       if (response.ok) {
         const data = await response.json()
         setStore(data.store)
@@ -82,7 +117,7 @@ export default function StoreViewPage() {
 
     try {
       const response = await fetch(`/api/stores/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       })
 
       if (response.ok) {
@@ -94,7 +129,9 @@ export default function StoreViewPage() {
       }
     } catch (error) {
       console.error('Erro ao excluir loja:', error)
-      toast.error(error instanceof Error ? error.message : 'Erro ao excluir loja')
+      toast.error(
+        error instanceof Error ? error.message : 'Erro ao excluir loja'
+      )
     }
   }
 
@@ -105,7 +142,9 @@ export default function StoreViewPage() {
       case 'inactive':
         return <Badge variant="secondary">Inativo</Badge>
       case 'maintenance':
-        return <Badge className="bg-yellow-100 text-yellow-800">Manutenção</Badge>
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800">Manutenção</Badge>
+        )
       default:
         return <Badge variant="outline">{status}</Badge>
     }
@@ -149,15 +188,44 @@ export default function StoreViewPage() {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <Button 
-            variant="ghost" 
+        <div className="mb-6 flex items-center justify-between">
+          <Button
+            variant="ghost"
             onClick={() => router.push('/admin/lojas')}
             className="flex items-center gap-2"
           >
             <ArrowLeft className="h-4 w-4" />
             Voltar às Lojas
           </Button>
+
+          <div className="flex items-center gap-3">
+            {/* Indicador de conexão em tempo real */}
+            <div className="flex items-center gap-2">
+              <div
+                className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+              ></div>
+              <span className="text-xs text-gray-500">
+                {isConnected ? 'Tempo real ativo' : 'Tempo real offline'}
+              </span>
+            </div>
+
+            <Button
+              variant="outline"
+              onClick={async () => {
+                try {
+                  await forceRecompute(store?.companies?.id || '')
+                  await loadStore()
+                  toast.success('Dados atualizados com sucesso!')
+                } catch (error) {
+                  toast.error('Erro ao atualizar dados')
+                }
+              }}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Atualizar
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -196,48 +264,65 @@ export default function StoreViewPage() {
                     <Globe className="h-5 w-5 text-blue-600" />
                     <div>
                       <p className="text-sm text-gray-600">Domínio</p>
-                      <p className="font-semibold text-blue-600">{store.domain}</p>
+                      <p className="font-semibold text-blue-600">
+                        {store.domain}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Building className="h-5 w-5 text-purple-600" />
                     <div>
                       <p className="text-sm text-gray-600">Empresa</p>
-                      <p className="font-semibold text-purple-600">{store.companies?.name}</p>
+                      <p className="font-semibold text-purple-600">
+                        {store.companies?.name}
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Users className="h-5 w-5 text-green-600" />
                     <div>
                       <p className="text-sm text-gray-600">Usuários</p>
-                      <p className="font-semibold text-green-600">{store.users_count} ativos</p>
+                      <p className="font-semibold text-green-600">
+                        {store.users_count} ativos
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <Package className="h-5 w-5 text-orange-600" />
                     <div>
                       <p className="text-sm text-gray-600">Produtos</p>
-                      <p className="font-semibold text-orange-600">{store.products_count} cadastrados</p>
+                      <p className="font-semibold text-orange-600">
+                        {store.products_count} total
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {store.products_ativo} ativos, {store.products_draft}{' '}
+                        rascunho, {store.products_inativo} inativos
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <ShoppingCart className="h-5 w-5 text-teal-600" />
                     <div>
                       <p className="text-sm text-gray-600">Pedidos</p>
-                      <p className="font-semibold text-teal-600">{store.orders_count} realizados</p>
+                      <p className="font-semibold text-teal-600">
+                        {store.orders_count} realizados
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <DollarSign className="h-5 w-5 text-emerald-600" />
                     <div>
                       <p className="text-sm text-gray-600">Receita</p>
                       <p className="font-semibold text-emerald-600">
-                        R$ {store.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                        R${' '}
+                        {store.revenue.toLocaleString('pt-BR', {
+                          minimumFractionDigits: 2,
+                        })}
                       </p>
                     </div>
                   </div>
@@ -246,8 +331,49 @@ export default function StoreViewPage() {
                 <div className="flex items-center gap-2 pt-4 border-t">
                   <Calendar className="h-4 w-4 text-gray-400" />
                   <span className="text-sm text-gray-500">
-                    Criada em {new Date(store.created_at).toLocaleDateString('pt-BR')}
+                    Criada em{' '}
+                    {new Date(store.created_at).toLocaleDateString('pt-BR')}
                   </span>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Estatísticas Detalhadas dos Produtos */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Estatísticas dos Produtos</CardTitle>
+                <CardDescription>
+                  Detalhamento por status dos produtos
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-600">
+                      {store.products_ativo}
+                    </div>
+                    <div className="text-sm text-green-700">
+                      Produtos Ativos
+                    </div>
+                  </div>
+                  <div className="text-center p-3 bg-yellow-50 rounded-lg">
+                    <div className="text-2xl font-bold text-yellow-600">
+                      {store.products_draft}
+                    </div>
+                    <div className="text-sm text-yellow-700">Em Rascunho</div>
+                  </div>
+                  <div className="text-center p-3 bg-red-50 rounded-lg">
+                    <div className="text-2xl font-bold text-red-600">
+                      {store.products_inativo}
+                    </div>
+                    <div className="text-sm text-red-700">Inativos</div>
+                  </div>
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {store.products_count}
+                    </div>
+                    <div className="text-sm text-blue-700">Total</div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -260,19 +386,31 @@ export default function StoreViewPage() {
               <CardContent className="space-y-3">
                 <div>
                   <p className="text-sm text-gray-600">Nome</p>
-                  <p className="font-medium">{store.companies?.name || 'Não informado'}</p>
+                  <p className="font-medium">
+                    {store.companies?.name || 'Não informado'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Email</p>
-                  <p className="font-medium">{store.companies?.email || 'Não informado'}</p>
+                  <p className="font-medium">
+                    {store.companies?.email || 'Não informado'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Telefone</p>
-                  <p className="font-medium">{store.companies?.phone || 'Não informado'}</p>
+                  <p className="font-medium">
+                    {store.companies?.phone || 'Não informado'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Endereço</p>
-                  <p className="font-medium">{store.companies?.address || 'Não informado'}</p>
+                  <p className="font-medium">
+                    {store.companies?.address || 'Não informado'}
+                    {store.companies?.city && `, ${store.companies.city}`}
+                    {store.companies?.state && ` - ${store.companies.state}`}
+                    {store.companies?.zip_code &&
+                      ` (${store.companies.zip_code})`}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -285,16 +423,15 @@ export default function StoreViewPage() {
               <CardContent>
                 <div className="flex gap-3">
                   <Button
-                    onClick={() => router.push(`/admin/lojas/editar/${store.id}`)}
+                    onClick={() =>
+                      router.push(`/admin/lojas/editar/${store.id}`)
+                    }
                     className="flex-1"
                   >
                     <Edit className="h-4 w-4 mr-2" />
                     Editar Loja
                   </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleDelete}
-                  >
+                  <Button variant="destructive" onClick={handleDelete}>
                     <Trash2 className="h-4 w-4 mr-2" />
                     Excluir
                   </Button>

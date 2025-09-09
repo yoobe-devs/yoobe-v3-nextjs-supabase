@@ -1,0 +1,114 @@
+{
+  "id": "error-spec-err_1757360437510_docs_routes_centralization",
+  "title": "Error Prevention: Centralização e correção de rotas de documentação",
+  "description": "Specification for preventing and handling: Rotas de documentação estavam fragmentadas e com problemas de acesso: /admin/documentacao/viva/* retornando 404, middleware bloqueando acesso, rotas redundantes em /documentacao. Sistema de documentação não estava centralizado e acessível.",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "routing",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437510_docs_routes_centralization-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-prevention-0",
+          "description": "SEMPRE centralizar rotas de documentação em /docs",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-prevention-1",
+          "description": "SEMPRE adicionar rotas públicas no middleware",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-prevention-2",
+          "description": "NUNCA criar rotas de documentação que começam com /admin",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-prevention-3",
+          "description": "SEMPRE criar layouts específicos para documentação pública",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-prevention-4",
+          "description": "SEMPRE testar acesso público às rotas de documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-prevention-5",
+          "description": "SEMPRE manter consistência nas URLs de documentação",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-prevention-6",
+          "description": "SEMPRE remover rotas redundantes após centralização",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437510_docs_routes_centralization-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437510_docs_routes_centralization-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437510_docs_routes_centralization-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// URLs centralizadas em /docs\nurl: '/docs/SMART_DOCS_GUIDE'\nurl: '/docs/SMART_DOCS_QUICK_REFERENCE'\nurl: '/docs/API_REFERENCE'\n\n// Middleware atualizado\nconst publicRoutes = ['/', '/auth', '/api/health', '/api/auth', '/api/docs', '/docs', '/_next', '/favicon.ico', '/choose-environment']",
+    "filePath": "app/docs/components/DocsNavigation.tsx, middleware.ts, app/docs/SMART_DOCS_GUIDE/page.tsx, app/docs/SMART_DOCS_QUICK_REFERENCE/page.tsx, app/docs/API_REFERENCE/page.tsx, app/docs/DATABASE_SCHEMA/page.tsx, app/docs/DEPLOYMENT_GUIDE/page.tsx, app/docs/SMART_DOCS_SYSTEM_COMPLETE/page.tsx",
+    "solution": "1) Centralizado todas as rotas de documentação em /docs, 2) Atualizado DocsNavigation.tsx para usar URLs /docs/*, 3) Criado páginas específicas em app/docs/ para cada documento, 4) Removido rotas redundantes como /documentacao, 5) Atualizado middleware para permitir acesso público a /docs, 6) Removido layout de autenticação para documentação pública.",
+    "relatedErrors": [],
+    "documentationLinks": [
+      "docs/SMART_DOCS_GUIDE.md",
+      "docs/SMART_DOCS_QUICK_REFERENCE.md",
+      "docs/API_REFERENCE.md"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437510_docs_routes_centralization",
+    "errorType": "routing",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T22:40:00.000Z",
+    "resolutionDate": "2025-09-08T22:45:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

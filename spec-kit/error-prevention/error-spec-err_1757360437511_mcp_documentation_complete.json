@@ -1,0 +1,114 @@
+{
+  "id": "error-spec-err_1757360437511_mcp_documentation_complete",
+  "title": "Error Prevention: Documentação completa de MCPs (Model Context Protocol)",
+  "description": "Specification for preventing and handling: Faltava documentação abrangente sobre os MCPs utilizados no projeto. Os desenvolvedores não tinham acesso a informações sobre como usar, configurar e manter os MCPs, incluindo tutorial básico, status de funcionamento e casos de uso práticos.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "documentation",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437511_mcp_documentation_complete-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-prevention-0",
+          "description": "SEMPRE documentar novas ferramentas e integrações",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-prevention-1",
+          "description": "SEMPRE incluir tutorial básico para novas tecnologias",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-prevention-2",
+          "description": "SEMPRE documentar status de funcionamento",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-prevention-3",
+          "description": "SEMPRE incluir casos de uso práticos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-prevention-4",
+          "description": "SEMPRE adicionar troubleshooting para ferramentas complexas",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-prevention-5",
+          "description": "SEMPRE manter documentação atualizada com mudanças",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-prevention-6",
+          "description": "SEMPRE integrar nova documentação no sistema de navegação",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437511_mcp_documentation_complete-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437511_mcp_documentation_complete-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437511_mcp_documentation_complete-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// MCPs documentados:\n// 1. MCP_DOCKER - GitHub, Stripe, Docker operations\n// 2. gemini-mcp-tool - AI analysis and content generation\n// 3. context7 - Latest documentation fetching\n// 4. playwright - Browser automation and testing\n// 5. spec-kit - Specification and workflow management\n// 6. yoobe-v3-filesystem - File system access with project context",
+    "filePath": "docs/MCP_COMPLETE_GUIDE.md, app/docs/MCP_GUIDE/page.tsx, app/docs/components/DocsNavigation.tsx, data/error-memory.json",
+    "solution": "1) Criado documentação completa em docs/MCP_COMPLETE_GUIDE.md, 2) Documentado todos os 6 MCPs configurados (MCP_DOCKER, gemini-mcp-tool, context7, playwright, spec-kit, yoobe-v3-filesystem), 3) Criado tutorial básico com exemplos práticos, 4) Documentado status de funcionamento de cada MCP, 5) Criado casos de uso práticos para diferentes cenários, 6) Adicionado troubleshooting abrangente, 7) Criado página específica em /docs/MCP_GUIDE, 8) Atualizado DocsNavigation para incluir o novo guia.",
+    "relatedErrors": [],
+    "documentationLinks": [
+      "docs/MCP_COMPLETE_GUIDE.md",
+      "docs/MCP_INTEGRATION_GUIDE.md",
+      "app/docs/MCP_GUIDE/page.tsx"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437511_mcp_documentation_complete",
+    "errorType": "documentation",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T22:50:00.000Z",
+    "resolutionDate": "2025-09-08T22:55:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

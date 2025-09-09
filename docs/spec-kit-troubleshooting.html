@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spec Kit - Solução de Problemas</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+      }
+      .header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+      .content {
+        padding: 30px;
+      }
+      .problem-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-left: 5px solid #e74c3c;
+      }
+      .problem-section h3 {
+        color: #e74c3c;
+        margin: 0 0 15px 0;
+        font-size: 1.3em;
+      }
+      .solution-section {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-left: 5px solid #27ae60;
+      }
+      .solution-section h3 {
+        color: #27ae60;
+        margin: 0 0 15px 0;
+        font-size: 1.3em;
+      }
+      .command-box {
+        background: #2c3e50;
+        color: #ecf0f1;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        margin: 10px 0;
+        overflow-x: auto;
+      }
+      .status-indicator {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        font-weight: 600;
+      }
+      .status-indicator.success {
+        background: #d5f4e6;
+        color: #27ae60;
+      }
+      .status-indicator.error {
+        background: #fadbd8;
+        color: #e74c3c;
+      }
+      .status-indicator.warning {
+        background: #fef9e7;
+        color: #f39c12;
+      }
+      .step-list {
+        counter-reset: step-counter;
+        list-style: none;
+        padding: 0;
+      }
+      .step-list li {
+        counter-increment: step-counter;
+        margin-bottom: 15px;
+        padding-left: 40px;
+        position: relative;
+      }
+      .step-list li::before {
+        content: counter(step-counter);
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: #3498db;
+        color: white;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 0.9em;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .info-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #3498db;
+      }
+      .info-card h4 {
+        color: #3498db;
+        margin: 0 0 10px 0;
+        font-size: 1.1em;
+      }
+      .timestamp {
+        text-align: center;
+        color: #7f8c8d;
+        font-size: 0.9em;
+        padding: 20px;
+        border-top: 1px solid #ecf0f1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>🔧 Spec Kit - Solução de Problemas</h1>
+        <p>Guia para resolver problemas comuns do Spec Kit</p>
+      </div>
+
+      <div class="content">
+        <div class="problem-section">
+          <h3>❌ Problema: Erro 404 no Dashboard</h3>
+          <p><strong>Sintomas:</strong></p>
+          <ul>
+            <li>Dashboard retorna "404 Not Found"</li>
+            <li>Rotas da API não respondem</li>
+            <li>Interface web não carrega corretamente</li>
+          </ul>
+
+          <p>
+            <strong>Causa:</strong> Servidor Spec Kit não está rodando
+            corretamente ou precisa ser reiniciado.
+          </p>
+        </div>
+
+        <div class="solution-section">
+          <h3>✅ Solução: Reiniciar o Spec Kit</h3>
+          <ol class="step-list">
+            <li>
+              <strong>Parar o processo atual:</strong>
+              <div class="command-box">pkill -f spec-workflow-mcp</div>
+            </li>
+            <li>
+              <strong>Aguardar 2 segundos:</strong>
+              <div class="command-box">sleep 2</div>
+            </li>
+            <li>
+              <strong>Reiniciar o Spec Kit:</strong>
+              <div class="command-box">
+                npx -y @pimzino/spec-workflow-mcp@latest
+                /Users/genautech/Downloads/v3-main/yoobe-v3 --AutoStartDashboard
+                --port 3456
+              </div>
+            </li>
+            <li>
+              <strong>Verificar se está funcionando:</strong>
+              <div class="command-box">
+                curl -s http://localhost:3456/ | head -5
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <h4>🔍 Verificação de Status</h4>
+            <p>Comandos para verificar se o Spec Kit está rodando:</p>
+            <div class="command-box">
+              # Verificar processos<br />
+              ps aux | grep spec-workflow<br /><br />
+              # Verificar porta<br />
+              lsof -i :3456<br /><br />
+              # Testar dashboard<br />
+              curl -s http://localhost:3456/
+            </div>
+          </div>
+
+          <div class="info-card">
+            <h4>🌐 Acesso ao Dashboard</h4>
+            <p>URLs importantes:</p>
+            <ul>
+              <li><strong>Dashboard:</strong> http://localhost:3456</li>
+              <li>
+                <strong>API Specs:</strong> http://localhost:3456/api/specs
+              </li>
+              <li>
+                <strong>Status:</strong>
+                <span class="status-indicator success">ONLINE</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h4>⚙️ Configuração MCP</h4>
+            <p>Arquivo de configuração:</p>
+            <div class="command-box">~/.cursor/mcp.json</div>
+            <p>Configuração atual:</p>
+            <ul>
+              <li>Projeto: yoobe-v3</li>
+              <li>Porta: 3456</li>
+              <li>Auto-start: Habilitado</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h4>🔄 Comandos Úteis</h4>
+            <p>Comandos para gerenciar o Spec Kit:</p>
+            <div class="command-box">
+              # Parar Spec Kit<br />
+              pkill -f spec-workflow-mcp<br /><br />
+              # Iniciar Spec Kit<br />
+              npx -y @pimzino/spec-workflow-mcp@latest<br /><br />
+              # Verificar logs<br />
+              ps aux | grep spec
+            </div>
+          </div>
+        </div>
+
+        <div class="solution-section">
+          <h3>✅ Status Atual: RESOLVIDO</h3>
+          <p>O problema do erro 404 foi resolvido com sucesso:</p>
+          <ul>
+            <li>
+              <span class="status-indicator success">Dashboard Online</span> -
+              http://localhost:3456
+            </li>
+            <li>
+              <span class="status-indicator success">API Funcionando</span> -
+              /api/specs retorna []
+            </li>
+            <li>
+              <span class="status-indicator success">Servidor Ativo</span> -
+              Processo rodando
+            </li>
+            <li>
+              <span class="status-indicator success">Porta 3456</span> - Ativa e
+              funcionando
+            </li>
+          </ul>
+        </div>
+
+        <div class="problem-section">
+          <h3>📋 Próximos Passos</h3>
+          <ol class="step-list">
+            <li>Acesse o dashboard em http://localhost:3456</li>
+            <li>Crie sua primeira especificação usando /spec create</li>
+            <li>Configure workflows para desenvolvimento</li>
+            <li>Integre com a documentação da plataforma</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="timestamp">
+        Problema resolvido em: <span id="timestamp"></span>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById('timestamp').textContent =
+        new Date().toLocaleString('pt-BR')
+    </script>
+  </body>
+</html>
+

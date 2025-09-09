@@ -89,13 +89,13 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert sample orders
-INSERT INTO orders (id, user_id, company_id, total_amount, points_used, payment_method, status, shipping_address, tracking_code)
+INSERT INTO orders (id, user_id, company_id, total_amount, points_used, payment_method, status, shipping_address, tracking_code, order_number)
 VALUES 
-    ('550e8400-e29b-41d4-a716-446655440050', '550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440002', 79.80, 798, 'mixed', 'delivered', 'Rua das Flores, 123 - São Paulo/SP', 'TRACK123456789'),
-    ('550e8400-e29b-41d4-a716-446655440051', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440002', 129.90, 1299, 'points', 'shipped', 'Av. Paulista, 500 - São Paulo/SP', 'TRACK987654321'),
-    ('550e8400-e29b-41d4-a716-446655440052', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440003', 39.90, 399, 'mixed', 'pending', 'Rua Augusta, 200 - São Paulo/SP', NULL),
-    ('550e8400-e29b-41d4-a716-446655440053', '550e8400-e29b-41d4-a716-446655440014', '550e8400-e29b-41d4-a716-446655440002', 59.90, 599, 'points', 'confirmed', 'Av. Brigadeiro Faria Lima, 1500 - São Paulo/SP', NULL),
-    ('550e8400-e29b-41d4-a716-446655440054', '550e8400-e29b-41d4-a716-446655440015', '550e8400-e29b-41d4-a716-446655440003', 29.90, 299, 'mixed', 'delivered', 'Rua Oscar Freire, 100 - São Paulo/SP', 'TRACK456789123')
+    ('550e8400-e29b-41d4-a716-446655440050', '550e8400-e29b-41d4-a716-446655440010', '550e8400-e29b-41d4-a716-446655440002', 79.80, 798, 'mixed', 'delivered', 'Rua das Flores, 123 - São Paulo/SP', 'TRACK123456789', 'ORD-2024-001'),
+    ('550e8400-e29b-41d4-a716-446655440051', '550e8400-e29b-41d4-a716-446655440011', '550e8400-e29b-41d4-a716-446655440002', 129.90, 1299, 'points', 'shipped', 'Av. Paulista, 500 - São Paulo/SP', 'TRACK987654321', 'ORD-2024-002'),
+    ('550e8400-e29b-41d4-a716-446655440052', '550e8400-e29b-41d4-a716-446655440012', '550e8400-e29b-41d4-a716-446655440003', 39.90, 399, 'mixed', 'pending', 'Rua Augusta, 200 - São Paulo/SP', NULL, 'ORD-2024-003'),
+    ('550e8400-e29b-41d4-a716-446655440053', '550e8400-e29b-41d4-a716-446655440014', '550e8400-e29b-41d4-a716-446655440002', 59.90, 599, 'points', 'confirmed', 'Av. Brigadeiro Faria Lima, 1500 - São Paulo/SP', NULL, 'ORD-2024-004'),
+    ('550e8400-e29b-41d4-a716-446655440054', '550e8400-e29b-41d4-a716-446655440015', '550e8400-e29b-41d4-a716-446655440003', 29.90, 299, 'mixed', 'delivered', 'Rua Oscar Freire, 100 - São Paulo/SP', 'TRACK456789123', 'ORD-2024-005')
 ON CONFLICT (id) DO NOTHING;
 
 -- Insert order items

@@ -1,0 +1,64 @@
+{
+  "id": "error-category-routing",
+  "title": "Error Category: ROUTING",
+  "description": "Comprehensive error prevention and handling for routing errors",
+  "category": "error-prevention",
+  "priority": "low",
+  "status": "active",
+  "tags": [
+    "error-prevention",
+    "category",
+    "routing"
+  ],
+  "requirements": [
+    {
+      "id": "req-routing-monitoring",
+      "title": "Error Monitoring",
+      "description": "Monitor and track routing errors",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-routing-monitoring-1",
+          "description": "All routing errors are logged and categorized",
+          "status": "pending"
+        },
+        {
+          "id": "ac-routing-monitoring-2",
+          "description": "Error trends are tracked and reported",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-routing-prevention",
+      "title": "Prevention Strategy",
+      "description": "Implement prevention strategies for routing errors",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-routing-prevention-1",
+          "description": "Prevention measures are documented and implemented",
+          "status": "pending"
+        },
+        {
+          "id": "ac-routing-prevention-2",
+          "description": "Team is trained on prevention strategies",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    }
+  ],
+  "metrics": {
+    "totalErrors": 1,
+    "resolvedErrors": 1,
+    "resolutionRate": 100,
+    "averageSeverity": "high"
+  },
+  "metadata": {
+    "errorType": "routing",
+    "migratedAt": "2025-09-09T03:18:50.281Z",
+    "relatedSpecifications": [
+      "error-spec-err_1757360437510_docs_routes_centralization"
+    ]
+  }
+}

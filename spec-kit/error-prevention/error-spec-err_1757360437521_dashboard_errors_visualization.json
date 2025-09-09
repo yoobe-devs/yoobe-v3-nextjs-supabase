@@ -1,0 +1,110 @@
+{
+  "id": "error-spec-err_1757360437521_dashboard_errors_visualization",
+  "title": "Error Prevention: Dashboard de monitoramento sem visualização de erros",
+  "description": "Specification for preventing and handling: O dashboard de monitoramento não mostrava erros e problemas de forma clara e organizada na home, dificultando a identificação rápida de issues do sistema. O usuário precisava navegar pelas abas para encontrar informações sobre problemas.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "dashboard",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437521_dashboard_errors_visualization-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-prevention-0",
+          "description": "SEMPRE incluir visualização de erros na home do dashboard",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-prevention-1",
+          "description": "SEMPRE categorizar problemas por severidade (crítico, alto, médio, baixo)",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-prevention-2",
+          "description": "SEMPRE mostrar status dos serviços principais na home",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-prevention-3",
+          "description": "SEMPRE implementar APIs para detecção automática de problemas",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-prevention-4",
+          "description": "SEMPRE usar cores e badges para facilitar identificação visual",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-prevention-5",
+          "description": "SEMPRE incluir ações rápidas para resolução de problemas",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437521_dashboard_errors_visualization-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437521_dashboard_errors_visualization-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437521_dashboard_errors_visualization-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// API de issues\nGET /api/system/issues\n\n// Dashboard com visualização de erros\n- Estatísticas: críticos, altos, médios, total\n- Problemas dinâmicos baseados em API\n- Status MCP sempre visível\n- Ações rápidas para resolução",
+    "filePath": "app/api/system/issues/route.ts, app/monitor/page.tsx",
+    "solution": "1) Criado API /api/system/issues para detectar e categorizar problemas automaticamente, 2) Adicionado seção 'Erros e Problemas Detectados' na home do dashboard, 3) Implementado visualização dinâmica com estatísticas (críticos, altos, médios, total), 4) Criado sistema de cores e badges para diferentes severidades, 5) Adicionado status dos serviços MCP sempre visível, 6) Implementado ações rápidas para resolução, 7) Confirmado que serviços MCP estão funcionando (status: healthy, available: true)",
+    "relatedErrors": [
+      "err_1757360437520_dashboard_monitoring_redirect_login"
+    ],
+    "documentationLinks": [
+      "app/api/system/issues/route.ts",
+      "app/monitor/page.tsx"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437521_dashboard_errors_visualization",
+    "errorType": "dashboard",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-09T01:32:00.000Z",
+    "resolutionDate": "2025-09-09T01:33:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

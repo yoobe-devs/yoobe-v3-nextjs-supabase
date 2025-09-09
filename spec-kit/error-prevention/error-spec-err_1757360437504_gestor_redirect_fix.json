@@ -1,0 +1,95 @@
+{
+  "id": "error-spec-err_1757360437504_gestor_redirect_fix",
+  "title": "Error Prevention: Redirecionamento após login como gestor não funcionava",
+  "description": "Specification for preventing and handling: Após login como gestor, o sistema não redirecionava para /gestor/dashboard. Problemas: auth-provider não atualizava loading state, layout do gestor usava usuário mock em vez do real, setTimeout no login tentava usar user antes da atualização",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "navigation",
+    "high"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437504_gestor_redirect_fix-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-prevention-0",
+          "description": "Sempre usar useEffect para redirecionamentos baseados em estado",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-prevention-1",
+          "description": "Não usar setTimeout para aguardar atualizações de estado",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-prevention-2",
+          "description": "Layouts devem usar useAuth() em vez de usuários mock",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-prevention-3",
+          "description": "Verificar loading state em auth providers",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437504_gestor_redirect_fix-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437504_gestor_redirect_fix-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437504_gestor_redirect_fix-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Removido setTimeout, deixado useEffect gerenciar\nuseEffect(() => {\n  if (!authLoading && user) {\n    const targetRoute = getPostLoginRedirect(user, redirectTo)\n    router.push(targetRoute)\n  }\n}, [user, authLoading, router, searchParams])",
+    "filePath": "app/auth/login/page.tsx",
+    "solution": "Corrigido auth-provider para atualizar loading state corretamente, removido setTimeout do login e deixado useEffect gerenciar redirecionamento, atualizado layout do gestor para usar useAuth() em vez de usuário mock, adicionado verificação de usuário no layout",
+    "relatedErrors": [],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437504_gestor_redirect_fix",
+    "errorType": "navigation",
+    "severity": "high",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T21:35:00.000Z",
+    "resolutionDate": "2025-09-08T21:40:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

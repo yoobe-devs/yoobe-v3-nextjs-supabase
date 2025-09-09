@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
-import { cookies } from 'next/headers'
+import { createClient } from '@supabase/supabase-js'
+import { authenticateAndAuthorize } from '@/lib/user-utils'
 
 /**
  * @api {get} /api/gestor/usuarios Listar usuários
@@ -10,138 +10,190 @@ import { cookies } from 'next/headers'
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
-    // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
-    if (authError || !session) {
+    // Verificar autenticação e autorização
+    const authResult = await authenticateAndAuthorize(request, [
+      'manager',
+      'admin',
+      'admin_global',
+      'superadmin',
+    ])
+    if (!authResult.success) {
       return NextResponse.json(
-        { success: false, error: { code: 'UNAUTHORIZED', message: 'Usuário não autenticado' } },
-        { status: 401 }
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: authResult.error,
+          },
+        },
+        { status: authResult.status }
       )
     }
 
-    // Verificar se é gestor
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('role, company_id')
-      .eq('id', session.user.id)
-      .single()
+    const { user } = authResult
+    const companyId = user.company_id
 
-    if (userError || !user || user.role !== 'manager') {
-      return NextResponse.json(
-        { success: false, error: { code: 'FORBIDDEN', message: 'Acesso negado. Apenas gestores podem acessar.' } },
-        { status: 403 }
-      )
-    }
+    // Configurar Supabase service
+    const supabaseService = createClient(
+      'http://localhost:54321',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+    )
 
-    // Parâmetros de busca e filtros
+    // Parâmetros de busca
     const { searchParams } = new URL(request.url)
     const search = searchParams.get('search') || ''
     const role = searchParams.get('role') || ''
     const status = searchParams.get('status') || ''
     const page = parseInt(searchParams.get('page') || '1')
     const limit = parseInt(searchParams.get('limit') || '20')
-    const offset = (page - 1) * limit
+    const sort = searchParams.get('sort') || 'created_at'
+    const dir = searchParams.get('dir') || 'desc'
 
-    // Construir query base
-    let query = supabase
+    // Query base para usuários
+    let query = supabaseService
       .from('users')
-      .select(`
+      .select(
+        `
         id,
         email,
         full_name,
+        name,
+        avatar_url,
         role,
-        status,
         company_id,
         department,
+        position,
+        points_balance,
+        status,
+        created_at,
+        updated_at,
+        store_id,
+        cpf,
         phone,
         address,
-        created_at,
+        city,
+        state,
+        zip_code,
+        birth_date,
         last_login,
-        metadata
-      `)
-      .eq('company_id', user.company_id)
+        metadata,
+        created_by,
+        updated_by,
+        preferences,
+        timezone,
+        language,
+        email_notifications,
+        push_notifications,
+        sms_notifications,
+        two_factor_enabled,
+        password_changed_at,
+        failed_login_attempts,
+        locked_until,
+        bio,
+        website,
+        linkedin_url,
+        twitter_handle,
+        employee_id,
+        hire_date,
+        salary,
+        manager_id,
+        is_active,
+        is_verified,
+        verification_token,
+        reset_token,
+        reset_token_expires
+      `,
+        { count: 'exact' }
+      )
+      .eq('company_id', companyId)
 
     // Aplicar filtros
     if (search) {
-      query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,department.ilike.%${search}%`)
+      query = query.or(
+        `email.ilike.%${search}%,full_name.ilike.%${search}%,name.ilike.%${search}%`
+      )
     }
+
     if (role) {
       query = query.eq('role', role)
     }
+
     if (status) {
       query = query.eq('status', status)
     }
 
-    // Contar total de registros
-    const { count, error: countError } = await query.count()
-    if (countError) {
-      console.error('Erro ao contar usuários:', countError)
-    }
+    // Aplicar ordenação
+    query = query.order(sort, { ascending: dir === 'asc' })
 
-    // Buscar dados paginados
-    const { data: users, error: usersError } = await query
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1)
+    // Aplicar paginação
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+    query = query.range(from, to)
+
+    const { data: users, error: usersError, count } = await query
 
     if (usersError) {
       console.error('Erro ao buscar usuários:', usersError)
       return NextResponse.json(
-        { success: false, error: { code: 'DATABASE_ERROR', message: 'Erro ao buscar usuários' } },
+        {
+          success: false,
+          error: {
+            code: 'INTERNAL_ERROR',
+            message: 'Erro ao buscar usuários',
+            details: usersError.message,
+          },
+        },
         { status: 500 }
       )
     }
 
-    // Buscar estatísticas dos usuários
-    const statsPromises = users?.map(async (user) => {
-      const { count: ordersCount } = await supabase
-        .from('orders')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
+    // Calcular estatísticas
+    const stats = {
+      total: count || 0,
+      byRole: {} as Record<string, number>,
+      byStatus: {} as Record<string, number>,
+      active: 0,
+      inactive: 0,
+    }
 
-      const { count: redemptionsCount } = await supabase
-        .from('redemptions')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
+    users?.forEach(user => {
+      // Contar por role
+      stats.byRole[user.role] = (stats.byRole[user.role] || 0) + 1
 
-      const { data: walletData } = await supabase
-        .from('wallet_entries')
-        .select('amount, type')
-        .eq('user_id', user.id)
+      // Contar por status
+      stats.byStatus[user.status] = (stats.byStatus[user.status] || 0) + 1
 
-      const totalPoints = walletData?.reduce((sum, entry) => {
-        return sum + (entry.type === 'credit' ? entry.amount : -entry.amount)
-      }, 0) || 0
-
-      return {
-        ...user,
-        stats: {
-          totalOrders: ordersCount || 0,
-          totalRedemptions: redemptionsCount || 0,
-          totalPoints: Math.max(0, totalPoints)
-        }
-      }
-    }) || []
-
-    const usersWithStats = await Promise.all(statsPromises)
-
-    return NextResponse.json({
-      success: true,
-      data: usersWithStats,
-      meta: {
-        total: count || 0,
-        page,
-        limit,
-        totalPages: Math.ceil((count || 0) / limit),
-        company_id: user.company_id
+      // Contar ativos/inativos
+      if (user.is_active) {
+        stats.active++
+      } else {
+        stats.inactive++
       }
     })
 
+    return NextResponse.json({
+      success: true,
+      data: {
+        users: users || [],
+        pagination: {
+          page,
+          limit,
+          total: count || 0,
+          totalPages: Math.ceil((count || 0) / limit),
+        },
+        stats,
+      },
+    })
   } catch (error) {
-    console.error('Erro na API de usuários:', error)
+    console.error('Erro na API de usuários do gestor:', error)
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Erro interno do servidor' } },
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Erro interno do servidor',
+        },
+      },
       { status: 500 }
     )
   }
@@ -155,175 +207,145 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createRouteHandlerClient({ cookies })
-    
-    // Verificar autenticação
-    const { data: { session }, error: authError } = await supabase.auth.getSession()
-    if (authError || !session) {
+    // Verificar autenticação e autorização
+    const authResult = await authenticateAndAuthorize(request, [
+      'manager',
+      'admin',
+      'admin_global',
+      'superadmin',
+    ])
+    if (!authResult.success) {
       return NextResponse.json(
-        { success: false, error: { code: 'UNAUTHORIZED', message: 'Usuário não autenticado' } },
-        { status: 401 }
+        {
+          success: false,
+          error: {
+            code: 'UNAUTHORIZED',
+            message: authResult.error,
+          },
+        },
+        { status: authResult.status }
       )
     }
 
-    // Verificar se é gestor
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('role, company_id')
-      .eq('id', session.user.id)
-      .single()
-
-    if (userError || !user || user.role !== 'manager') {
-      return NextResponse.json(
-        { success: false, error: { code: 'FORBIDDEN', message: 'Acesso negado. Apenas gestores podem acessar.' } },
-        { status: 403 }
-      )
-    }
+    const { user } = authResult
+    const companyId = user.company_id
 
     const body = await request.json()
-    const { 
-      email, 
-      full_name, 
-      role, 
-      department, 
-      phone, 
-      address, 
-      password,
-      metadata = {}
-    } = body
+    const { email, full_name, role, department, position, phone, cpf } = body
 
-    // Validação dos campos obrigatórios
-    if (!email || !full_name || !role || !department) {
+    // Validações básicas
+    if (!email || !full_name || !role) {
       return NextResponse.json(
-        { success: false, error: { code: 'VALIDATION_ERROR', message: 'Campos obrigatórios não preenchidos' } },
+        {
+          success: false,
+          error: {
+            code: 'VALIDATION_ERROR',
+            message: 'Email, nome completo e role são obrigatórios',
+          },
+        },
         { status: 400 }
       )
     }
 
-    // Validar role
-    if (!['manager', 'employee', 'viewer'].includes(role)) {
+    // Configurar Supabase service
+    const supabaseService = createClient(
+      'http://localhost:54321',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+    )
+
+    // Criar usuário no Auth
+    const { data: authUser, error: authError } =
+      await supabaseService.auth.admin.createUser({
+        email,
+        password: 'temp123', // Senha temporária
+        email_confirm: true,
+        user_metadata: {
+          full_name,
+          role,
+          company_id: companyId,
+        },
+      })
+
+    if (authError || !authUser.user) {
+      console.error('Erro ao criar usuário no Auth:', authError)
       return NextResponse.json(
-        { success: false, error: { code: 'VALIDATION_ERROR', message: 'Role inválido' } },
-        { status: 400 }
-      )
-    }
-
-    // Verificar se email já existe
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', email)
-      .single()
-
-    if (existingUser) {
-      return NextResponse.json(
-        { success: false, error: { code: 'CONFLICT', message: 'Email já cadastrado' } },
-        { status: 409 }
-      )
-    }
-
-    // Criar usuário no Supabase Auth
-    const { data: authUser, error: authCreateError } = await supabase.auth.admin.createUser({
-      email,
-      password: password || 'temp123456',
-      email_confirm: true,
-      user_metadata: {
-        full_name,
-        role,
-        company_id: user.company_id,
-        department,
-        phone,
-        address,
-        ...metadata
-      }
-    })
-
-    if (authCreateError) {
-      console.error('Erro ao criar usuário no Auth:', authCreateError)
-      return NextResponse.json(
-        { success: false, error: { code: 'AUTH_ERROR', message: 'Erro ao criar usuário no sistema de autenticação' } },
+        {
+          success: false,
+          error: {
+            code: 'AUTH_ERROR',
+            message: 'Erro ao criar usuário',
+            details: authError?.message,
+          },
+        },
         { status: 500 }
       )
     }
 
     // Criar registro na tabela users
-    const { data: dbUser, error: dbCreateError } = await supabase
+    const userData = {
+      id: authUser.user.id,
+      email,
+      full_name,
+      role,
+      company_id: companyId,
+      department: department || null,
+      position: position || null,
+      phone: phone || null,
+      cpf: cpf || null,
+      points_balance: 0,
+      status: 'active',
+      is_active: true,
+      is_verified: false,
+      created_by: user.id,
+      updated_by: user.id,
+    }
+
+    const { data: newUser, error: createError } = await supabaseService
       .from('users')
-      .insert({
-        id: authUser.user.id,
-        email,
-        full_name,
-        role,
-        status: 'active',
-        company_id: user.company_id,
-        department,
-        phone,
-        address,
-        metadata,
-        created_by: session.user.id,
-        updated_by: session.user.id
-      })
+      .insert(userData)
       .select()
       .single()
 
-    if (dbCreateError) {
-      console.error('Erro ao criar usuário no banco:', dbCreateError)
+    if (createError) {
+      console.error('Erro ao criar usuário na tabela:', createError)
+
       // Rollback: deletar usuário do Auth
-      await supabase.auth.admin.deleteUser(authUser.user.id)
+      try {
+        await supabaseService.auth.admin.deleteUser(authUser.user.id)
+      } catch (rollbackError) {
+        console.error('Erro ao fazer rollback:', rollbackError)
+      }
+
       return NextResponse.json(
-        { success: false, error: { code: 'DATABASE_ERROR', message: 'Erro ao criar usuário no banco de dados' } },
+        {
+          success: false,
+          error: {
+            code: 'DATABASE_ERROR',
+            message: 'Erro ao criar usuário',
+            details: createError.message,
+          },
+        },
         { status: 500 }
       )
     }
 
-    // Log de auditoria
-    await supabase
-      .from('audit_log')
-      .insert({
-        event_type: 'user_created',
-        actor_id: session.user.id,
-        role: user.role,
-        tenant_id: user.company_id,
-        target: 'users',
-        payload: { 
-          user_id: dbUser.id, 
-          action: 'create',
-          user_role: role,
-          user_email: email
-        }
-      })
-
-    // Enviar email de boas-vindas se configurado
-    if (process.env.EMAIL_SERVICE_URL) {
-      try {
-        await fetch(process.env.EMAIL_SERVICE_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            to: email,
-            template: 'welcome_user',
-            data: {
-              full_name,
-              company_name: 'Join Tecnologia',
-              login_url: `${process.env.NEXT_PUBLIC_APP_URL}/auth/login`
-            }
-          })
-        })
-      } catch (emailError) {
-        console.warn('Erro ao enviar email de boas-vindas:', emailError)
-      }
-    }
-
     return NextResponse.json({
       success: true,
-      data: dbUser,
-      message: 'Usuário criado com sucesso'
-    }, { status: 201 })
-
+      data: {
+        user: newUser,
+        message: 'Usuário criado com sucesso',
+      },
+    })
   } catch (error) {
-    console.error('Erro na API de usuários:', error)
+    console.error('Erro na API de criação de usuários:', error)
     return NextResponse.json(
-      { success: false, error: { code: 'INTERNAL_ERROR', message: 'Erro interno do servidor' } },
+      {
+        success: false,
+        error: {
+          code: 'INTERNAL_ERROR',
+          message: 'Erro interno do servidor',
+        },
+      },
       { status: 500 }
     )
   }

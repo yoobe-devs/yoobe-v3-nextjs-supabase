@@ -1,113 +1,125 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/components/auth/auth-provider-simple"
-import { YoobeLogo } from "@/components/ui/yoobe-logo"
-import { NotificationBell } from "@/components/notifications/notification-bell"
-import { 
-  LayoutDashboard, 
-  Users, 
-  Package, 
-  ShoppingCart, 
-  Settings, 
-  LogOut, 
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
+import { useAuth } from '@/components/auth/auth-provider-simple'
+import { YoobeLogo } from '@/components/ui/yoobe-logo'
+import { NotificationBell } from '@/components/notifications/notification-bell'
+import { SmartLink } from '@/components/smart-link'
+import {
+  LayoutDashboard,
+  Users,
+  Package,
+  ShoppingCart,
+  Settings,
+  LogOut,
   HelpCircle,
   BarChart3,
   Store,
   UserPlus,
   Building2,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Gift,
 } from 'lucide-react'
 
 const mainNav = [
   {
-    title: "Dashboard",
-    href: "/gestor/dashboard",
-    icon: LayoutDashboard
+    title: 'Dashboard',
+    href: '/gestor/dashboard',
+    icon: LayoutDashboard,
   },
   {
-    title: "Funcionários",
-    href: "/gestor/funcionarios",
-    icon: Users
+    title: 'Funcionários',
+    href: '/gestor/funcionarios',
+    icon: Users,
   },
   {
-    title: "Produtos",
-    href: "/gestor/produtos",
-    icon: Package
+    title: 'Gerenciar Tags',
+    href: '/gestor/funcionarios/tags',
+    icon: Users,
   },
   {
-    title: "Catálogo",
-    href: "/gestor/catalogo",
-    icon: Store
+    title: 'Resgate de Brindes',
+    href: '/funcionario/brindes',
+    icon: Gift,
   },
   {
-    title: "Orçamentos",
-    href: "/gestor/orcamentos",
-    icon: ShoppingCart
+    title: 'Produtos',
+    href: '/gestor/produtos',
+    icon: Package,
   },
   {
-    title: "Pedidos",
-    href: "/gestor/pedidos",
-    icon: ShoppingCart
+    title: 'Catálogo',
+    href: '/gestor/catalogo',
+    icon: Store,
   },
   {
-    title: "Estoque",
-    href: "/gestor/estoque",
-    icon: Package
+    title: 'Orçamentos',
+    href: '/gestor/orcamentos',
+    icon: ShoppingCart,
   },
   {
-    title: "Usuários",
-    href: "/gestor/usuarios",
-    icon: Users
+    title: 'Pedidos',
+    href: '/gestor/pedidos',
+    icon: ShoppingCart,
   },
   {
-    title: "Minha Loja",
-    href: "/gestor/minha-loja",
-    icon: Store
+    title: 'Estoque',
+    href: '/gestor/estoque',
+    icon: Package,
   },
   {
-    title: "Loja de Brindes",
-    href: "/gestor/loja-brindes",
-    icon: Store
+    title: 'Usuários',
+    href: '/gestor/usuarios',
+    icon: Users,
   },
   {
-    title: "Swag Track",
-    href: "/gestor/swag-track",
-    icon: BarChart3
+    title: 'Minha Loja',
+    href: '/gestor/minha-loja',
+    icon: Store,
   },
   {
-    title: "Onboarding",
-    href: "/gestor/onboarding",
-    icon: UserPlus
+    title: 'Loja de Brindes',
+    href: '/gestor/loja-brindes',
+    icon: Store,
   },
   {
-    title: "Configurações",
-    href: "/gestor/configuracoes",
-    icon: Settings
+    title: 'Swag Track',
+    href: '/gestor/swag-track',
+    icon: BarChart3,
   },
   {
-    title: "Integração Cubbo",
-    href: "/gestor/integracao-cubbo",
-    icon: LinkIcon
-  }
+    title: 'Onboarding',
+    href: '/gestor/onboarding',
+    icon: UserPlus,
+  },
+  {
+    title: 'Configurações',
+    href: '/gestor/configuracoes',
+    icon: Settings,
+  },
+  {
+    title: 'Integração Cubbo',
+    href: '/gestor/integracao-cubbo',
+    icon: LinkIcon,
+  },
 ]
 
 const footerNav = [
   {
-    title: "Política de Privacidade",
-    href: "/privacidade"
+    title: 'Política de Privacidade',
+    href: '/privacidade',
   },
   {
-    title: "Termos de Uso", 
-    href: "/termos"
+    title: 'Termos de Uso',
+    href: '/termos',
   },
   {
-    title: "Contato",
-    href: "/contato"
-  }
+    title: 'Contato',
+    href: '/contato',
+  },
 ]
 
 export function GestorNavigationMenu() {
@@ -137,27 +149,27 @@ export function GestorNavigationMenu() {
       </div>
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-4 text-sm font-medium">
-          {mainNav.map((item) => {
+          {mainNav.map(item => {
             const Icon = item.icon
             return (
-              <Link
+              <SmartLink
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900",
-                  pathname === item.href ? "bg-gray-100 text-gray-900" : ""
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900',
+                  pathname === item.href ? 'bg-gray-100 text-gray-900' : ''
                 )}
               >
                 <Icon className="h-4 w-4" />
                 {item.title}
-              </Link>
+              </SmartLink>
             )
           })}
         </nav>
       </div>
       <div className="mt-auto p-4">
         <nav className="grid gap-1">
-          {footerNav.map((item) => (
+          {footerNav.map(item => (
             <Link
               key={item.href}
               href={item.href}
@@ -171,8 +183,8 @@ export function GestorNavigationMenu() {
           <HelpCircle className="h-4 w-4" />
           Ajuda
         </Button>
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="mt-2 w-full justify-start gap-2 text-red-500 hover:text-red-600"
           onClick={handleLogout}
         >

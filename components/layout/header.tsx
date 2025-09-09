@@ -3,9 +3,17 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
-import { Bell, Settings, LogOut, User, Building, Crown, Shield } from 'lucide-react'
+import { Settings, LogOut, User, Building, Crown, Shield } from 'lucide-react'
+import { RealtimeNotificationBell } from '@/components/notifications/realtime-notification-bell'
 
 interface HeaderProps {
   user?: {
@@ -14,24 +22,49 @@ interface HeaderProps {
     role: 'superadmin' | 'admin_gestor' | 'gestor' | 'funcionario'
     company_name?: string
   }
-  notifications?: number
   onLogout?: () => void
   onProfile?: () => void
   onSettings?: () => void
 }
 
-export default function Header({ user, notifications = 0, onLogout, onProfile, onSettings }: HeaderProps) {
+export default function Header({
+  user,
+  onLogout,
+  onProfile,
+  onSettings,
+}: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   const getRoleBadge = (role: string) => {
     const roleConfig = {
-      superadmin: { variant: 'default', icon: Crown, label: 'Super Admin', color: 'bg-purple-100 text-purple-800' },
-      admin_gestor: { variant: 'default', icon: Crown, label: 'Admin Gestor', color: 'bg-blue-100 text-blue-800' },
-      gestor: { variant: 'default', icon: Shield, label: 'Gestor', color: 'bg-green-100 text-green-800' },
-      funcionario: { variant: 'secondary', icon: User, label: 'Funcionário', color: 'bg-gray-100 text-gray-800' }
+      superadmin: {
+        variant: 'default',
+        icon: Crown,
+        label: 'Super Admin',
+        color: 'bg-purple-100 text-purple-800',
+      },
+      admin_gestor: {
+        variant: 'default',
+        icon: Crown,
+        label: 'Admin Gestor',
+        color: 'bg-blue-100 text-blue-800',
+      },
+      gestor: {
+        variant: 'default',
+        icon: Shield,
+        label: 'Gestor',
+        color: 'bg-green-100 text-green-800',
+      },
+      funcionario: {
+        variant: 'secondary',
+        icon: User,
+        label: 'Funcionário',
+        color: 'bg-gray-100 text-gray-800',
+      },
     }
 
-    const config = roleConfig[role as keyof typeof roleConfig] || roleConfig.funcionario
+    const config =
+      roleConfig[role as keyof typeof roleConfig] || roleConfig.funcionario
     const Icon = config.icon
 
     return (
@@ -62,7 +95,7 @@ export default function Header({ user, notifications = 0, onLogout, onProfile, o
             </div>
             <span className="font-bold text-xl">Yoobe</span>
           </div>
-          
+
           {user?.company_name && (
             <div className="hidden md:flex items-center gap-2 text-sm text-muted-foreground">
               <Building className="w-4 h-4" />
@@ -78,24 +111,17 @@ export default function Header({ user, notifications = 0, onLogout, onProfile, o
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Notifications */}
-          <Button variant="ghost" size="sm" className="relative">
-            <Bell className="w-5 h-5" />
-            {notifications > 0 && (
-              <Badge 
-                variant="destructive" 
-                className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs flex items-center justify-center"
-              >
-                {notifications > 99 ? '99+' : notifications}
-              </Badge>
-            )}
-          </Button>
+          {/* Notificações em Tempo Real */}
+          <RealtimeNotificationBell />
 
           {/* User Menu */}
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button
+                  variant="ghost"
+                  className="relative h-8 w-8 rounded-full"
+                >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="/avatars/01.png" alt={user.name} />
                     <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
@@ -105,13 +131,13 @@ export default function Header({ user, notifications = 0, onLogout, onProfile, o
               <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user.name}</p>
+                    <p className="text-sm font-medium leading-none">
+                      {user.name}
+                    </p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {user.email}
                     </p>
-                    <div className="mt-2">
-                      {getRoleBadge(user.role)}
-                    </div>
+                    <div className="mt-2">{getRoleBadge(user.role)}</div>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />

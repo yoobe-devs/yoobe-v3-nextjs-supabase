@@ -1,0 +1,303 @@
+{
+  "id": "error-prevention-index",
+  "title": "Error Prevention Specifications Index",
+  "description": "Index of all error prevention specifications",
+  "category": "index",
+  "priority": "medium",
+  "status": "active",
+  "specifications": [
+    {
+      "id": "error-management-system",
+      "title": "Error Management System",
+      "category": "system",
+      "priority": "high",
+      "status": "active"
+    },
+    {
+      "id": "error-category-example",
+      "title": "Error Category: EXAMPLE",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-linter",
+      "title": "Error Category: LINTER",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-integration",
+      "title": "Error Category: INTEGRATION",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-syntax",
+      "title": "Error Category: SYNTAX",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-navigation",
+      "title": "Error Category: NAVIGATION",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-authentication",
+      "title": "Error Category: AUTHENTICATION",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-best_practice",
+      "title": "Error Category: BEST PRACTICE",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-routing",
+      "title": "Error Category: ROUTING",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-documentation",
+      "title": "Error Category: DOCUMENTATION",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-system_architecture",
+      "title": "Error Category: SYSTEM ARCHITECTURE",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-system",
+      "title": "Error Category: SYSTEM",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-api",
+      "title": "Error Category: API",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-dashboard",
+      "title": "Error Category: DASHBOARD",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-category-script",
+      "title": "Error Category: SCRIPT",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "active"
+    },
+    {
+      "id": "error-spec-err_1756847704543_x3wp8qqpg",
+      "title": "Error Prevention: Exemplo de erro registrado",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1756850264096_t1jtxnaof",
+      "title": "Error Prevention: Exemplo de erro registrado",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1756936800000_store_config_imports",
+      "title": "Error Prevention: Imports ausentes em app/api/gestor/store-config/route.ts",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1756936800001_firecrawl_integration",
+      "title": "Error Prevention: Firecrawl API Key Required Error",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437502_login_syntax_error",
+      "title": "Error Prevention: Erro de sintaxe na página de login - aspa simples extra",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437503_redirect_system_fix",
+      "title": "Error Prevention: Sistema de redirecionamento inconsistente e fragmentado",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437504_gestor_redirect_fix",
+      "title": "Error Prevention: Redirecionamento após login como gestor não funcionava",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437505_all_logins_fix",
+      "title": "Error Prevention: Layouts de admin e funcionário não usavam auth provider correto",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437506_mcp_integration_rules",
+      "title": "Error Prevention: MCP Integration Rules and Best Practices",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437507_login_redirect_loop",
+      "title": "Error Prevention: Loop infinito no sistema de redirecionamento de login",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437508_middleware_loop_fix",
+      "title": "Error Prevention: Correção definitiva do loop infinito no middleware",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437509_loop_definitive_fix",
+      "title": "Error Prevention: Correção definitiva do loop infinito - Middleware simplificado",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437510_docs_routes_centralization",
+      "title": "Error Prevention: Centralização e correção de rotas de documentação",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437511_mcp_documentation_complete",
+      "title": "Error Prevention: Documentação completa de MCPs (Model Context Protocol)",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437512_system_protection_implementation",
+      "title": "Error Prevention: Sistema de Proteção e Monitoramento Completo",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437513_documentation_system_update",
+      "title": "Error Prevention: Atualização completa do sistema de documentação com Sistema de Proteção",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437514_system_monitoring_not_working",
+      "title": "Error Prevention: Sistema de monitoramento não está funcionando - APIs fora do ar",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437515_localhost_not_working",
+      "title": "Error Prevention: Localhost não está funcionando - Erro 500 no servidor",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437516_incorrect_dates_documentation",
+      "title": "Error Prevention: Datas incorretas na documentação e memória de erros",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437517_date_validation_system",
+      "title": "Error Prevention: Sistema de validação de datas implementado para prevenir erros futuros",
+      "category": "error-prevention",
+      "priority": "low",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437518_broken_documentation_links",
+      "title": "Error Prevention: Links quebrados na documentação - Erros de sintaxe JSX",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437519_system_apis_not_working",
+      "title": "Error Prevention: APIs de sistema não funcionando - Erro de autenticação",
+      "category": "error-prevention",
+      "priority": "high",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437520_dashboard_monitoring_redirect_login",
+      "title": "Error Prevention: Dashboard de monitoramento redirecionando para login",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437521_dashboard_errors_visualization",
+      "title": "Error Prevention: Dashboard de monitoramento sem visualização de erros",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    },
+    {
+      "id": "error-spec-err_1757360437522_smart_docs_init_script_missing",
+      "title": "Error Prevention: Script init-smart-docs.js não existia",
+      "category": "error-prevention",
+      "priority": "medium",
+      "status": "completed"
+    }
+  ],
+  "metadata": {
+    "totalSpecifications": 40,
+    "categories": [
+      "system",
+      "error-prevention"
+    ],
+    "priorities": [
+      "high",
+      "low",
+      "medium"
+    ],
+    "migratedAt": "2025-09-09T03:18:50.284Z"
+  }
+}

@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Índice Completo - Spec Kit Yoobe v3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(var(--destructive))",
+                            foreground: "hsl(var(--destructive-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))",
+                        },
+                        popover: {
+                            DEFAULT: "hsl(var(--popover))",
+                            foreground: "hsl(var(--popover-foreground))",
+                        },
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 221.2 83.2% 53.3%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96%;
+            --secondary-foreground: 222.2 84% 4.9%;
+            --muted: 210 40% 96%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96%;
+            --accent-foreground: 222.2 84% 4.9%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 221.2 83.2% 53.3%;
+            --radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-background font-sans antialiased">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="p-2 bg-primary/10 rounded-lg">
+                    <svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold text-foreground">Spec Kit</h1>
+                    <p class="text-xl text-muted-foreground">Índice Completo de Recursos e Documentação</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">
+                    <svg class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                    </svg>
+                    Spec Kit v3.1.0
+                </span>
+                <span class="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">
+                    <svg class="h-3 w-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                    </svg>
+                    Ativo
+                </span>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="mb-8">
+            <div class="flex flex-wrap gap-2">
+                <a href="index.html" class="inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v2H8V5z"></path>
+                    </svg>
+                    Índice
+                </a>
+                <a href="status.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Status
+                </a>
+                <a href="monitoring.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Monitoramento
+                </a>
+                <a href="workflow.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                    Workflow
+                </a>
+                <a href="analytics.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Analytics
+                </a>
+                <a href="troubleshooting.html" class="inline-flex items-center rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground">
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                    Solução de Problemas
+                </a>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="space-y-6">
+            <!-- Estatísticas -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">📊 Estatísticas do Sistema</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="text-center p-4 bg-primary/5 rounded-lg">
+                        <div class="text-3xl font-bold text-primary">44</div>
+                        <div class="text-sm text-muted-foreground">Especificações</div>
+                    </div>
+                    <div class="text-center p-4 bg-green-50 rounded-lg">
+                        <div class="text-3xl font-bold text-green-600">25</div>
+                        <div class="text-sm text-muted-foreground">Erros Migrados</div>
+                    </div>
+                    <div class="text-center p-4 bg-blue-50 rounded-lg">
+                        <div class="text-3xl font-bold text-blue-600">14</div>
+                        <div class="text-sm text-muted-foreground">Categorias</div>
+                    </div>
+                    <div class="text-center p-4 bg-purple-50 rounded-lg">
+                        <div class="text-3xl font-bold text-purple-600">100%</div>
+                        <div class="text-sm text-muted-foreground">Taxa Resolução</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comandos MCP -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">⚡ Comandos MCP Disponíveis</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 bg-muted rounded-lg">
+                        <code class="text-sm font-mono text-primary">/spec create</code>
+                        <p class="text-sm text-muted-foreground mt-1">Criar nova especificação</p>
+                    </div>
+                    <div class="p-4 bg-muted rounded-lg">
+                        <code class="text-sm font-mono text-primary">/spec track</code>
+                        <p class="text-sm text-muted-foreground mt-1">Rastrear progresso</p>
+                    </div>
+                    <div class="p-4 bg-muted rounded-lg">
+                        <code class="text-sm font-mono text-primary">/spec approve</code>
+                        <p class="text-sm text-muted-foreground mt-1">Gerenciar aprovações</p>
+                    </div>
+                    <div class="p-4 bg-muted rounded-lg">
+                        <code class="text-sm font-mono text-primary">/spec bug</code>
+                        <p class="text-sm text-muted-foreground mt-1">Relatar bugs</p>
+                    </div>
+                    <div class="p-4 bg-muted rounded-lg">
+                        <code class="text-sm font-mono text-primary">/spec docs</code>
+                        <p class="text-sm text-muted-foreground mt-1">Atualizar documentação</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recursos Principais -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">🌐 Recursos Principais</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="p-6 border rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2 bg-primary/10 rounded-lg">
+                                <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-card-foreground">Dashboard Principal</h3>
+                                <span class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+                                    ⚠️ Interface com problemas
+                                </span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Interface web completa para gerenciar especificações e workflows</p>
+                        <a href="http://localhost:3456" target="_blank" class="inline-flex items-center text-sm text-primary hover:underline">
+                            Acessar Dashboard
+                            <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="p-6 border rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2 bg-green-100 rounded-lg">
+                                <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-card-foreground">API REST</h3>
+                                <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                                    ✅ Funcionando
+                                </span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Endpoints da API para acessar especificações programaticamente</p>
+                        <a href="http://localhost:3456/api/specs" target="_blank" class="inline-flex items-center text-sm text-primary hover:underline">
+                            Acessar API
+                            <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="p-6 border rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2 bg-blue-100 rounded-lg">
+                                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-card-foreground">Documentação Integrada</h3>
+                                <span class="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                                    ✅ Disponível
+                                </span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Página integrada na plataforma Yoobe v3</p>
+                        <a href="/docs/spec-kit" target="_blank" class="inline-flex items-center text-sm text-primary hover:underline">
+                            Ver Documentação
+                            <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sistemas Core -->
+            <div class="rounded-lg border bg-card p-6">
+                <h2 class="text-2xl font-bold text-card-foreground mb-4">🏗️ Sistemas Core</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 border rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2 bg-red-100 rounded-lg">
+                                <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="font-semibold text-card-foreground">Sistema de Gerenciamento de Erros</h3>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Sistema abrangente de gerenciamento e prevenção de erros para Yoobe v3</p>
+                        <a href="../spec-kit/error-management-system.json" target="_blank" class="inline-flex items-center text-sm text-primary hover:underline">
+                            Ver Especificação
+                            <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="p-6 border rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2 bg-blue-100 rounded-lg">
+                                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="font-semibold text-card-foreground">Workflow de Desenvolvimento</h3>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Workflow abrangente para todas as tarefas futuras de desenvolvimento</p>
+                        <a href="../spec-kit/development-workflow.json" target="_blank" class="inline-flex items-center text-sm text-primary hover:underline">
+                            Ver Especificação
+                            <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="p-6 border rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2 bg-green-100 rounded-lg">
+                                <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="font-semibold text-card-foreground">Sistema de Analytics e Insights</h3>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Sistema de rastreamento de analytics e insights para melhorias da plataforma</p>
+                        <a href="../spec-kit/analytics-insights-system.json" target="_blank" class="inline-flex items-center text-sm text-primary hover:underline">
+                            Ver Especificação
+                            <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="p-6 border rounded-lg hover:shadow-md transition-shadow">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="p-2 bg-purple-100 rounded-lg">
+                                <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="font-semibold text-card-foreground">Sistema de Integração MCP</h3>
+                        </div>
+                        <p class="text-sm text-muted-foreground mb-4">Integração perfeita do Spec Kit com ferramentas MCP existentes</p>
+                        <a href="../spec-kit/mcp-integration-system.json" target="_blank" class="inline-flex items-center text-sm text-primary hover:underline">
+                            Ver Especificação
+                            <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-8 border-t border-border">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-sm text-muted-foreground">
+                    <p>Spec Kit v3.1.0 - Sistema de Especificações Yoobe</p>
+                    <p>Última atualização: <span id="timestamp"></span></p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="http://localhost:3456" target="_blank" class="text-sm text-primary hover:underline">
+                        Dashboard Principal
+                    </a>
+                    <a href="http://localhost:3456/api/specs" target="_blank" class="text-sm text-primary hover:underline">
+                        API REST
+                    </a>
+                    <a href="/docs/spec-kit" class="text-sm text-primary hover:underline">
+                        Documentação Integrada
+                    </a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('timestamp').textContent = new Date().toLocaleString('pt-BR');
+    </script>
+</body>
+</html>

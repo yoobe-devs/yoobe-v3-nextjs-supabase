@@ -55,8 +55,10 @@ CREATE TABLE IF NOT EXISTS company_products (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Inserir categorias padrão
-INSERT INTO product_categories (name, description, icon, color) VALUES
+-- Inserir categorias padrão (apenas se a coluna description existir)
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'product_categories' AND column_name = 'description' AND table_schema = 'public') THEN
+    INSERT INTO product_categories (name, description, icon, color) VALUES
   ('Vestuário', 'Roupas e acessórios corporativos', 'shirt', '#3B82F6'),
   ('Tecnologia', 'Produtos tecnológicos e gadgets', 'smartphone', '#10B981'),
   ('Escritório', 'Material de escritório e papelaria', 'briefcase', '#F59E0B'),
@@ -66,6 +68,8 @@ INSERT INTO product_categories (name, description, icon, color) VALUES
   ('Alimentação', 'Produtos alimentícios e bebidas', 'coffee', '#84CC16'),
   ('Viagem', 'Produtos para viagem e turismo', 'map-pin', '#F97316')
 ON CONFLICT (name) DO NOTHING;
+  END IF;
+END $$;
 
 -- Inserir produtos-base padrão
 INSERT INTO base_products (name, description, category_id, base_price, base_points_cost, specifications) 

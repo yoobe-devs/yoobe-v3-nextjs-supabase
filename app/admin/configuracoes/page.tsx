@@ -1,18 +1,24 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { 
-  Settings, 
-  Save, 
-  Globe, 
-  Shield, 
-  Database, 
+import { useState, useEffect } from 'react'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import {
+  Settings,
+  Save,
+  Globe,
+  Shield,
+  Database,
   Bell,
   Mail,
   CreditCard,
@@ -21,9 +27,9 @@ import {
   Package,
   BarChart3,
   BookOpen,
-  ExternalLink
-} from "lucide-react"
-import YoobeLogo from "@/components/ui/yoobe-logo"
+  ExternalLink,
+} from 'lucide-react'
+import YoobeLogo from '@/components/ui/yoobe-logo'
 
 interface SystemConfig {
   siteName: string
@@ -41,9 +47,9 @@ interface SystemConfig {
 }
 
 const defaultConfig: SystemConfig = {
-  siteName: "Yoobe - Plataforma de Brindes Corporativos",
-  siteUrl: "https://yoobe.co",
-  supportEmail: "suporte@yoobe.co",
+  siteName: 'Yoobe - Plataforma de Brindes Corporativos',
+  siteUrl: 'https://yoobe.co',
+  supportEmail: 'suporte@yoobe.co',
   maxFileSize: 10,
   maintenanceMode: false,
   allowRegistration: true,
@@ -51,8 +57,8 @@ const defaultConfig: SystemConfig = {
   enableNotifications: true,
   enableAnalytics: true,
   enableBackup: true,
-  backupFrequency: "daily",
-  retentionDays: 30
+  backupFrequency: 'daily',
+  retentionDays: 30,
 }
 
 export default function AdminConfiguracoesPage() {
@@ -79,9 +85,9 @@ export default function AdminConfiguracoesPage() {
     totalStores: 24,
     totalProducts: 456,
     totalOrders: 2891,
-    systemUptime: "99.9%",
-    lastBackup: "2024-01-17 02:00:00",
-    nextBackup: "2024-01-18 02:00:00"
+    systemUptime: '99.9%',
+    lastBackup: '2024-01-17 02:00:00',
+    nextBackup: '2024-01-18 02:00:00',
   }
 
   return (
@@ -91,8 +97,12 @@ export default function AdminConfiguracoesPage() {
         <div className="flex items-center gap-3">
           <YoobeLogo size={40} />
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Configurações do Sistema</h1>
-            <p className="text-gray-600">Gerencie as configurações globais da plataforma</p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Configurações do Sistema
+            </h1>
+            <p className="text-gray-600">
+              Gerencie as configurações globais da plataforma
+            </p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -100,7 +110,7 @@ export default function AdminConfiguracoesPage() {
             Restaurar
           </Button>
           <Button onClick={handleSave} disabled={!hasChanges || isLoading}>
-            {isLoading ? "Salvando..." : "Salvar Alterações"}
+            {isLoading ? 'Salvando...' : 'Salvar Alterações'}
           </Button>
         </div>
       </div>
@@ -173,7 +183,7 @@ export default function AdminConfiguracoesPage() {
               <Input
                 id="siteName"
                 value={config.siteName}
-                onChange={(e) => handleConfigChange('siteName', e.target.value)}
+                onChange={e => handleConfigChange('siteName', e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -181,7 +191,7 @@ export default function AdminConfiguracoesPage() {
               <Input
                 id="siteUrl"
                 value={config.siteUrl}
-                onChange={(e) => handleConfigChange('siteUrl', e.target.value)}
+                onChange={e => handleConfigChange('siteUrl', e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -190,16 +200,22 @@ export default function AdminConfiguracoesPage() {
                 id="supportEmail"
                 type="email"
                 value={config.supportEmail}
-                onChange={(e) => handleConfigChange('supportEmail', e.target.value)}
+                onChange={e =>
+                  handleConfigChange('supportEmail', e.target.value)
+                }
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="maxFileSize">Tamanho Máximo de Arquivo (MB)</Label>
+              <Label htmlFor="maxFileSize">
+                Tamanho Máximo de Arquivo (MB)
+              </Label>
               <Input
                 id="maxFileSize"
                 type="number"
                 value={config.maxFileSize}
-                onChange={(e) => handleConfigChange('maxFileSize', parseInt(e.target.value))}
+                onChange={e =>
+                  handleConfigChange('maxFileSize', parseInt(e.target.value))
+                }
               />
             </div>
           </CardContent>
@@ -212,37 +228,51 @@ export default function AdminConfiguracoesPage() {
               <Shield className="h-5 w-5" />
               Configurações de Segurança
             </CardTitle>
-            <CardDescription>Configurações de segurança e privacidade</CardDescription>
+            <CardDescription>
+              Configurações de segurança e privacidade
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Modo de Manutenção</Label>
-                <p className="text-sm text-gray-500">Desabilita o acesso público ao sistema</p>
+                <p className="text-sm text-gray-500">
+                  Desabilita o acesso público ao sistema
+                </p>
               </div>
               <Switch
                 checked={config.maintenanceMode}
-                onCheckedChange={(checked) => handleConfigChange('maintenanceMode', checked)}
+                onCheckedChange={checked =>
+                  handleConfigChange('maintenanceMode', checked)
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Permitir Registro</Label>
-                <p className="text-sm text-gray-500">Permite que novos usuários se registrem</p>
+                <p className="text-sm text-gray-500">
+                  Permite que novos usuários se registrem
+                </p>
               </div>
               <Switch
                 checked={config.allowRegistration}
-                onCheckedChange={(checked) => handleConfigChange('allowRegistration', checked)}
+                onCheckedChange={checked =>
+                  handleConfigChange('allowRegistration', checked)
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Verificação de Email</Label>
-                <p className="text-sm text-gray-500">Requer verificação de email para ativação</p>
+                <p className="text-sm text-gray-500">
+                  Requer verificação de email para ativação
+                </p>
               </div>
               <Switch
                 checked={config.requireEmailVerification}
-                onCheckedChange={(checked) => handleConfigChange('requireEmailVerification', checked)}
+                onCheckedChange={checked =>
+                  handleConfigChange('requireEmailVerification', checked)
+                }
               />
             </div>
           </CardContent>
@@ -255,27 +285,37 @@ export default function AdminConfiguracoesPage() {
               <Bell className="h-5 w-5" />
               Configurações de Notificações
             </CardTitle>
-            <CardDescription>Configurações de notificações e alertas</CardDescription>
+            <CardDescription>
+              Configurações de notificações e alertas
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Notificações por Email</Label>
-                <p className="text-sm text-gray-500">Envia notificações por email</p>
+                <p className="text-sm text-gray-500">
+                  Envia notificações por email
+                </p>
               </div>
               <Switch
                 checked={config.enableNotifications}
-                onCheckedChange={(checked) => handleConfigChange('enableNotifications', checked)}
+                onCheckedChange={checked =>
+                  handleConfigChange('enableNotifications', checked)
+                }
               />
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Analytics</Label>
-                <p className="text-sm text-gray-500">Coleta dados de uso para analytics</p>
+                <p className="text-sm text-gray-500">
+                  Coleta dados de uso para analytics
+                </p>
               </div>
               <Switch
                 checked={config.enableAnalytics}
-                onCheckedChange={(checked) => handleConfigChange('enableAnalytics', checked)}
+                onCheckedChange={checked =>
+                  handleConfigChange('enableAnalytics', checked)
+                }
               />
             </div>
           </CardContent>
@@ -288,17 +328,23 @@ export default function AdminConfiguracoesPage() {
               <Database className="h-5 w-5" />
               Configurações de Backup
             </CardTitle>
-            <CardDescription>Configurações de backup e retenção de dados</CardDescription>
+            <CardDescription>
+              Configurações de backup e retenção de dados
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label>Backup Automático</Label>
-                <p className="text-sm text-gray-500">Executa backups automáticos</p>
+                <p className="text-sm text-gray-500">
+                  Executa backups automáticos
+                </p>
               </div>
               <Switch
                 checked={config.enableBackup}
-                onCheckedChange={(checked) => handleConfigChange('enableBackup', checked)}
+                onCheckedChange={checked =>
+                  handleConfigChange('enableBackup', checked)
+                }
               />
             </div>
             <div className="space-y-2">
@@ -306,7 +352,9 @@ export default function AdminConfiguracoesPage() {
               <select
                 id="backupFrequency"
                 value={config.backupFrequency}
-                onChange={(e) => handleConfigChange('backupFrequency', e.target.value)}
+                onChange={e =>
+                  handleConfigChange('backupFrequency', e.target.value)
+                }
                 className="w-full border border-gray-300 rounded-md px-3 py-2"
               >
                 <option value="daily">Diário</option>
@@ -320,7 +368,9 @@ export default function AdminConfiguracoesPage() {
                 id="retentionDays"
                 type="number"
                 value={config.retentionDays}
-                onChange={(e) => handleConfigChange('retentionDays', parseInt(e.target.value))}
+                onChange={e =>
+                  handleConfigChange('retentionDays', parseInt(e.target.value))
+                }
               />
             </div>
           </CardContent>
@@ -334,60 +384,87 @@ export default function AdminConfiguracoesPage() {
             <BookOpen className="h-5 w-5" />
             Documentação
           </CardTitle>
-          <CardDescription>Acesse a documentação completa da plataforma</CardDescription>
+          <CardDescription>
+            Acesse a documentação completa da plataforma
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">Documentação Geral</h4>
               <div className="space-y-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
                   onClick={() => window.open('/admin/documentacao', '_blank')}
                 >
                   <BookOpen className="h-4 w-4 mr-2" />
                   Documentação Completa
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
-                  onClick={() => window.open('/admin/documentacao/viva/API_REFERENCE', '_blank')}
+                  onClick={() =>
+                    window.open(
+                      '/admin/documentacao/viva/API_REFERENCE',
+                      '_blank'
+                    )
+                  }
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   API Reference
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
-                  onClick={() => window.open('/admin/documentacao/viva/DATABASE_SCHEMA', '_blank')}
+                  onClick={() =>
+                    window.open(
+                      '/admin/documentacao/viva/DATABASE_SCHEMA',
+                      '_blank'
+                    )
+                  }
                 >
                   <Database className="h-4 w-4 mr-2" />
                   Database Schema
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full justify-start"
+                  onClick={() =>
+                    window.open('/docs/SYSTEM_PROTECTION', '_blank')
+                  }
+                >
+                  <Shield className="h-4 w-4 mr-2" />
+                  Sistema de Proteção
                 </Button>
               </div>
             </div>
             <div className="space-y-3">
               <h4 className="font-medium text-gray-900">Integrações</h4>
               <div className="space-y-2">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
-                  onClick={() => window.open('/admin/documentacao/viva/CUBBO_INTEGRATION', '_blank')}
+                  onClick={() =>
+                    window.open(
+                      '/admin/documentacao/viva/CUBBO_INTEGRATION',
+                      '_blank'
+                    )
+                  }
                 >
                   <Package className="h-4 w-4 mr-2" />
                   Integração Cubbo
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
                   onClick={() => window.open('/admin/integracoes', '_blank')}
                 >
                   <Settings className="h-4 w-4 mr-2" />
                   Configurar Integrações
                 </Button>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   className="w-full justify-start"
                   onClick={() => window.open('/admin/changelog', '_blank')}
                 >
@@ -429,7 +506,9 @@ export default function AdminConfiguracoesPage() {
             <div className="space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-600">Total de Pedidos:</span>
-                <span className="font-medium">{systemStats.totalOrders.toLocaleString()}</span>
+                <span className="font-medium">
+                  {systemStats.totalOrders.toLocaleString()}
+                </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Total de Produtos:</span>
@@ -450,4 +529,3 @@ export default function AdminConfiguracoesPage() {
     </div>
   )
 }
-

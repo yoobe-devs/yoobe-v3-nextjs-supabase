@@ -1,8 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
-import { supabaseServiceKey as supabaseAdmin } from '@/lib/supabase-admin'
 import { CatalogScraper } from '@/lib/services/catalog-scraper'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU'
+
+// Criar cliente Supabase com service key
+const supabaseAdmin = createClient(supabaseUrl, serviceKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false
+  }
+})
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar permissões de admin através dos metadados do usuário
-    const userRole = user.user_metadata?.role
+    const userRole = (user.user_metadata as any)?.role
     const allowed = ['admin', 'admin_global', 'superadmin']
     if (!allowed.includes(userRole)) {
       return NextResponse.json({ error: 'Acesso negado - Apenas administradores podem importar catálogos' }, { status: 403 })

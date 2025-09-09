@@ -1,6 +1,7 @@
 # 🚀 Yoobe Platform - Visão Geral Completa
 
 ## 📋 Índice
+
 - [Visão Geral](#visão-geral)
 - [Arquitetura](#arquitetura)
 - [Funcionalidades](#funcionalidades)
@@ -34,13 +35,14 @@ graph TB
 
 ### 📊 Características Principais
 
-| Característica | Descrição | Status |
-|----------------|-----------|--------|
-| **Multi-tenant** | Cada empresa tem sua própria loja | ✅ Ativo |
-| **Gamificação** | Integração com Workvivo, Applause, Human | ✅ Ativo |
-| **Fulfillment** | Integração completa com Cubbo | ✅ Ativo |
-| **Automação** | Zapier, Floui, Make | ✅ Ativo |
-| **ERP/CRM** | SAP, Salesforce, Oracle | 🔄 Em desenvolvimento |
+| Característica   | Descrição                                | Status                |
+| ---------------- | ---------------------------------------- | --------------------- |
+| **Multi-tenant** | Cada empresa tem sua própria loja        | ✅ Ativo              |
+| **Gamificação**  | Integração com Workvivo, Applause, Human | ✅ Ativo              |
+| **Fulfillment**  | Integração completa com Cubbo            | ✅ Ativo              |
+| **Automação**    | Zapier, Floui, Make                      | ✅ Ativo              |
+| **Web Scraping** | Firecrawl para catálogo externo          | ✅ Ativo              |
+| **ERP/CRM**      | SAP, Salesforce, Oracle                  | 🔄 Em desenvolvimento |
 
 ---
 
@@ -95,18 +97,21 @@ sequenceDiagram
 ### 👥 Perfis de Usuário
 
 #### **Admin Global**
+
 - Gerenciamento de todas as empresas
 - Configuração de integrações globais
 - Monitoramento do sistema
 - Gestão de usuários globais
 
 #### **Gestor da Loja**
+
 - Gerenciamento da própria loja
 - Configuração de produtos
 - Gestão de funcionários
 - Relatórios de vendas
 
 #### **Funcionário**
+
 - Acesso à loja da empresa
 - Compra de produtos
 - Visualização de pontos
@@ -126,11 +131,11 @@ Cada empresa pode ter uma ou mais lojas com:
 
 Integração com plataformas populares:
 
-| Plataforma | Funcionalidade | Status |
-|------------|----------------|--------|
-| **Workvivo** | Pontos e recompensas | ✅ Ativo |
+| Plataforma   | Funcionalidade          | Status   |
+| ------------ | ----------------------- | -------- |
+| **Workvivo** | Pontos e recompensas    | ✅ Ativo |
 | **Applause** | Gamificação de feedback | ✅ Ativo |
-| **Human** | Engajamento de equipes | ✅ Ativo |
+| **Human**    | Engajamento de equipes  | ✅ Ativo |
 
 ---
 
@@ -150,8 +155,8 @@ const cubboConfig = {
     products: true,
     inventory: true,
     orders: true,
-    tracking: true
-  }
+    tracking: true,
+  },
 }
 ```
 
@@ -162,6 +167,32 @@ const cubboConfig = {
 - ✅ **Processamento de Pedidos**: Pedidos são enviados automaticamente para fulfillment
 - ✅ **Rastreamento**: Status de entrega em tempo real
 - ✅ **Logs Detalhados**: Registro completo de todas as operações
+
+### 🔥 Firecrawl (Web Scraping)
+
+Integração com Firecrawl para scraping avançado do catálogo externo:
+
+```typescript
+// Exemplo de configuração
+const firecrawlConfig = {
+  apiKey: process.env.FIRECRAWL_API_KEY,
+  baseUrl: 'https://catalogo.yoobe.co',
+  features: {
+    dynamicContent: true,
+    javascriptRendering: true,
+    markdownOutput: true,
+    imageExtraction: true,
+  },
+}
+```
+
+#### Funcionalidades Firecrawl
+
+- ✅ **Scraping Dinâmico**: Suporte a conteúdo JavaScript
+- ✅ **Extração Limpa**: Dados estruturados em markdown e HTML
+- ✅ **Fallback Automático**: Método padrão se Firecrawl falhar
+- ✅ **Deduplicação**: Remove produtos duplicados automaticamente
+- ✅ **Logs Detalhados**: Monitoramento completo do processo
 
 ### 🤖 Automação (Zapier, Floui, Make)
 
@@ -188,6 +219,7 @@ curl -X GET https://api.yoobe.com/v1/users \
 ### Endpoints Principais
 
 #### Usuários
+
 ```typescript
 // Listar usuários
 GET /api/users
@@ -203,6 +235,7 @@ POST /api/users
 ```
 
 #### Empresas
+
 ```typescript
 // Listar empresas
 GET /api/companies
@@ -217,6 +250,7 @@ POST /api/companies
 ```
 
 #### Lojas
+
 ```typescript
 // Listar lojas
 GET /api/stores
@@ -231,6 +265,7 @@ POST /api/stores
 ```
 
 #### Produtos
+
 ```typescript
 // Listar produtos
 GET /api/products
@@ -247,15 +282,15 @@ POST /api/products
 
 ### Códigos de Status
 
-| Código | Descrição |
-|--------|-----------|
-| `200` | Sucesso |
-| `201` | Criado com sucesso |
-| `400` | Requisição inválida |
-| `401` | Não autorizado |
-| `403` | Acesso negado |
-| `404` | Não encontrado |
-| `500` | Erro interno |
+| Código | Descrição           |
+| ------ | ------------------- |
+| `200`  | Sucesso             |
+| `201`  | Criado com sucesso  |
+| `400`  | Requisição inválida |
+| `401`  | Não autorizado      |
+| `403`  | Acesso negado       |
+| `404`  | Não encontrado      |
+| `500`  | Erro interno        |
 
 ---
 
@@ -405,6 +440,7 @@ CMD ["npm", "start"]
 ### Problemas Comuns
 
 #### 1. Erro de Autenticação
+
 ```bash
 # Verificar se as credenciais estão corretas
 curl -X POST https://api.yoobe.com/auth/login \
@@ -413,6 +449,7 @@ curl -X POST https://api.yoobe.com/auth/login \
 ```
 
 #### 2. Sincronização Cubbo Falhando
+
 ```bash
 # Verificar logs
 tail -f /var/log/yoobe/cubbo-sync.log
@@ -423,6 +460,7 @@ curl -X GET https://api.cubbo.com/v1/health \
 ```
 
 #### 3. Upload de Imagens
+
 ```bash
 # Verificar permissões do bucket
 supabase storage list-buckets

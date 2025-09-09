@@ -110,7 +110,7 @@ export default function AdminDashboard() {
           id: '1',
           type: 'budget_created',
           title: 'Novo Orçamento Criado',
-          description: 'Orçamento #1234 foi criado para Join Tecnologia',
+          description: 'Orçamento #1234 foi criado para Yoobe',
           timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
           status: 'completed'
         },

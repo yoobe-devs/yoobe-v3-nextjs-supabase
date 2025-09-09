@@ -6,8 +6,8 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'set_updated_at') THEN
-    CREATE OR REPLACE FUNCTION public.set_updated_at() RETURNS trigger AS $$
-    BEGIN NEW.updated_at = now(); RETURN NEW; END; $$ LANGUAGE plpgsql;
+    CREATE OR REPLACE FUNCTION public.set_updated_at() RETURNS trigger AS $func$
+    BEGIN NEW.updated_at = now(); RETURN NEW; END; $func$ LANGUAGE plpgsql;
   END IF;
 END $$;
 
@@ -200,10 +200,14 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- audit_logs: actor scoped
+-- audit_logs: actor scoped (only if table exists and has correct structure)
 DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='audit_logs_actor') THEN
-    CREATE POLICY audit_logs_actor ON public.audit_logs FOR ALL USING (auth.uid() = actor_user_id) WITH CHECK (auth.uid() = actor_user_id);
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'audit_logs' AND table_schema = 'public') THEN
+    IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'audit_logs' AND column_name = 'actor_user_id' AND table_schema = 'public') THEN
+      IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='audit_logs_actor') THEN
+        CREATE POLICY audit_logs_actor ON public.audit_logs FOR ALL USING (auth.uid() = actor_user_id) WITH CHECK (auth.uid() = actor_user_id);
+      END IF;
+    END IF;
   END IF;
 END $$;
 
@@ -312,6 +316,7 @@ SELECT
 FROM public.checkout_sessions cs
 LEFT JOIN public.shipment_intents si ON si.session_id = cs.id
 GROUP BY cs.user_id;
+
 
 
 

@@ -1,0 +1,100 @@
+{
+  "id": "error-spec-err_1757360437507_login_redirect_loop",
+  "title": "Error Prevention: Loop infinito no sistema de redirecionamento de login",
+  "description": "Specification for preventing and handling: Sistema de login estava em loop infinito devido a múltiplos redirecionamentos conflitantes: auth provider redirecionando + useEffect da página redirecionando + onAuthStateChange redirecionando, causando requisições repetidas infinitas para /auth/login?redirect=...",
+  "category": "error-prevention",
+  "priority": "high",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "navigation",
+    "critical"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437507_login_redirect_loop-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-prevention-0",
+          "description": "SEMPRE ter apenas UM ponto de redirecionamento por fluxo",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-prevention-1",
+          "description": "NUNCA redirecionar em múltiplos lugares simultaneamente",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-prevention-2",
+          "description": "Usar window.location.replace() em vez de window.location.href para evitar histórico",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-prevention-3",
+          "description": "Testar fluxos de login após mudanças de redirecionamento",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-prevention-4",
+          "description": "Monitorar logs para detectar loops de requisições",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437507_login_redirect_loop-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437507_login_redirect_loop-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437507_login_redirect_loop-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Auth Provider: apenas setar user, sem redirecionar\nsetUser(data.user)\nsetLoading(false)\nconsole.log('AuthProvider: login successful, user set')\n\n// Login Page: único ponto de redirecionamento\nuseEffect(() => {\n  if (!authLoading && user) {\n    const targetRoute = getPostLoginRedirect(user, redirectTo)\n    window.location.replace(targetRoute) // replace evita loop\n  }\n}, [user, authLoading, searchParams])",
+    "filePath": "components/auth/auth-provider-simple-fixed.tsx, app/auth/login/page.tsx",
+    "solution": "Removido todos os redirecionamentos automáticos do auth provider (signIn, onAuthStateChange, fallback). Mantido apenas o useEffect da página de login com window.location.replace() para evitar loop. Sistema agora tem apenas um ponto de redirecionamento controlado.",
+    "relatedErrors": [],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437507_login_redirect_loop",
+    "errorType": "navigation",
+    "severity": "critical",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T22:10:00.000Z",
+    "resolutionDate": "2025-09-08T22:15:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

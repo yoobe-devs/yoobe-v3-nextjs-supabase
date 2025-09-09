@@ -20,49 +20,37 @@ export default function ClientReplicatedProductsPage() {
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [q, setQ] = useState('')
-  const [activeFilter, setActiveFilter] = useState<'all'|'active'|'inactive'>('all')
+  const [activeFilter, setActiveFilter] = useState<
+    'all' | 'active' | 'inactive'
+  >('all')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')
   const [clients, setClients] = useState<{ id: string; name: string }[]>([])
 
   const load = async () => {
     setLoading(true)
     try {
-      const [{ data: client }, { data: products }, { data: allClients }] = await Promise.all([
-        supabase.from('companies').select('id,name').eq('id', clientId).single(),
-        supabase
-          .from('client_products')
-          .select('*, base_products ( id, name, base_price, base_points_cost ), product_categories ( id, name )')
-          .eq('client_id', clientId)
-          .order('created_at', { ascending: false }),
-        supabase.from('companies').select('id,name').order('name', { ascending: true })
-      ])
+      const [{ data: client }, { data: products }, { data: allClients }] =
+        await Promise.all([
+          supabase
+            .from('companies')
+            .select('id,name')
+            .eq('id', clientId)
+            .single(),
+          supabase
+            .from('client_products')
+            .select(
+              '*, base_products ( id, name, base_price, base_points_cost )'
+            )
+            .eq('client_id', clientId)
+            .order('created_at', { ascending: false }),
+          supabase
+            .from('companies')
+            .select('id,name')
+            .order('name', { ascending: true }),
+        ])
       setClientName(client?.name || '')
 
-      // Fallback: se relação product_categories não estiver disponível (sem FK), buscar nomes por category_id
-      let enriched = products || []
-      try {
-        const missingIds = Array.from(new Set(
-          (enriched || [])
-            .filter((it: any) => !it?.product_categories?.name && it?.category_id)
-            .map((it: any) => it.category_id)
-        ))
-        if (missingIds.length > 0) {
-          const { data: cats } = await supabase
-            .from('product_categories')
-            .select('id,name')
-            .in('id', missingIds)
-          const byId = new Map((cats || []).map((c: any) => [c.id, c.name]))
-          enriched = (enriched || []).map((it: any) => (
-            it?.product_categories?.name || !it?.category_id
-              ? it
-              : { ...it, product_categories: { id: it.category_id, name: byId.get(it.category_id) || '—' } }
-          ))
-        }
-      } catch (e) {
-        // silently ignore fallback errors
-      }
-
-      setItems(enriched)
+      setItems(products || [])
       setClients(allClients || [])
     } catch (e) {
       console.error(e)
@@ -78,38 +66,51 @@ export default function ClientReplicatedProductsPage() {
   }, [clientId])
 
   const categories = useMemo(() => {
-    const set = new Set<string>()
-    items.forEach((it) => {
-      const name = it.product_categories?.name
-      if (name) set.add(name)
-    })
-    return Array.from(set)
+    // Como não há relação com product_categories, retornar array vazio
+    return []
   }, [items])
 
   const filtered = useMemo(() => {
     const term = q.toLowerCase()
-    return items.filter((it) => {
-      const matchesText = !term || (it.name || '').toLowerCase().includes(term) || (it.base_products?.name || '').toLowerCase().includes(term)
-      const matchesActive = activeFilter === 'all' || (activeFilter === 'active' ? it.is_active : !it.is_active)
-      const matchesCategory = categoryFilter === 'all' || it.product_categories?.name === categoryFilter
+    return items.filter(it => {
+      const matchesText =
+        !term ||
+        (it.name || '').toLowerCase().includes(term) ||
+        (it.base_products?.name || '').toLowerCase().includes(term)
+      const matchesActive =
+        activeFilter === 'all' ||
+        (activeFilter === 'active'
+          ? it.status === 'active'
+          : it.status !== 'active')
+      const matchesCategory = true // Sem filtro de categoria por enquanto
       return matchesText && matchesActive && matchesCategory
     })
   }, [items, q, activeFilter, categoryFilter])
 
-  const toggleActive = async (id: string, isActive: boolean) => {
+  const toggleActive = async (id: string, currentStatus: string) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      const res = await fetch(`/api/clients/${clientId}/products/${id}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
-        },
-        body: JSON.stringify({ is_active: !isActive }),
-      })
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      const newStatus = currentStatus === 'active' ? 'inactive' : 'active'
+      const res = await fetch(
+        `/api/clients/${clientId}/products/${id}/status`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(session?.access_token
+              ? { Authorization: `Bearer ${session.access_token}` }
+              : {}),
+          },
+          body: JSON.stringify({ status: newStatus }),
+        }
+      )
       const data = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(data?.error || 'Falha ao atualizar')
-      toast.success(`Produto ${!isActive ? 'ativado' : 'inativado'}`)
+      toast.success(
+        `Produto ${newStatus === 'active' ? 'ativado' : 'inativado'}`
+      )
       load()
     } catch (e) {
       console.error(e)
@@ -122,7 +123,9 @@ export default function ClientReplicatedProductsPage() {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-2 text-sm text-gray-600">Carregando produtos replicados...</p>
+          <p className="mt-2 text-sm text-gray-600">
+            Carregando produtos replicados...
+          </p>
         </div>
       </div>
     )
@@ -136,12 +139,23 @@ export default function ClientReplicatedProductsPage() {
           <p className="text-gray-600">Cliente: {clientName || clientId}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={() => router.push('/admin/produtos/catalogo-base')}>
+          <Button
+            variant="outline"
+            onClick={() => router.push('/admin/produtos/catalogo-base')}
+          >
             <ArrowLeft className="h-4 w-4 mr-2" /> Voltar ao Catálogo Base
           </Button>
-          <select className="px-3 py-2 border rounded-md text-sm" value={clientId} onChange={(e) => router.push(`/admin/clientes/${e.target.value}/produtos`)}>
+          <select
+            className="px-3 py-2 border rounded-md text-sm"
+            value={clientId}
+            onChange={e =>
+              router.push(`/admin/clientes/${e.target.value}/produtos`)
+            }
+          >
             {clients.map(c => (
-              <option key={c.id} value={c.id}>{c.name}</option>
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
             ))}
           </select>
         </div>
@@ -151,47 +165,59 @@ export default function ClientReplicatedProductsPage() {
         <Input
           placeholder="Buscar por nome..."
           value={q}
-          onChange={(e) => setQ(e.target.value)}
+          onChange={e => setQ(e.target.value)}
           className="max-w-sm"
         />
         <div className="flex items-center gap-2">
-          <select className="px-3 py-2 border rounded-md text-sm" value={activeFilter} onChange={(e) => setActiveFilter(e.target.value as any)}>
+          <select
+            className="px-3 py-2 border rounded-md text-sm"
+            value={activeFilter}
+            onChange={e => setActiveFilter(e.target.value as any)}
+          >
             <option value="all">Todos</option>
             <option value="active">Ativos</option>
             <option value="inactive">Inativos</option>
-          </select>
-          <select className="px-3 py-2 border rounded-md text-sm" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-            <option value="all">Todas categorias</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
           </select>
         </div>
         <div className="text-sm text-gray-600">{filtered.length} itens</div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((p) => (
+        {filtered.map(p => (
           <Card key={p.id}>
             <CardHeader className="pb-2">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">{p.name || p.base_products?.name}</CardTitle>
-                <Badge variant={p.is_active ? 'default' : 'secondary'}>
-                  {p.is_active ? 'Ativo' : 'Inativo'}
+                <CardTitle className="text-lg">
+                  {p.name || p.base_products?.name}
+                </CardTitle>
+                <Badge
+                  variant={p.status === 'active' ? 'default' : 'secondary'}
+                >
+                  {p.status === 'active' ? 'Ativo' : 'Inativo'}
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="space-y-2">
               <div className="text-sm text-gray-600">
                 <div>Preço: R$ {(p.price || 0).toLocaleString()}</div>
-                <div>Categoria: {p.product_categories?.name || '—'}</div>
+                <div>SKU: {p.final_sku || '—'}</div>
               </div>
               <div className="flex gap-2 justify-end">
-                <Button variant="outline" size="sm" onClick={() => router.push(`/admin/produtos/${p.base_product_id}`)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    router.push(`/admin/produtos/${p.base_product_id}`)
+                  }
+                >
                   <Eye className="h-4 w-4 mr-1" /> Base
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => toggleActive(p.id, p.is_active)}>
-                  {p.is_active ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => toggleActive(p.id, p.status)}
+                >
+                  {p.status === 'active' ? (
                     <>
                       <ToggleRight className="h-4 w-4 mr-1" /> Desativar
                     </>

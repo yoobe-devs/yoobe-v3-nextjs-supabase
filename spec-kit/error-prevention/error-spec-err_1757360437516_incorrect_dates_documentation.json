@@ -1,0 +1,109 @@
+{
+  "id": "error-spec-err_1757360437516_incorrect_dates_documentation",
+  "title": "Error Prevention: Datas incorretas na documentação e memória de erros",
+  "description": "Specification for preventing and handling: As datas na documentação e na memória de erros estavam incorretas, mostrando 27 de janeiro de 2025 quando na verdade é 8 de setembro de 2025. Isso pode causar confusão e problemas de rastreamento temporal dos erros e soluções.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "documentation",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1757360437516_incorrect_dates_documentation-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-prevention-0",
+          "description": "SEMPRE usar new Date().toISOString() para timestamps automáticos",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-prevention-1",
+          "description": "SEMPRE verificar a data atual antes de documentar erros",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-prevention-2",
+          "description": "SEMPRE validar datas em documentação antes de salvar",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-prevention-3",
+          "description": "SEMPRE usar ferramentas de data automáticas em vez de hardcode",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-prevention-4",
+          "description": "SEMPRE revisar timestamps em relatórios de erro",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-prevention-5",
+          "description": "SEMPRE implementar validação de data em sistemas de documentação",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437516_incorrect_dates_documentation-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1757360437516_incorrect_dates_documentation-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1757360437516_incorrect_dates_documentation-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "// Verificação de data correta\nconst currentDate = new Date().toISOString()\n// 2025-09-08T23:30:00.000Z (correto)\n// 2025-09-08T23:30:00.000Z (incorreto)",
+    "filePath": "data/error-memory.json",
+    "solution": "1) Corrigido todas as datas na memória de erros para 8 de setembro de 2025, 2) Atualizado timestamps e resolutionDates para refletir a data correta, 3) Implementado verificação automática de data para evitar erros futuros, 4) Adicionado este erro à memória para documentar o problema e prevenção",
+    "relatedErrors": [
+      "err_1757360437513_documentation_system_update"
+    ],
+    "documentationLinks": [
+      "data/error-memory.json"
+    ]
+  },
+  "metadata": {
+    "originalErrorId": "err_1757360437516_incorrect_dates_documentation",
+    "errorType": "documentation",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-08T23:40:00.000Z",
+    "resolutionDate": "2025-09-08T23:45:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

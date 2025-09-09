@@ -1,22 +1,28 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { ImageUpload } from '@/components/ui/image-upload'
-import { 
-  ArrowLeft, 
-  Save, 
-  Loader2,
-  Building2,
-  AlertCircle
-} from 'lucide-react'
+import { ArrowLeft, Save, Loader2, Building2, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 
 interface Company {
@@ -61,7 +67,7 @@ export default function EditCompanyPage() {
     points_rate: 0.1,
     allow_points_only: false,
     allow_mixed_payment: false,
-    logo_url: ''
+    logo_url: '',
   })
 
   useEffect(() => {
@@ -76,11 +82,11 @@ export default function EditCompanyPage() {
     try {
       setLoading(true)
       const response = await fetch(`/api/companies/${id}`)
-      
+
       if (response.ok) {
         const data = await response.json()
         const company = data.company
-        
+
         setFormData({
           name: company.name || '',
           email: company.email || '',
@@ -95,7 +101,7 @@ export default function EditCompanyPage() {
           points_rate: company.points_rate || 0.1,
           allow_points_only: company.allow_points_only || false,
           allow_mixed_payment: company.allow_mixed_payment || false,
-          logo_url: company.logo_url || ''
+          logo_url: company.logo_url || '',
         })
       } else {
         throw new Error('Empresa não encontrada')
@@ -109,16 +115,19 @@ export default function EditCompanyPage() {
     }
   }
 
-  const handleInputChange = (field: string, value: string | number | boolean) => {
+  const handleInputChange = (
+    field: string,
+    value: string | number | boolean
+  ) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!formData.name || !formData.email) {
       toast.error('Preencha todos os campos obrigatórios')
       return
@@ -141,7 +150,7 @@ export default function EditCompanyPage() {
         points_rate: formData.points_rate,
         allow_points_only: formData.allow_points_only,
         allow_mixed_payment: formData.allow_mixed_payment,
-        logo_url: formData.logo_url || null
+        logo_url: formData.logo_url || null,
       }
 
       const response = await fetch(`/api/companies/${id}`, {
@@ -162,7 +171,9 @@ export default function EditCompanyPage() {
       }
     } catch (error) {
       console.error('Erro ao atualizar empresa:', error)
-      toast.error(error instanceof Error ? error.message : 'Erro ao atualizar empresa')
+      toast.error(
+        error instanceof Error ? error.message : 'Erro ao atualizar empresa'
+      )
     } finally {
       setSubmitting(false)
     }
@@ -188,8 +199,8 @@ export default function EditCompanyPage() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             onClick={() => router.push('/admin/empresas')}
             className="flex items-center gap-2"
           >
@@ -219,8 +230,8 @@ export default function EditCompanyPage() {
                     <Input
                       id="name"
                       value={formData.name}
-                      onChange={(e) => handleInputChange('name', e.target.value)}
-                      placeholder="Ex: Join Tecnologia"
+                      onChange={e => handleInputChange('name', e.target.value)}
+                      placeholder="Ex: Yoobe Tecnologia"
                       required
                     />
                   </div>
@@ -232,7 +243,7 @@ export default function EditCompanyPage() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      onChange={e => handleInputChange('email', e.target.value)}
                       placeholder="Ex: contato@jointecnologia.com.br"
                       required
                     />
@@ -244,7 +255,7 @@ export default function EditCompanyPage() {
                     <Input
                       id="phone"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      onChange={e => handleInputChange('phone', e.target.value)}
                       placeholder="Ex: (11) 3000-0000"
                     />
                   </div>
@@ -255,7 +266,9 @@ export default function EditCompanyPage() {
                     <Input
                       id="website"
                       value={formData.website}
-                      onChange={(e) => handleInputChange('website', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('website', e.target.value)
+                      }
                       placeholder="Ex: https://www.jointecnologia.com.br"
                     />
                   </div>
@@ -266,7 +279,9 @@ export default function EditCompanyPage() {
                     <Input
                       id="address"
                       value={formData.address}
-                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('address', e.target.value)
+                      }
                       placeholder="Ex: Av. Paulista, 1000"
                     />
                   </div>
@@ -278,7 +293,9 @@ export default function EditCompanyPage() {
                       <Input
                         id="city"
                         value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('city', e.target.value)
+                        }
                         placeholder="Ex: São Paulo"
                       />
                     </div>
@@ -287,7 +304,9 @@ export default function EditCompanyPage() {
                       <Input
                         id="state"
                         value={formData.state}
-                        onChange={(e) => handleInputChange('state', e.target.value)}
+                        onChange={e =>
+                          handleInputChange('state', e.target.value)
+                        }
                         placeholder="Ex: SP"
                       />
                     </div>
@@ -299,7 +318,9 @@ export default function EditCompanyPage() {
                     <Input
                       id="zip_code"
                       value={formData.zip_code}
-                      onChange={(e) => handleInputChange('zip_code', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('zip_code', e.target.value)
+                      }
                       placeholder="Ex: 01310-100"
                     />
                   </div>
@@ -310,7 +331,9 @@ export default function EditCompanyPage() {
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) => handleInputChange('description', e.target.value)}
+                      onChange={e =>
+                        handleInputChange('description', e.target.value)
+                      }
                       placeholder="Descrição da empresa..."
                       rows={3}
                     />
@@ -321,7 +344,9 @@ export default function EditCompanyPage() {
                     <Label htmlFor="status">Status</Label>
                     <Select
                       value={formData.status}
-                      onValueChange={(value) => handleInputChange('status', value)}
+                      onValueChange={value =>
+                        handleInputChange('status', value)
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -344,7 +369,12 @@ export default function EditCompanyPage() {
                       min="0"
                       max="1"
                       value={formData.points_rate}
-                      onChange={(e) => handleInputChange('points_rate', parseFloat(e.target.value))}
+                      onChange={e =>
+                        handleInputChange(
+                          'points_rate',
+                          parseFloat(e.target.value)
+                        )
+                      }
                       placeholder="0.1"
                     />
                     <p className="text-xs text-gray-500">
@@ -354,8 +384,10 @@ export default function EditCompanyPage() {
 
                   {/* Configurações */}
                   <div className="space-y-4">
-                    <Label className="text-base font-medium">Configurações</Label>
-                    
+                    <Label className="text-base font-medium">
+                      Configurações
+                    </Label>
+
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
                         <Label htmlFor="allow_points_only">Apenas Pontos</Label>
@@ -366,13 +398,17 @@ export default function EditCompanyPage() {
                       <Switch
                         id="allow_points_only"
                         checked={formData.allow_points_only}
-                        onCheckedChange={(checked) => handleInputChange('allow_points_only', checked)}
+                        onCheckedChange={checked =>
+                          handleInputChange('allow_points_only', checked)
+                        }
                       />
                     </div>
 
                     <div className="flex items-center justify-between">
                       <div className="space-y-0.5">
-                        <Label htmlFor="allow_mixed_payment">Pagamento Misto</Label>
+                        <Label htmlFor="allow_mixed_payment">
+                          Pagamento Misto
+                        </Label>
                         <p className="text-sm text-gray-500">
                           Permitir pagamento com pontos e dinheiro
                         </p>
@@ -380,7 +416,9 @@ export default function EditCompanyPage() {
                       <Switch
                         id="allow_mixed_payment"
                         checked={formData.allow_mixed_payment}
-                        onCheckedChange={(checked) => handleInputChange('allow_mixed_payment', checked)}
+                        onCheckedChange={checked =>
+                          handleInputChange('allow_mixed_payment', checked)
+                        }
                       />
                     </div>
                   </div>
@@ -423,9 +461,7 @@ export default function EditCompanyPage() {
             <Card>
               <CardHeader>
                 <CardTitle>Logo da Empresa</CardTitle>
-                <CardDescription>
-                  Atualize o logo da empresa
-                </CardDescription>
+                <CardDescription>Atualize o logo da empresa</CardDescription>
               </CardHeader>
               <CardContent>
                 <ImageUpload
@@ -451,7 +487,7 @@ export default function EditCompanyPage() {
                 <p>• Campos marcados com * são obrigatórios</p>
                 <p>• Logo é opcional</p>
                 <p>• Taxa de pontos deve estar entre 0.0 e 1.0</p>
-                <p>• Clique em "Salvar" para aplicar as mudanças</p>
+                <p>• Clique em &quot;Salvar&quot; para aplicar as mudanças</p>
               </CardContent>
             </Card>
           </div>

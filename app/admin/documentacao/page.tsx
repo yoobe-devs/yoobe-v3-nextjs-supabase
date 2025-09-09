@@ -1,20 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { 
-  BookOpen, 
-  Search, 
-  ExternalLink, 
-  FileText, 
-  Code, 
-  Database, 
-  Zap, 
-  Globe, 
+import {
+  BookOpen,
+  Search,
+  ExternalLink,
+  FileText,
+  Code,
+  Database,
+  Zap,
+  Globe,
   Settings,
   Download,
   Eye,
@@ -37,7 +43,7 @@ import {
   Camera,
   Play,
   Terminal,
-  FolderOpen
+  FolderOpen,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -71,7 +77,8 @@ const documentationItems: DocumentationItem[] = [
   {
     id: 'SCREEN_DOCS',
     title: '📱 Documentação das Telas',
-    description: 'Documentação técnica completa de todas as 31 telas da plataforma com estrutura padronizada',
+    description:
+      'Documentação técnica completa de todas as 31 telas da plataforma com estrutura padronizada',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
     lastUpdated: '2 de Setembro, 2025',
@@ -80,12 +87,13 @@ const documentationItems: DocumentationItem[] = [
     tags: ['telas', 'documentação', 'técnica', 'onboarding'],
     url: '/admin/documentacao/viva/screens/README',
     icon: Monitor,
-    badge: '31 Telas'
+    badge: '31 Telas',
   },
   {
     id: 'DEVELOPER_GUIDE',
     title: '🚀 Guia do Desenvolvedor',
-    description: 'Guia completo para desenvolvedores sobre como usar e manter a documentação técnica',
+    description:
+      'Guia completo para desenvolvedores sobre como usar e manter a documentação técnica',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
     lastUpdated: '2 de Setembro, 2025',
@@ -93,12 +101,13 @@ const documentationItems: DocumentationItem[] = [
     status: 'active',
     tags: ['desenvolvedor', 'guia', 'manutenção', 'padrões'],
     url: '/admin/documentacao/viva/DEVELOPER_GUIDE',
-    icon: BookMarked
+    icon: BookMarked,
   },
   {
     id: 'SCREENSHOT_GUIDE',
     title: '📸 Guia de Screenshots',
-    description: 'Guia para captura, organização e manutenção de screenshots das telas da plataforma',
+    description:
+      'Guia para captura, organização e manutenção de screenshots das telas da plataforma',
     category: 'Design',
     version: 'v3.1.0',
     lastUpdated: '2 de Setembro, 2025',
@@ -106,12 +115,13 @@ const documentationItems: DocumentationItem[] = [
     status: 'active',
     tags: ['screenshots', 'captura', 'organização', 'visual'],
     url: '/admin/documentacao/viva/SCREENSHOT_GUIDE',
-    icon: Camera
+    icon: Camera,
   },
   {
     id: 'EXECUTIVE_SUMMARY',
     title: '📋 Resumo Executivo',
-    description: 'Resumo completo do projeto de documentação técnica com métricas e resultados alcançados',
+    description:
+      'Resumo completo do projeto de documentação técnica com métricas e resultados alcançados',
     category: 'Gestão',
     version: 'v3.1.0',
     lastUpdated: '2 de Setembro, 2025',
@@ -119,12 +129,13 @@ const documentationItems: DocumentationItem[] = [
     status: 'active',
     tags: ['resumo', 'executivo', 'métricas', 'resultados'],
     url: '/admin/documentacao/viva/EXECUTIVE_SUMMARY',
-    icon: BarChart3
+    icon: BarChart3,
   },
   {
     id: 'AUTOMATION_SCRIPT',
     title: '⚡ Script de Automação',
-    description: 'Script automatizado para geração de documentação técnica de todas as telas',
+    description:
+      'Script automatizado para geração de documentação técnica de todas as telas',
     category: 'Ferramentas',
     version: 'v3.1.0',
     lastUpdated: '2 de Setembro, 2025',
@@ -132,98 +143,142 @@ const documentationItems: DocumentationItem[] = [
     status: 'active',
     tags: ['automação', 'script', 'geração', 'documentação'],
     url: '/admin/documentacao/viva/AUTOMATION_SCRIPT',
-    icon: Terminal
+    icon: Terminal,
+  },
+  {
+    id: 'SPEC_KIT_INTEGRATION',
+    title: '🔧 Spec Kit - Gerenciamento de Especificações',
+    description:
+      'Sistema integrado de especificações, workflows e documentação automática com dashboard web',
+    category: 'Desenvolvimento',
+    version: 'v3.1.0',
+    lastUpdated: 'Setembro 2025',
+    author: 'Equipe Yoobe',
+    status: 'active',
+    tags: [
+      'spec-kit',
+      'especificações',
+      'workflows',
+      'documentação',
+      'mcp',
+      'dashboard',
+    ],
+    url: '/docs/spec-kit',
+    icon: Settings,
+    badge: 'MCP Server',
+  },
+  {
+    id: 'SYSTEM_PROTECTION',
+    title: '🛡️ Sistema de Proteção e Monitoramento',
+    description:
+      'Sistema abrangente de proteção e monitoramento do middleware e MCPs',
+    category: 'Desenvolvimento',
+    version: 'v3.1.0',
+    lastUpdated: 'Setembro 2025',
+    author: 'Equipe Yoobe',
+    status: 'active',
+    tags: ['proteção', 'monitoramento', 'middleware', 'mcp', 'segurança'],
+    url: '/docs/SYSTEM_PROTECTION',
+    icon: Shield,
+    featured: true,
   },
   {
     id: 'PLATFORM_OVERVIEW',
     title: 'Visão Geral da Plataforma',
-    description: 'Introdução completa à Yoobe Platform v3.1.0, arquitetura e conceitos fundamentais',
+    description:
+      'Introdução completa à Yoobe Platform v3.1.0, arquitetura e conceitos fundamentais',
     category: 'Fundamentos',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['introdução', 'arquitetura', 'conceitos', 'v3.1.0'],
     url: '/admin/documentacao/viva/PLATFORM_OVERVIEW',
-    icon: BookOpen
+    icon: BookOpen,
   },
   {
     id: 'USER_GUIDE',
     title: 'Manual do Usuário',
-    description: 'Guia completo para usuários da plataforma com todas as funcionalidades v3.1.0',
+    description:
+      'Guia completo para usuários da plataforma com todas as funcionalidades v3.1.0',
     category: 'Fundamentos',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['usuário', 'manual', 'funcionalidades', 'v3.1.0'],
     url: '/admin/documentacao/viva/USER_GUIDE',
-    icon: BookOpen
+    icon: BookOpen,
   },
   {
     id: 'API_REFERENCE',
     title: 'Referência da API',
-    description: 'Documentação completa de todos os endpoints da API REST v3.1.0',
+    description:
+      'Documentação completa de todos os endpoints da API REST v3.1.0',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['api', 'endpoints', 'rest', 'desenvolvimento', 'v3.1.0'],
     url: '/admin/documentacao/viva/API_REFERENCE',
-    icon: Code
+    icon: Code,
   },
   {
     id: 'DATABASE_SCHEMA',
     title: 'Schema do Banco de Dados',
-    description: 'Estrutura completa do banco de dados v3.1.0 e relacionamentos',
+    description:
+      'Estrutura completa do banco de dados v3.1.0 e relacionamentos',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['database', 'schema', 'tabelas', 'relacionamentos', 'v3.1.0'],
     url: '/admin/documentacao/viva/DATABASE_SCHEMA',
-    icon: Database
+    icon: Database,
   },
   {
     id: 'RBAC_SYSTEM',
     title: 'Sistema RBAC',
-    description: 'Documentação completa do sistema de controle de acesso baseado em roles',
+    description:
+      'Documentação completa do sistema de controle de acesso baseado em roles',
     category: 'Segurança',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['rbac', 'segurança', 'permissões', 'roles', 'v3.1.0'],
     url: '/admin/documentacao/viva/RBAC_SYSTEM',
-    icon: Shield
+    icon: Shield,
   },
   {
     id: 'QUOTES_SYSTEM',
     title: 'Sistema de Orçamentos',
-    description: 'Fluxo completo de orçamentos, aprovação e replicação automática',
+    description:
+      'Fluxo completo de orçamentos, aprovação e replicação automática',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['orçamentos', 'quotes', 'aprovação', 'replicação', 'v3.1.0'],
     url: '/admin/documentacao/viva/QUOTES_SYSTEM',
-    icon: FileText
+    icon: FileText,
   },
   {
     id: 'CHECKOUT_SYSTEM',
     title: 'Sistema de Checkout',
-    description: 'Checkout avançado com múltiplos métodos de pagamento e validações',
+    description:
+      'Checkout avançado com múltiplos métodos de pagamento e validações',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['checkout', 'pagamento', 'carrinho', 'validação', 'v3.1.0'],
     url: '/admin/documentacao/viva/CHECKOUT_SYSTEM',
-    icon: ShoppingCart
+    icon: ShoppingCart,
   },
   {
     id: 'MULTITENANCY',
@@ -231,12 +286,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Sistema robusto de multi-tenancy com isolamento de dados',
     category: 'Arquitetura',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['multi-tenancy', 'empresas', 'isolamento', 'tenants', 'v3.1.0'],
     url: '/admin/documentacao/viva/MULTITENANCY',
-    icon: Building
+    icon: Building,
   },
   {
     id: 'WALLET_SYSTEM',
@@ -244,12 +299,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Gestão de pontos, transações e sistema de crédito/debito',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['carteira', 'pontos', 'transações', 'crédito', 'v3.1.0'],
     url: '/admin/documentacao/viva/WALLET_SYSTEM',
-    icon: CreditCard
+    icon: CreditCard,
   },
   {
     id: 'REPLICATION_SYSTEM',
@@ -257,12 +312,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Replicação automática de produtos após pagamento confirmado',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['replicação', 'produtos', 'automação', 'pagamento', 'v3.1.0'],
     url: '/admin/documentacao/viva/REPLICATION_SYSTEM',
-    icon: Package
+    icon: Package,
   },
   {
     id: 'USER_MANAGEMENT',
@@ -270,12 +325,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Sistema de convites, roles e gestão de equipes',
     category: 'Administração',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['usuários', 'convites', 'equipes', 'gestão', 'v3.1.0'],
     url: '/admin/documentacao/viva/USER_MANAGEMENT',
-    icon: Users
+    icon: Users,
   },
   {
     id: 'ADDRESS_MANAGEMENT',
@@ -283,12 +338,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Sistema de endereços múltiplos com validação e padrão único',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['endereços', 'validação', 'cep', 'padrão', 'v3.1.0'],
     url: '/admin/documentacao/viva/ADDRESS_MANAGEMENT',
-    icon: Globe
+    icon: Globe,
   },
   {
     id: 'DASHBOARDS',
@@ -296,38 +351,40 @@ const documentationItems: DocumentationItem[] = [
     description: 'Dashboards em tempo real com métricas e analytics avançados',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['dashboards', 'métricas', 'analytics', 'tempo real', 'v3.1.0'],
     url: '/admin/documentacao/viva/DASHBOARDS',
-    icon: BarChart3
+    icon: BarChart3,
   },
   {
     id: 'DEPLOYMENT_GUIDE',
     title: 'Guia de Deploy',
-    description: 'Guia completo para deploy em desenvolvimento e produção v3.1.0',
+    description:
+      'Guia completo para deploy em desenvolvimento e produção v3.1.0',
     category: 'Operações',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['deploy', 'produção', 'vercel', 'docker', 'v3.1.0'],
     url: '/admin/documentacao/viva/DEPLOYMENT_GUIDE',
-    icon: FileText
+    icon: FileText,
   },
   {
     id: 'CHANGELOG_V3',
     title: 'Changelog v3.1.0',
-    description: 'Histórico completo de mudanças e funcionalidades da versão 3.1.0',
+    description:
+      'Histórico completo de mudanças e funcionalidades da versão 3.1.0',
     category: 'Fundamentos',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['changelog', 'mudanças', 'v3.1.0', 'funcionalidades'],
     url: '/admin/documentacao/viva/CHANGELOG',
-    icon: FileText
+    icon: FileText,
   },
   {
     id: 'IMPLEMENTATION_SUMMARY',
@@ -335,13 +392,13 @@ const documentationItems: DocumentationItem[] = [
     description: 'Resumo executivo da implementação completa da versão 3.1.0',
     category: 'Fundamentos',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['implementação', 'resumo', 'v3.1.0', 'status'],
     url: '/admin/documentacao/viva/RESUMO_IMPLEMENTACAO_v3.1.0',
-    icon: FileText
-  }
+    icon: FileText,
+  },
 ]
 
 const screenDocumentation: ScreenDocumentation[] = [
@@ -351,10 +408,11 @@ const screenDocumentation: ScreenDocumentation[] = [
     title: 'Dashboard Administrativo',
     route: '/admin/dashboard',
     module: 'Admin',
-    description: 'Visão geral do sistema administrativo com métricas e estatísticas',
+    description:
+      'Visão geral do sistema administrativo com métricas e estatísticas',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-changelog',
@@ -364,7 +422,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Histórico completo de mudanças e evolução da plataforma',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-usuarios',
@@ -374,7 +432,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Controle completo de usuários do sistema',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-empresas',
@@ -384,7 +442,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Controle de empresas e multi-tenancy',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-lojas',
@@ -394,7 +452,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Gestão de lojas por empresa',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-produtos',
@@ -404,7 +462,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Listagem de produtos base',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-orcamentos',
@@ -414,7 +472,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Sistema completo de orçamentos',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-pedidos',
@@ -424,7 +482,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Gestão completa de pedidos',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-relatorios',
@@ -434,7 +492,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Analytics e métricas avançadas',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-configuracoes',
@@ -444,7 +502,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Configurações gerais da plataforma',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-integracoes',
@@ -454,7 +512,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Integrações com sistemas externos',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-categorias',
@@ -464,7 +522,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Gestão de categorias de produtos',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-gestores',
@@ -474,7 +532,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Gestão de gestores de empresa',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'admin-documentacao',
@@ -484,7 +542,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Central de documentação da plataforma',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   // Store Module
   {
@@ -495,7 +553,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Visão geral da loja para clientes',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'store-catalog',
@@ -505,7 +563,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Listagem de produtos para compra',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'store-cart',
@@ -515,7 +573,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Gestão do carrinho de compras',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'store-checkout',
@@ -525,7 +583,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Processo de finalização de compra',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'store-orders',
@@ -535,7 +593,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Histórico de pedidos do usuário',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'store-profile',
@@ -545,7 +603,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Dados e configurações do usuário',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'store-points',
@@ -555,7 +613,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Sistema de pontos e recompensas',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'store-product',
@@ -565,7 +623,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Página de detalhes do produto',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   // Gestor Module
   {
@@ -576,7 +634,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Visão geral para gestores de empresa',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'gestor-users',
@@ -586,7 +644,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Gestão de funcionários da empresa',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'gestor-products',
@@ -596,7 +654,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Gestão de produtos da empresa',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'gestor-quotes',
@@ -606,7 +664,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Sistema de orçamentos para gestores',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'gestor-orders',
@@ -616,7 +674,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Acompanhamento de pedidos da empresa',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   // Auth Module
   {
@@ -627,7 +685,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Sistema de autenticação de usuários',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'auth-register',
@@ -637,7 +695,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Processo de registro de novos usuários',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   {
     id: 'auth-forgot',
@@ -647,7 +705,7 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Recuperação de credenciais perdidas',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
+    hasScreenshot: false,
   },
   // Onboarding
   {
@@ -658,8 +716,8 @@ const screenDocumentation: ScreenDocumentation[] = [
     description: 'Processo de primeiro acesso à plataforma',
     status: 'documented',
     lastUpdated: '2 de Setembro, 2025',
-    hasScreenshot: false
-  }
+    hasScreenshot: false,
+  },
 ]
 
 const categories = [
@@ -670,7 +728,7 @@ const categories = [
   { id: 'Segurança', name: 'Segurança', icon: Shield },
   { id: 'Arquitetura', name: 'Arquitetura', icon: Building },
   { id: 'Administração', name: 'Administração', icon: Users },
-  { id: 'Operações', name: 'Operações', icon: Settings }
+  { id: 'Operações', name: 'Operações', icon: Settings },
 ]
 
 const getStatusColor = (status: string) => {
@@ -705,17 +763,23 @@ export default function DocumentationPage() {
   const [selectedModule, setSelectedModule] = useState('all')
 
   const filteredDocs = documentationItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory
+    const matchesSearch =
+      item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.tags.some(tag =>
+        tag.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    const matchesCategory =
+      selectedCategory === 'all' || item.category === selectedCategory
     return matchesSearch && matchesCategory
   })
 
   const filteredScreens = screenDocumentation.filter(screen => {
-    const matchesSearch = screen.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         screen.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesModule = selectedModule === 'all' || screen.module === selectedModule
+    const matchesSearch =
+      screen.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      screen.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesModule =
+      selectedModule === 'all' || screen.module === selectedModule
     return matchesSearch && matchesModule
   })
 
@@ -725,12 +789,27 @@ export default function DocumentationPage() {
       <Card className="border-yellow-300 bg-yellow-50">
         <CardContent className="py-4 flex items-center justify-between gap-3">
           <div>
-            <p className="font-semibold text-yellow-900">Documentação pode estar desatualizada</p>
-            <p className="text-sm text-yellow-800">Esta listagem é estática. Acesse as páginas de documentação para o conteúdo mais recente.</p>
+            <p className="font-semibold text-yellow-900">
+              Documentação pode estar desatualizada
+            </p>
+            <p className="text-sm text-yellow-800">
+              Esta listagem é estática. Acesse as páginas de documentação para o
+              conteúdo mais recente.
+            </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => window.open('/docs/PLATFORM_OVERVIEW', '_self')}>Abrir Plataforma</Button>
-            <Button variant="outline" onClick={() => window.open('/docs/API_REFERENCE', '_self')}>Abrir API</Button>
+            <Button
+              variant="outline"
+              onClick={() => window.open('/docs/PLATFORM_OVERVIEW', '_self')}
+            >
+              Abrir Plataforma
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => window.open('/docs/API_REFERENCE', '_self')}
+            >
+              Abrir API
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -739,20 +818,33 @@ export default function DocumentationPage() {
         <div className="flex items-center justify-center gap-3">
           <BookOpen className="h-12 w-12 text-blue-600" />
           <div>
-            <h1 className="text-4xl font-bold text-gray-900">Documentação da Plataforma</h1>
-            <p className="text-xl text-gray-600">Yoobe v3.1.0 - Central de Conhecimento</p>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Documentação da Plataforma
+            </h1>
+            <p className="text-xl text-gray-600">
+              Yoobe v3.1.0 - Central de Conhecimento
+            </p>
           </div>
         </div>
         <div className="flex items-center justify-center gap-4">
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge
+            variant="outline"
+            className="bg-blue-50 text-blue-700 border-blue-200"
+          >
             <Star className="h-3 w-3 mr-1" />
             v3.1.0
           </Badge>
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200"
+          >
             <Clock className="h-3 w-3 mr-1" />
             Atualizado: 2 de Setembro, 2025
           </Badge>
-          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+          <Badge
+            variant="outline"
+            className="bg-purple-50 text-purple-700 border-purple-200"
+          >
             <Users className="h-3 w-3 mr-1" />
             Equipe Yoobe
           </Badge>
@@ -769,7 +861,7 @@ export default function DocumentationPage() {
             <Input
               placeholder="Buscar na documentação..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={e => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -777,7 +869,7 @@ export default function DocumentationPage() {
         <div className="flex gap-2">
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={e => setSelectedCategory(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm"
           >
             {categories.map(c => (
@@ -788,14 +880,16 @@ export default function DocumentationPage() {
           </select>
           <select
             value={selectedModule}
-            onChange={(e) => setSelectedModule(e.target.value)}
+            onChange={e => setSelectedModule(e.target.value)}
             className="px-3 py-2 border border-gray-300 rounded-md text-sm"
           >
-            {['all', 'Admin', 'Store', 'Gestor', 'Auth', 'Onboarding'].map(module => (
-              <option key={module} value={module}>
-                {module === 'all' ? 'Todos os Módulos' : module}
-              </option>
-            ))}
+            {['all', 'Admin', 'Store', 'Gestor', 'Auth', 'Onboarding'].map(
+              module => (
+                <option key={module} value={module}>
+                  {module === 'all' ? 'Todos os Módulos' : module}
+                </option>
+              )
+            )}
           </select>
         </div>
       </div>
@@ -807,7 +901,9 @@ export default function DocumentationPage() {
             <CardContent className="p-4 text-center">
               <Play className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <h3 className="font-semibold">Executar Script</h3>
-              <p className="text-sm text-gray-600">Gerar documentação automaticamente</p>
+              <p className="text-sm text-gray-600">
+                Gerar documentação automaticamente
+              </p>
             </CardContent>
           </Card>
         </Link>
@@ -816,7 +912,9 @@ export default function DocumentationPage() {
             <CardContent className="p-4 text-center">
               <Camera className="h-8 w-8 text-green-600 mx-auto mb-2" />
               <h3 className="font-semibold">Capturar Screenshots</h3>
-              <p className="text-sm text-gray-600">Atualizar imagens das telas</p>
+              <p className="text-sm text-gray-600">
+                Atualizar imagens das telas
+              </p>
             </CardContent>
           </Card>
         </Link>
@@ -825,7 +923,9 @@ export default function DocumentationPage() {
             <CardContent className="p-4 text-center">
               <Download className="h-8 w-8 text-purple-600 mx-auto mb-2" />
               <h3 className="font-semibold">Exportar Docs</h3>
-              <p className="text-sm text-gray-600">Baixar documentação completa</p>
+              <p className="text-sm text-gray-600">
+                Baixar documentação completa
+              </p>
             </CardContent>
           </Card>
         </Link>
@@ -834,7 +934,9 @@ export default function DocumentationPage() {
             <CardContent className="p-4 text-center">
               <Eye className="h-8 w-8 text-orange-600 mx-auto mb-2" />
               <h3 className="font-semibold">Visualizar</h3>
-              <p className="text-sm text-gray-600">Ver todas as telas documentadas</p>
+              <p className="text-sm text-gray-600">
+                Ver todas as telas documentadas
+              </p>
             </CardContent>
           </Card>
         </Link>
@@ -844,11 +946,13 @@ export default function DocumentationPage() {
       <div className="space-y-6">
         <div className="flex items-center gap-2">
           <FileText className="h-6 w-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-900">Documentação Principal</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Documentação Principal
+          </h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredDocs.map((item) => (
+          {filteredDocs.map(item => (
             <Card key={item.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -879,7 +983,7 @@ export default function DocumentationPage() {
                   ))}
                 </div>
                 <div className="flex items-center justify-between">
-                  <Badge 
+                  <Badge
                     variant={item.status === 'active' ? 'default' : 'secondary'}
                     className="text-xs"
                   >
@@ -902,14 +1006,20 @@ export default function DocumentationPage() {
       <div className="space-y-6">
         <div className="flex items-center gap-2">
           <Monitor className="h-6 w-6 text-green-600" />
-          <h2 className="text-2xl font-bold text-gray-900">Documentação das Telas</h2>
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-            {screenDocumentation.filter(s => s.status === 'documented').length} de {screenDocumentation.length} documentadas
+          <h2 className="text-2xl font-bold text-gray-900">
+            Documentação das Telas
+          </h2>
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200"
+          >
+            {screenDocumentation.filter(s => s.status === 'documented').length}{' '}
+            de {screenDocumentation.length} documentadas
           </Badge>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredScreens.map((screen) => (
+          {filteredScreens.map(screen => (
             <Card key={screen.id} className="hover:shadow-lg transition-shadow">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -918,7 +1028,10 @@ export default function DocumentationPage() {
                     <CardTitle className="text-base">{screen.title}</CardTitle>
                   </div>
                   <Badge className={`text-xs ${getStatusColor(screen.status)}`}>
-                    {getStatusIcon(screen.status)} {screen.status === 'documented' ? 'Documentada' : screen.status}
+                    {getStatusIcon(screen.status)}{' '}
+                    {screen.status === 'documented'
+                      ? 'Documentada'
+                      : screen.status}
                   </Badge>
                 </div>
                 <CardDescription className="text-sm">
@@ -945,7 +1058,9 @@ export default function DocumentationPage() {
                       </Link>
                     </Button>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/admin/documentacao/viva/screens/${screen.id}`}>
+                      <Link
+                        href={`/admin/documentacao/viva/screens/${screen.id}`}
+                      >
                         <FileText className="h-3 w-3 mr-1" />
                         Docs
                       </Link>

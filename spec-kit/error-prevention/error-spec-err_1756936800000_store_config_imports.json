@@ -1,0 +1,85 @@
+{
+  "id": "error-spec-err_1756936800000_store_config_imports",
+  "title": "Error Prevention: Imports ausentes em app/api/gestor/store-config/route.ts",
+  "description": "Specification for preventing and handling: Erros de linter e typecheck devido a imports ausentes de createRouteHandlerClient e cookies.",
+  "category": "error-prevention",
+  "priority": "medium",
+  "status": "completed",
+  "tags": [
+    "error-prevention",
+    "linter",
+    "medium"
+  ],
+  "requirements": [
+    {
+      "id": "req-err_1756936800000_store_config_imports-prevention",
+      "title": "Prevention Measures",
+      "description": "Implement prevention steps to avoid this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756936800000_store_config_imports-prevention-0",
+          "description": "Adicionar lint:ci e typecheck no CI",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1756936800000_store_config_imports-prevention-1",
+          "description": "Executar scripts de auditoria que destaquem imports ausentes",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1756936800000_store_config_imports-detection",
+      "title": "Error Detection",
+      "description": "Implement detection mechanisms for this error type",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756936800000_store_config_imports-detection-1",
+          "description": "Error is logged with proper context",
+          "status": "pending"
+        },
+        {
+          "id": "ac-err_1756936800000_store_config_imports-detection-2",
+          "description": "Error is categorized correctly",
+          "status": "pending"
+        }
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "req-err_1756936800000_store_config_imports-resolution",
+      "title": "Error Resolution",
+      "description": "Implement resolution procedures for this error",
+      "acceptanceCriteria": [
+        {
+          "id": "ac-err_1756936800000_store_config_imports-resolution-1",
+          "description": "Solution is documented and accessible",
+          "status": "completed"
+        },
+        {
+          "id": "ac-err_1756936800000_store_config_imports-resolution-2",
+          "description": "Resolution is tracked and monitored",
+          "status": "pending"
+        }
+      ],
+      "status": "completed"
+    }
+  ],
+  "implementation": {
+    "codeSnippet": "import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'\nimport { cookies } from 'next/headers'",
+    "filePath": "app/api/gestor/store-config/route.ts",
+    "solution": "Adicionar imports: createRouteHandlerClient de @supabase/auth-helpers-nextjs e cookies de next/headers. Rodar lint e typecheck.",
+    "relatedErrors": [],
+    "documentationLinks": []
+  },
+  "metadata": {
+    "originalErrorId": "err_1756936800000_store_config_imports",
+    "errorType": "linter",
+    "severity": "medium",
+    "developer": "Automation",
+    "timestamp": "2025-09-06T00:00:00.000Z",
+    "resolutionDate": "2025-09-06T00:05:00.000Z",
+    "migratedAt": "2025-09-09T03:18:50.281Z"
+  }
+}

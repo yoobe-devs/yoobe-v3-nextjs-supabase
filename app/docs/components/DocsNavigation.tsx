@@ -1,20 +1,26 @@
 'use client'
 
 import { useState } from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { 
-  BookOpen, 
-  Search, 
-  ExternalLink, 
-  FileText, 
-  Code, 
-  Database, 
-  Zap, 
-  Globe, 
+import {
+  BookOpen,
+  Search,
+  ExternalLink,
+  FileText,
+  Code,
+  Database,
+  Zap,
+  Globe,
   Settings,
   Download,
   Eye,
@@ -30,7 +36,7 @@ import {
   BarChart3,
   ChevronRight,
   Home,
-  ArrowRight
+  ArrowRight,
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -53,112 +59,120 @@ const documentationItems: DocumentationItem[] = [
   {
     id: 'PLATFORM_OVERVIEW',
     title: 'Visão Geral da Plataforma',
-    description: 'Introdução completa à Yoobe Platform v3.1.0, arquitetura e conceitos fundamentais',
+    description:
+      'Introdução completa à Yoobe Platform v3.1.0, arquitetura e conceitos fundamentais',
     category: 'Fundamentos',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['introdução', 'arquitetura', 'conceitos', 'v3.1.0'],
     url: '/docs/PLATFORM_OVERVIEW',
     icon: BookOpen,
-    featured: true
+    featured: true,
   },
   {
     id: 'USER_GUIDE',
     title: 'Manual do Usuário',
-    description: 'Guia completo para usuários da plataforma com todas as funcionalidades v3.1.0',
+    description:
+      'Guia completo para usuários da plataforma com todas as funcionalidades v3.1.0',
     category: 'Fundamentos',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['usuário', 'manual', 'funcionalidades', 'v3.1.0'],
     url: '/docs/USER_GUIDE',
     icon: BookOpen,
-    featured: true
+    featured: true,
   },
   {
     id: 'QUOTES_SYSTEM',
     title: 'Sistema de Orçamentos',
-    description: 'Fluxo completo de orçamentos, aprovação e replicação automática',
+    description:
+      'Fluxo completo de orçamentos, aprovação e replicação automática',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['orçamentos', 'quotes', 'aprovação', 'replicação', 'v3.1.0'],
     url: '/docs/QUOTES_SYSTEM',
     icon: FileText,
-    featured: true
+    featured: true,
   },
   {
     id: 'CHECKOUT_SYSTEM',
     title: 'Sistema de Checkout',
-    description: 'Checkout avançado com múltiplos métodos de pagamento e validações',
+    description:
+      'Checkout avançado com múltiplos métodos de pagamento e validações',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['checkout', 'pagamento', 'carrinho', 'validação', 'v3.1.0'],
     url: '/docs/CHECKOUT_SYSTEM',
     icon: ShoppingCart,
-    featured: true
+    featured: true,
   },
   {
     id: 'RBAC_SYSTEM',
     title: 'Sistema RBAC',
-    description: 'Documentação completa do sistema de controle de acesso baseado em roles',
+    description:
+      'Documentação completa do sistema de controle de acesso baseado em roles',
     category: 'Segurança',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['rbac', 'segurança', 'permissões', 'roles', 'v3.1.0'],
     url: '/docs/RBAC_SYSTEM',
     icon: Shield,
-    featured: true
+    featured: true,
   },
   {
     id: 'SMART_DOCS_SYSTEM',
     title: 'Sistema Inteligente',
-    description: 'Documentação completa do Sistema de Documentação Inteligente (Smart Docs).',
+    description:
+      'Documentação completa do Sistema de Documentação Inteligente (Smart Docs).',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['docs', 'automação', 'monitoramento', 'smart-docs', 'v3.1.0'],
-    url: '/admin/documentacao/viva/SMART_DOCS_SYSTEM_COMPLETE',
+    url: '/docs/SMART_DOCS_SYSTEM_COMPLETE',
     icon: BookOpen,
-    featured: true
+    featured: true,
   },
   {
     id: 'SMART_DOCS_GUIDE',
     title: 'Guia de Uso (Smart Docs)',
-    description: 'Guia detalhado de uso e configuração do Sistema Inteligente de Documentação.',
+    description:
+      'Guia detalhado de uso e configuração do Sistema Inteligente de Documentação.',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['docs', 'guia', 'smart-docs', 'configuração', 'v3.1.0'],
-    url: '/admin/documentacao/viva/SMART_DOCS_GUIDE',
-    icon: BookOpen
+    url: '/docs/SMART_DOCS_GUIDE',
+    icon: BookOpen,
   },
   {
     id: 'SMART_DOCS_QUICK_REFERENCE',
     title: 'Consulta Rápida (Smart Docs)',
-    description: 'Referência rápida de comandos, endpoints e operações do Smart Docs.',
+    description:
+      'Referência rápida de comandos, endpoints e operações do Smart Docs.',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['docs', 'consulta', 'referência', 'smart-docs', 'v3.1.0'],
-    url: '/admin/documentacao/viva/SMART_DOCS_QUICK_REFERENCE',
-    icon: FileText
+    url: '/docs/SMART_DOCS_QUICK_REFERENCE',
+    icon: FileText,
   },
   {
     id: 'MULTITENANCY',
@@ -166,26 +180,27 @@ const documentationItems: DocumentationItem[] = [
     description: 'Sistema robusto de multi-tenancy com isolamento de dados',
     category: 'Arquitetura',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['multi-tenancy', 'empresas', 'isolamento', 'tenants', 'v3.1.0'],
     url: '/docs/MULTITENANCY',
     icon: Building,
-    featured: true
+    featured: true,
   },
   {
     id: 'WALLET_SYSTEM',
     title: 'Sistema de Carteira',
-    description: 'Gestão de pontos, transações e sistema de crédito/debito',
+    description:
+      'Gestão completa de pontos, transações e sistema de crédito/debito',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['carteira', 'pontos', 'transações', 'crédito', 'v3.1.0'],
     url: '/docs/WALLET_SYSTEM',
-    icon: CreditCard
+    icon: CreditCard,
   },
   {
     id: 'REPLICATION_SYSTEM',
@@ -193,25 +208,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Replicação automática de produtos após pagamento confirmado',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['replicação', 'produtos', 'automação', 'pagamento', 'v3.1.0'],
     url: '/docs/REPLICATION_SYSTEM',
-    icon: Package
-  },
-  {
-    id: 'WALLET_SYSTEM',
-    title: 'Sistema de Carteira',
-    description: 'Gestão completa de pontos, transações e sistema de crédito/debito',
-    category: 'Funcionalidades',
-    version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
-    author: 'Equipe Yoobe',
-    status: 'active',
-    tags: ['carteira', 'pontos', 'transações', 'crédito', 'v3.1.0'],
-    url: '/docs/WALLET_SYSTEM',
-    icon: CreditCard
+    icon: Package,
   },
   {
     id: 'USER_MANAGEMENT',
@@ -219,12 +221,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Sistema de convites, roles e gestão de equipes',
     category: 'Administração',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['usuários', 'convites', 'equipes', 'gestão', 'v3.1.0'],
     url: '/docs/USER_MANAGEMENT',
-    icon: Users
+    icon: Users,
   },
   {
     id: 'ADDRESS_MANAGEMENT',
@@ -232,12 +234,12 @@ const documentationItems: DocumentationItem[] = [
     description: 'Sistema de endereços múltiplos com validação e padrão único',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['endereços', 'validação', 'cep', 'padrão', 'v3.1.0'],
     url: '/docs/ADDRESS_MANAGEMENT',
-    icon: Globe
+    icon: Globe,
   },
   {
     id: 'DASHBOARDS',
@@ -245,52 +247,92 @@ const documentationItems: DocumentationItem[] = [
     description: 'Dashboards em tempo real com métricas e analytics avançados',
     category: 'Funcionalidades',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['dashboards', 'métricas', 'analytics', 'tempo real', 'v3.1.0'],
     url: '/docs/DASHBOARDS',
-    icon: BarChart3
+    icon: BarChart3,
   },
   {
     id: 'API_REFERENCE',
     title: 'Referência da API',
-    description: 'Documentação completa de todos os endpoints da API REST v3.1.0',
+    description:
+      'Documentação completa de todos os endpoints da API REST v3.1.0',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['api', 'endpoints', 'rest', 'desenvolvimento', 'v3.1.0'],
-    url: '/admin/documentacao/viva/API_REFERENCE',
-    icon: Code
+    url: '/docs/API_REFERENCE',
+    icon: Code,
   },
   {
     id: 'DATABASE_SCHEMA',
     title: 'Schema do Banco de Dados',
-    description: 'Estrutura completa do banco de dados v3.1.0 e relacionamentos',
+    description:
+      'Estrutura completa do banco de dados v3.1.0 e relacionamentos',
     category: 'Desenvolvimento',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['database', 'schema', 'tabelas', 'relacionamentos', 'v3.1.0'],
-    url: '/admin/documentacao/viva/DATABASE_SCHEMA',
-    icon: Database
+    url: '/docs/DATABASE_SCHEMA',
+    icon: Database,
   },
   {
     id: 'DEPLOYMENT_GUIDE',
     title: 'Guia de Deploy',
-    description: 'Guia completo para deploy em desenvolvimento e produção v3.1.0',
+    description:
+      'Guia completo para deploy em desenvolvimento e produção v3.1.0',
     category: 'Operações',
     version: 'v3.1.0',
-    lastUpdated: 'Janeiro 2025',
+    lastUpdated: 'Setembro 2025',
     author: 'Equipe Yoobe',
     status: 'active',
     tags: ['deploy', 'produção', 'vercel', 'docker', 'v3.1.0'],
-    url: '/admin/documentacao/viva/DEPLOYMENT_GUIDE',
-    icon: Settings
-  }
+    url: '/docs/DEPLOYMENT_GUIDE',
+    icon: Settings,
+  },
+  {
+    id: 'MCP_GUIDE',
+    title: 'Guia Completo de MCPs',
+    description:
+      'Documentação completa dos Model Context Protocols utilizados na plataforma',
+    category: 'Desenvolvimento',
+    version: 'v3.1.0',
+    lastUpdated: 'Setembro 2025',
+    author: 'Equipe Yoobe',
+    status: 'active',
+    tags: ['mcp', 'automação', 'integração', 'ferramentas', 'v3.1.0'],
+    url: '/docs/MCP_GUIDE',
+    icon: Code,
+    featured: true,
+  },
+  {
+    id: 'SYSTEM_PROTECTION',
+    title: 'Sistema de Proteção e Monitoramento',
+    description:
+      'Sistema abrangente de proteção e monitoramento do middleware e MCPs',
+    category: 'Segurança',
+    version: 'v3.1.0',
+    lastUpdated: 'Setembro 2025',
+    author: 'Equipe Yoobe',
+    status: 'active',
+    tags: [
+      'proteção',
+      'monitoramento',
+      'middleware',
+      'mcp',
+      'segurança',
+      'v3.1.0',
+    ],
+    url: '/docs/SYSTEM_PROTECTION',
+    icon: Shield,
+    featured: true,
+  },
 ]
 
 const categories = [
@@ -301,7 +343,7 @@ const categories = [
   { id: 'Segurança', name: 'Segurança', icon: Shield },
   { id: 'Arquitetura', name: 'Arquitetura', icon: Building },
   { id: 'Administração', name: 'Administração', icon: Users },
-  { id: 'Operações', name: 'Operações', icon: Settings }
+  { id: 'Operações', name: 'Operações', icon: Settings },
 ]
 
 const getStatusColor = (status: string) => {
@@ -335,12 +377,14 @@ export default function DocsNavigation() {
   const [selectedCategory, setSelectedCategory] = useState('all')
 
   const filteredDocs = documentationItems.filter(doc => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-    
-    const matchesCategory = selectedCategory === 'all' || doc.category === selectedCategory
-    
+    const matchesSearch =
+      doc.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      doc.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+
+    const matchesCategory =
+      selectedCategory === 'all' || doc.category === selectedCategory
+
     return matchesSearch && matchesCategory
   })
 
@@ -353,17 +397,26 @@ export default function DocsNavigation() {
       <div className="text-center space-y-4">
         <div className="flex items-center justify-center gap-3">
           <Home className="h-8 w-8 text-blue-600" />
-          <h1 className="text-4xl font-bold text-gray-900">Documentação Yoobe v3.1.0</h1>
+          <h1 className="text-4xl font-bold text-gray-900">
+            Documentação Yoobe v3.1.0
+          </h1>
         </div>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-          Documentação completa da plataforma Yoobe v3.1.0 - Sistema de Orçamentos e Replicação
+          Documentação completa da plataforma Yoobe v3.1.0 - Sistema de
+          Orçamentos e Replicação
         </p>
         <div className="flex items-center justify-center gap-2">
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+          <Badge
+            variant="outline"
+            className="bg-blue-50 text-blue-700 border-blue-200"
+          >
             <FileText className="h-3 w-3 mr-1" />
             {documentationItems.length} Documentos
           </Badge>
-          <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+          <Badge
+            variant="outline"
+            className="bg-green-50 text-green-700 border-green-200"
+          >
             <Star className="h-3 w-3 mr-1" />
             v3.1.0
           </Badge>
@@ -373,9 +426,12 @@ export default function DocsNavigation() {
       {/* Smart Docs Banner */}
       <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
         <CardHeader>
-          <CardTitle className="text-2xl text-indigo-900">🧠 Sistema de Documentação Inteligente</CardTitle>
+          <CardTitle className="text-2xl text-indigo-900">
+            🧠 Sistema de Documentação Inteligente
+          </CardTitle>
           <CardDescription className="text-indigo-700">
-            O Sistema de Documentação Inteligente transforma a forma como você gerencia conhecimento na plataforma Yoobe.
+            O Sistema de Documentação Inteligente transforma a forma como você
+            gerencia conhecimento na plataforma Yoobe.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -388,9 +444,16 @@ export default function DocsNavigation() {
               <li>✅ Consistência garantida</li>
             </ul>
             <div>
-              <p className="font-semibold text-indigo-900 mb-2">Próximos Passos</p>
+              <p className="font-semibold text-indigo-900 mb-2">
+                Próximos Passos
+              </p>
               <ol className="list-decimal ml-5 space-y-1 text-indigo-900">
-                <li>Inicialize: <code className="bg-white/70 px-1 rounded border">node scripts/init-smart-docs.js</code></li>
+                <li>
+                  Inicialize:{' '}
+                  <code className="bg-white/70 px-1 rounded border">
+                    node scripts/init-smart-docs.js
+                  </code>
+                </li>
                 <li>Configure o monitoramento dos diretórios</li>
                 <li>Registre erros conhecidos (base de conhecimento)</li>
                 <li>Integre ao workflow do time</li>
@@ -399,13 +462,15 @@ export default function DocsNavigation() {
             </div>
           </div>
           <div className="flex gap-2 pt-2">
-            <Link href="/admin/documentacao/viva/SMART_DOCS_SYSTEM_COMPLETE">
-              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">Ver Sistema Inteligente</Button>
+            <Link href="/docs/SMART_DOCS_SYSTEM_COMPLETE">
+              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                Ver Sistema Inteligente
+              </Button>
             </Link>
-            <Link href="/admin/documentacao/viva/SMART_DOCS_QUICK_REFERENCE">
+            <Link href="/docs/SMART_DOCS_QUICK_REFERENCE">
               <Button variant="outline">Consulta Rápida</Button>
             </Link>
-            <Link href="/admin/documentacao/viva/SMART_DOCS_GUIDE">
+            <Link href="/docs/SMART_DOCS_GUIDE">
               <Button variant="outline">Guia de Uso</Button>
             </Link>
           </div>
@@ -421,16 +486,18 @@ export default function DocsNavigation() {
               <Input
                 placeholder="Buscar na documentação..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="pl-10"
               />
             </div>
           </div>
           <div className="flex gap-2 overflow-x-auto">
-            {categories.map((category) => (
+            {categories.map(category => (
               <Button
                 key={category.id}
-                variant={selectedCategory === category.id ? "default" : "outline"}
+                variant={
+                  selectedCategory === category.id ? 'default' : 'outline'
+                }
                 size="sm"
                 onClick={() => setSelectedCategory(category.id)}
                 className="whitespace-nowrap"
@@ -448,10 +515,12 @@ export default function DocsNavigation() {
         <div className="space-y-4">
           <div className="flex items-center gap-2">
             <Star className="h-5 w-5 text-yellow-600" />
-            <h2 className="text-2xl font-bold text-gray-900">Documentação em Destaque</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              Documentação em Destaque
+            </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredDocs.map((doc) => (
+            {featuredDocs.map(doc => (
               <Link key={doc.id} href={doc.url} className="block">
                 <Card className="h-full hover:shadow-lg transition-all duration-200 border-2 border-blue-100 hover:border-blue-300">
                   <CardHeader className="pb-3">
@@ -462,7 +531,10 @@ export default function DocsNavigation() {
                         </div>
                         <div>
                           <CardTitle className="text-lg">{doc.title}</CardTitle>
-                          <Badge variant="outline" className={getStatusColor(doc.status)}>
+                          <Badge
+                            variant="outline"
+                            className={getStatusColor(doc.status)}
+                          >
                             {getStatusIcon(doc.status)} {doc.status}
                           </Badge>
                         </div>
@@ -491,14 +563,16 @@ export default function DocsNavigation() {
       {/* All Documentation */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-gray-900">Toda a Documentação</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Toda a Documentação
+          </h2>
           <div className="text-sm text-gray-500">
             {filteredDocs.length} de {documentationItems.length} documentos
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {regularDocs.map((doc) => (
+          {regularDocs.map(doc => (
             <Link key={doc.id} href={doc.url} className="block">
               <Card className="h-full hover:shadow-md transition-all duration-200">
                 <CardHeader className="pb-3">
@@ -509,7 +583,10 @@ export default function DocsNavigation() {
                       </div>
                       <div>
                         <CardTitle className="text-base">{doc.title}</CardTitle>
-                        <Badge variant="outline" className={getStatusColor(doc.status)}>
+                        <Badge
+                          variant="outline"
+                          className={getStatusColor(doc.status)}
+                        >
                           {getStatusIcon(doc.status)} {doc.status}
                         </Badge>
                       </div>
@@ -534,8 +611,12 @@ export default function DocsNavigation() {
         {regularDocs.length === 0 && (
           <div className="text-center py-12">
             <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhum documento encontrado</h3>
-            <p className="text-gray-500">Tente ajustar os filtros ou termos de busca</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Nenhum documento encontrado
+            </h3>
+            <p className="text-gray-500">
+              Tente ajustar os filtros ou termos de busca
+            </p>
           </div>
         )}
       </div>
@@ -556,7 +637,7 @@ export default function DocsNavigation() {
                 Ver Changelog
               </Button>
             </Link>
-            <Link href="/admin/documentacao/viva/SMART_DOCS_SYSTEM_COMPLETE" className="block">
+            <Link href="/docs/SMART_DOCS_SYSTEM_COMPLETE" className="block">
               <Button variant="outline" className="w-full justify-start">
                 <BookOpen className="h-4 w-4 mr-2" />
                 Sistema Inteligente

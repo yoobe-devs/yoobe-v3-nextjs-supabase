@@ -6,8 +6,8 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_proc WHERE proname = 'set_updated_at') THEN
-    CREATE OR REPLACE FUNCTION public.set_updated_at() RETURNS trigger AS $$
-    BEGIN NEW.updated_at = now(); RETURN NEW; END; $$ LANGUAGE plpgsql;
+    CREATE OR REPLACE FUNCTION public.set_updated_at() RETURNS trigger AS $func$
+    BEGIN NEW.updated_at = now(); RETURN NEW; END; $func$ LANGUAGE plpgsql;
   END IF;
 END $$;
 
@@ -284,9 +284,9 @@ DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE policyname='users_company_admins') THEN
     CREATE POLICY users_company_admins ON public.users FOR SELECT USING (
       EXISTS (
-        SELECT 1 FROM public.user_company_roles ucr 
-        WHERE ucr.user_id = auth.uid() 
-        AND ucr.company_id = users.company 
+        SELECT 1 FROM public.user_company_roles ucr
+        WHERE ucr.user_id = auth.uid()
+        AND ucr.company_id = users.company_id
         AND ucr.role IN ('admin_gestor', 'gestor')
       )
     );
@@ -430,31 +430,55 @@ LEFT JOIN public.quote_items qi ON qi.quote_id = q.id
 GROUP BY q.id, q.company_id, c.name, q.status, q.subtotal, q.discount, q.total, q.created_at;
 
 -- 8) Seed data -----------------------------------------------------------
--- Insert default company if none exists
-INSERT INTO public.companies (id, name, tax_id) 
+-- Insert default company if none exists (only if tax_id column exists)
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'companies' AND column_name = 'tax_id' AND table_schema = 'public') THEN
+    INSERT INTO public.companies (id, name, tax_id) 
 SELECT 
   '00000000-0000-0000-0000-000000000001'::uuid,
   'Yoobe Admin',
   '00.000.000/0001-00'
 WHERE NOT EXISTS (SELECT 1 FROM public.companies LIMIT 1);
+  END IF;
+END $$;
 
--- Insert default superadmin if none exists
-INSERT INTO public.users (id, email, name, role, status)
-SELECT 
-  '00000000-0000-0000-0000-000000000001'::uuid,
-  'admin@yoobe.com',
-  'Super Admin',
-  'superadmin',
-  'active'
-WHERE NOT EXISTS (SELECT 1 FROM public.users WHERE role = 'superadmin' LIMIT 1);
+-- Insert default superadmin if none exists (only if role column accepts superadmin)
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'users' AND column_name = 'role' AND table_schema = 'public') THEN
+    -- Try to insert with superadmin role, if it fails, use admin
+    BEGIN
+      INSERT INTO public.users (id, email, name, role, status)
+      SELECT 
+        '00000000-0000-0000-0000-000000000001'::uuid,
+        'admin@yoobe.com',
+        'Super Admin',
+        'superadmin',
+        'active'
+      WHERE NOT EXISTS (SELECT 1 FROM public.users WHERE role = 'superadmin' LIMIT 1);
+    EXCEPTION WHEN OTHERS THEN
+      INSERT INTO public.users (id, email, name, role, status)
+      SELECT 
+        '00000000-0000-0000-0000-000000000001'::uuid,
+        'admin@yoobe.com',
+        'Super Admin',
+        'admin',
+        'active'
+      WHERE NOT EXISTS (SELECT 1 FROM public.users WHERE role = 'admin' LIMIT 1);
+    END;
+  END IF;
+END $$;
 
--- Link superadmin to default company
-INSERT INTO public.user_company_roles (user_id, company_id, role)
-SELECT 
-  '00000000-0000-0000-0000-000000000001'::uuid,
-  '00000000-0000-0000-0000-000000000001'::uuid,
-  'superadmin'
-WHERE NOT EXISTS (
-  SELECT 1 FROM public.user_company_roles 
-  WHERE user_id = '00000000-0000-0000-0000-000000000001'::uuid
-);
+-- Link superadmin to default company (only if user exists)
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM public.users WHERE id = '00000000-0000-0000-0000-000000000001'::uuid) THEN
+    INSERT INTO public.user_company_roles (user_id, company_id, role)
+    SELECT 
+      '00000000-0000-0000-0000-000000000001'::uuid,
+      '00000000-0000-0000-0000-000000000001'::uuid,
+      'superadmin'
+    WHERE NOT EXISTS (
+      SELECT 1 FROM public.user_company_roles
+      WHERE user_id = '00000000-0000-0000-0000-000000000001'::uuid
+    );
+  END IF;
+END $$;

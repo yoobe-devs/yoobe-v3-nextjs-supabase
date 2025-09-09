@@ -19,14 +19,26 @@ export class ErrorPreventionSystem {
     // Padrões de código de alto risco
     this.codePatterns.set('sql_select_all', /\bSELECT\s+\*\s+FROM\b/i)
     this.codePatterns.set('nested_queries', /\bSELECT.*\bSELECT\b/i)
-    this.codePatterns.set('missing_auth', /\b(req\.user|auth\.user)\b.*\bundefined\b/i)
-    this.codePatterns.set('hardcoded_credentials', /\b(password|secret|key)\s*[:=]\s*['"][^'"]+['"]/i)
+    this.codePatterns.set(
+      'missing_auth',
+      /\b(req\.user|auth\.user)\b.*\bundefined\b/i
+    )
+    this.codePatterns.set(
+      'hardcoded_credentials',
+      /\b(password|secret|key)\s*[:=]\s*['"][^'"]+['"]/i
+    )
     this.codePatterns.set('unhandled_errors', /\bcatch\s*\(\s*\)\s*\{\s*\}/)
-    this.codePatterns.set('missing_validation', /\b(req\.body|req\.query)\b(?!.*\bvalidate\b)/i)
-    this.codePatterns.set('sql_injection_risk', /\b(req\.body|req\.query)\s*\+\s*['"']\s*SQL/i)
+    this.codePatterns.set(
+      'missing_validation',
+      /\b(req\.body|req\.query)\b(?!.*\bvalidate\b)/i
+    )
+    this.codePatterns.set(
+      'sql_injection_risk',
+      /\b(req\.body|req\.query)\s*\+\s*['"']\s*SQL/i
+    )
     this.codePatterns.set('missing_rls', /\bINSERT\s+INTO.*\bWITHOUT\s+RLS\b/i)
     this.codePatterns.set('unlimited_queries', /\bLIMIT\s+[0-9]{4,}\b/i)
-    
+
     // Níveis de risco para cada padrão
     this.riskPatterns.set('sql_select_all', 8)
     this.riskPatterns.set('nested_queries', 7)
@@ -40,7 +52,10 @@ export class ErrorPreventionSystem {
   }
 
   // Analisar código e detectar problemas
-  async analyzeCode(code: string, filePath: string): Promise<CodeAnalysisResult> {
+  async analyzeCode(
+    code: string,
+    filePath: string
+  ): Promise<CodeAnalysisResult> {
     const alerts: PreventionAlert[] = []
     const suggestions: string[] = []
     let totalRisk = 0
@@ -69,7 +84,11 @@ export class ErrorPreventionSystem {
     const similarErrorIds = similarErrors.map(e => e.id)
 
     // Calcular nível de risco
-    const riskLevel = this.calculateRiskLevel(totalRisk, patternCount, similarErrors.length)
+    const riskLevel = this.calculateRiskLevel(
+      totalRisk,
+      patternCount,
+      similarErrors.length
+    )
 
     // Adicionar sugestões baseadas em erros similares
     for (const error of similarErrors) {
@@ -80,14 +99,14 @@ export class ErrorPreventionSystem {
       alerts,
       suggestions: [...new Set(suggestions)], // Remover duplicatas
       riskLevel,
-      similarErrors: similarErrorIds
+      similarErrors: similarErrorIds,
     }
   }
 
   // Analisar arquivo completo
   async analyzeFile(filePath: string): Promise<CodeAnalysisResult> {
     try {
-      const fs = require('fs')
+      const fs = await import('fs')
       const code = fs.readFileSync(filePath, 'utf-8')
       return await this.analyzeCode(code, filePath)
     } catch (error) {
@@ -96,24 +115,26 @@ export class ErrorPreventionSystem {
         alerts: [],
         suggestions: ['Erro ao analisar arquivo'],
         riskLevel: 'low',
-        similarErrors: []
+        similarErrors: [],
       }
     }
   }
 
   // Analisar diretório completo
-  async analyzeDirectory(dirPath: string): Promise<Map<string, CodeAnalysisResult>> {
+  async analyzeDirectory(
+    dirPath: string
+  ): Promise<Map<string, CodeAnalysisResult>> {
     const results = new Map<string, CodeAnalysisResult>()
-    const fs = require('fs')
-    const path = require('path')
+    const fs = await import('fs')
+    const path = await import('path')
 
     const analyzeRecursive = async (currentPath: string) => {
       const items = fs.readdirSync(currentPath)
-      
+
       for (const item of items) {
         const itemPath = path.join(currentPath, item)
         const stat = fs.statSync(itemPath)
-        
+
         if (stat.isDirectory()) {
           await analyzeRecursive(itemPath)
         } else if (this.isCodeFile(item)) {
@@ -130,17 +151,22 @@ export class ErrorPreventionSystem {
   // Verificar se é arquivo de código
   private isCodeFile(filePath: string): boolean {
     const codeExtensions = ['.ts', '.tsx', '.js', '.jsx', '.sql']
-    const ext = require('path').extname(filePath)
+    const path = await import('path')
+    const ext = path.extname(filePath)
     return codeExtensions.includes(ext)
   }
 
   // Calcular nível de risco
-  private calculateRiskLevel(totalRisk: number, patternCount: number, similarErrorCount: number): 'low' | 'medium' | 'high' {
+  private calculateRiskLevel(
+    totalRisk: number,
+    patternCount: number,
+    similarErrorCount: number
+  ): 'low' | 'medium' | 'high' {
     const baseRisk = totalRisk / Math.max(patternCount, 1)
     const errorRisk = similarErrorCount * 2
-    
+
     const finalRisk = baseRisk + errorRisk
-    
+
     if (finalRisk >= 15) return 'high'
     if (finalRisk >= 8) return 'medium'
     return 'low'
@@ -149,17 +175,17 @@ export class ErrorPreventionSystem {
   // Obter sugestão para padrão específico
   private getSuggestionForPattern(patternName: string): string {
     const suggestions: Record<string, string> = {
-      'sql_select_all': 'Use SELECT com colunas específicas em vez de SELECT *',
-      'nested_queries': 'Considere usar JOINs em vez de subqueries aninhadas',
-      'missing_auth': 'Sempre verifique autenticação antes de acessar recursos',
-      'hardcoded_credentials': 'Use variáveis de ambiente para credenciais',
-      'unhandled_errors': 'Implemente tratamento adequado de erros',
-      'missing_validation': 'Valide sempre dados de entrada',
-      'sql_injection_risk': 'Use prepared statements ou ORM para queries SQL',
-      'missing_rls': 'Implemente políticas RLS para segurança de dados',
-      'unlimited_queries': 'Implemente paginação para evitar sobrecarga'
+      sql_select_all: 'Use SELECT com colunas específicas em vez de SELECT *',
+      nested_queries: 'Considere usar JOINs em vez de subqueries aninhadas',
+      missing_auth: 'Sempre verifique autenticação antes de acessar recursos',
+      hardcoded_credentials: 'Use variáveis de ambiente para credenciais',
+      unhandled_errors: 'Implemente tratamento adequado de erros',
+      missing_validation: 'Valide sempre dados de entrada',
+      sql_injection_risk: 'Use prepared statements ou ORM para queries SQL',
+      missing_rls: 'Implemente políticas RLS para segurança de dados',
+      unlimited_queries: 'Implemente paginação para evitar sobrecarga',
     }
-    
+
     return suggestions[patternName] || 'Revisar implementação'
   }
 
@@ -169,8 +195,14 @@ export class ErrorPreventionSystem {
 
 ## 📊 Resumo Geral
 - **Arquivos Analisados:** ${results.size}
-- **Alertas Gerados:** ${Array.from(results.values()).reduce((sum, r) => sum + r.alerts.length, 0)}
-- **Sugestões:** ${Array.from(results.values()).reduce((sum, r) => sum + r.suggestions.length, 0)}
+- **Alertas Gerados:** ${Array.from(results.values()).reduce(
+      (sum, r) => sum + r.alerts.length,
+      0
+    )}
+- **Sugestões:** ${Array.from(results.values()).reduce(
+      (sum, r) => sum + r.suggestions.length,
+      0
+    )}
 
 ## 🚨 Arquivos com Alto Risco
 `
@@ -180,7 +212,8 @@ export class ErrorPreventionSystem {
       .sort((a, b) => b[1].alerts.length - a[1].alerts.length)
 
     for (const [filePath, result] of highRiskFiles) {
-      const fileName = require('path').basename(filePath)
+      const path = await import('path')
+      const fileName = path.basename(filePath)
       report += `### ${fileName}
 - **Caminho:** ${filePath}
 - **Alertas:** ${result.alerts.length}
@@ -191,7 +224,7 @@ export class ErrorPreventionSystem {
 
     report += `## 💡 Sugestões Gerais
 `
-    
+
     const allSuggestions = new Set<string>()
     for (const result of results.values()) {
       result.suggestions.forEach(s => allSuggestions.add(s))
@@ -206,7 +239,10 @@ export class ErrorPreventionSystem {
   }
 
   // Analisar código em tempo real (para uso em editores)
-  analyzeCodeSnippet(codeSnippet: string, context?: string): {
+  analyzeCodeSnippet(
+    codeSnippet: string,
+    context?: string
+  ): {
     riskLevel: 'low' | 'medium' | 'high'
     alerts: string[]
     suggestions: string[]
@@ -220,7 +256,7 @@ export class ErrorPreventionSystem {
       if (regex.test(codeSnippet)) {
         const risk = this.riskPatterns.get(patternName) || 5
         totalRisk += risk
-        
+
         alerts.push(`Padrão de risco detectado: ${patternName}`)
         suggestions.push(this.getSuggestionForPattern(patternName))
       }
@@ -229,18 +265,23 @@ export class ErrorPreventionSystem {
     // Verificar base de memória
     const similarErrors = errorMemorySystem.findSimilarErrors(codeSnippet)
     if (similarErrors.length > 0) {
-      alerts.push(`${similarErrors.length} erro(s) similar(es) encontrado(s) na base de conhecimento`)
+      alerts.push(
+        `${similarErrors.length} erro(s) similar(es) encontrado(s) na base de conhecimento`
+      )
       for (const error of similarErrors.slice(0, 2)) {
-        suggestions.push(`Solução conhecida: ${error.solution.substring(0, 100)}...`)
+        suggestions.push(
+          `Solução conhecida: ${error.solution.substring(0, 100)}...`
+        )
       }
     }
 
-    const riskLevel = totalRisk >= 15 ? 'high' : totalRisk >= 8 ? 'medium' : 'low'
+    const riskLevel =
+      totalRisk >= 15 ? 'high' : totalRisk >= 8 ? 'medium' : 'low'
 
     return {
       riskLevel,
       alerts,
-      suggestions
+      suggestions,
     }
   }
 
@@ -251,21 +292,30 @@ export class ErrorPreventionSystem {
     patternsByCategory: Record<string, number>
   } {
     const totalPatterns = this.codePatterns.size
-    const highRiskPatterns = Array.from(this.riskPatterns.values()).filter(risk => risk >= 8).length
-    
+    const highRiskPatterns = Array.from(this.riskPatterns.values()).filter(
+      risk => risk >= 8
+    ).length
+
     const patternsByCategory: Record<string, number> = {
-      'SQL': 0,
-      'Segurança': 0,
-      'Performance': 0,
-      'Validação': 0
+      SQL: 0,
+      Segurança: 0,
+      Performance: 0,
+      Validação: 0,
     }
 
     for (const [patternName, risk] of this.riskPatterns) {
       if (patternName.includes('sql')) {
         patternsByCategory['SQL']++
-      } else if (patternName.includes('auth') || patternName.includes('credentials') || patternName.includes('rls')) {
+      } else if (
+        patternName.includes('auth') ||
+        patternName.includes('credentials') ||
+        patternName.includes('rls')
+      ) {
         patternsByCategory['Segurança']++
-      } else if (patternName.includes('performance') || patternName.includes('nested')) {
+      } else if (
+        patternName.includes('performance') ||
+        patternName.includes('nested')
+      ) {
         patternsByCategory['Performance']++
       } else {
         patternsByCategory['Validação']++
@@ -275,7 +325,7 @@ export class ErrorPreventionSystem {
     return {
       totalPatterns,
       highRiskPatterns,
-      patternsByCategory
+      patternsByCategory,
     }
   }
 }

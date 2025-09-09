@@ -40,7 +40,7 @@ export async function POST(
     const { user, error } = await authenticateUser(request)
     if (error || !user) return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
 
-    const role = user.user_metadata?.role
+    const role = (user.user_metadata as any)?.role
     if (!['manager','gestor','admin','admin_global','superadmin'].includes(role)) {
       return NextResponse.json({ error: 'Acesso negado' }, { status: 403 })
     }
